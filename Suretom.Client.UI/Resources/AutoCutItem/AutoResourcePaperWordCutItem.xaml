@@ -1,0 +1,68 @@
+﻿<UserControl x:Class="CTBClient.DataTools.Pages.AutoCutItem.AutoResourcePaperWordCutItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CTBClient.UI.Pages.ItemResource"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="1000" Loaded="UserControl_Loaded">
+    <UserControl.Resources>
+        <local:BatchImportDealResultConverter x:Key="DealReaultConverter"/>
+    </UserControl.Resources>
+    <Border BorderThickness="1" BorderBrush="#AAA" Margin="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="500*"/>
+                    <ColumnDefinition Width="100*"/>
+                    <ColumnDefinition Width="380*"/>
+
+                </Grid.ColumnDefinitions>
+                <StackPanel x:Name="Sp1" Orientation="Horizontal" Margin="5">
+                    <Button x:Name="BtnAddWords" Content="添加" Margin="20,0,0,0"  Click="BtnAddWords_Click"/>
+                    <Button x:Name="BtnAddWordPath" Content="添加文件夹" Margin="20,0,0,0"  Click="BtnAddWordPath_Click"/>
+
+                    <!--<Button x:Name="BtnClearAllWords" Content="清空列表" Margin="20,0,0,0" Click="BtnClearAllWords_Click"/>-->
+                    <Button x:Name="BtnStartDeal" Content="开始处理" Margin="20,0,0,0"  Click="BtnStartDeal_Click"/>
+                    <Button x:Name="BtnCloseAllSuccess" Content="关闭成功"  Margin="20,0,0,0"  Click="BtnCloseAllSuccess_Click"/>
+                    <Button x:Name="BtnExportError" Content="导出错误"  Margin="20,0,0,0"  Click="BtnExportError_Click"/>
+
+                </StackPanel>
+                <StackPanel x:Name="Sp2" Grid.Column="1" Orientation="Horizontal" Margin="5">
+                    <Button x:Name="BtnStopDeal" Content="停止处理" Margin="0,0,0,0" Visibility="Hidden"  Click="BtnStopDeal_Click"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="5">
+                    <Label x:Name="LblAllCount" Margin="2 0 0 0" VerticalContentAlignment="Center" Style="{StaticResource text-primary}"/>
+                    <Label x:Name="LblUnDealCount" Margin="15 0 0 0" VerticalContentAlignment="Center" Style="{StaticResource text-primary}"/>
+                    <Label x:Name="LblManualCount" Margin="15 0 0 0" VerticalContentAlignment="Center" Style="{StaticResource text-primary}"/>
+                    <Label x:Name="LblSuccessCount" Margin="15 0 0 0" VerticalContentAlignment="Center" Style="{StaticResource text-primary}"/>
+                    <Label x:Name="LblInitFailCount" Margin="15 0 0 0" VerticalContentAlignment="Center" Style="{StaticResource text-danger}"/>
+                    <Label x:Name="LblFailCount" Margin="15 0 0 0" VerticalContentAlignment="Center" Style="{StaticResource text-danger}"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <ListBox x:Name="ListBoxWord" Grid.Column="0" BorderBrush="#FFAAAAAA" Padding="2" ItemsSource="{Binding}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Label Margin="0 0 0 0" Content="{Binding ShowName}" />
+                                <Label Margin="4 0 0 0" Content="{Binding Status}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Grid x:Name="DealCtlContainer" Grid.Column="1">
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

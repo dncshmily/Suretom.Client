@@ -1,0 +1,141 @@
+﻿<UserControl x:Class="CTBClient.DataTools.Pages.AutoCutItem.AutoResourcePaperWordCutItemContent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CTBClient.UI.Pages.ItemResource"
+             xmlns:utilities="clr-namespace:CTBClient.UI.Utilities"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="1200">
+    <UserControl.Resources>
+        <local:Bool2VisibilityConverter x:Key="bool2VisibilityConverter"/>
+        <local:BatchImportProcessInfoType2ColorConverter x:Key="batchImportProcessInfoType2ColorConverter" />
+    </UserControl.Resources>
+
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="55"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="65"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border BorderThickness="1" BorderBrush="#AAA" Margin="5,2,5,5" Padding="5">
+            <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="187*"/>
+                        <ColumnDefinition Width="74*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel x:Name="Sp1"  Orientation="Horizontal" >
+                        <Label Margin="0,0,0,0" Content="Word文件：" Style="{DynamicResource text-primary}" VerticalContentAlignment="Center" Width="68"/>
+                        <TextBox x:Name="TxtWordFileName" Margin="5,0,0,0"  IsReadOnly="True" Width="280" />
+                        <Button x:Name="BtnPaperFileSelect" Margin="10,0,0,0" Content="选择" Style="{DynamicResource btn-info}" Click="BtnPaperFileSelect_Click"   />
+                        <Button x:Name="BtnOpenPaperFile" Margin="10,0,0,0" Content="打开" Style="{DynamicResource btn-warning}" Click="BtnOpenPaperFile_Click"   />
+                        <Button x:Name="BtnOpenPaperFileDir" Margin="10,0,0,0" Content="打开目录" Style="{DynamicResource btn-warning}" Click="BtnOpenPaperFileDir_Click"   />
+                    </StackPanel>
+                    <StackPanel x:Name="Sp2" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Width="250">
+                        <Button x:Name="BtnOpenImgDir" Margin="0 0 10 0" Visibility="Hidden"  Content="图片目录" Style="{DynamicResource btn-success}"  Click="BtnOpenImgDir_Click"  />
+                        <Button x:Name="BtnOpenWordDir" Margin="0 0 10 0" Visibility="Hidden"  Content="Word目录" Style="{DynamicResource btn-success}"  Click="BtnOpenWordDir_Click"  />
+                        <Button x:Name="BtnRemove" Content="关闭处理" Style="{StaticResource btn-danger}" Click="BtnRemove_Click"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+        <StackPanel Grid.Row="1" Margin="5,2,5,5" Orientation="Horizontal">
+            <Label x:Name="LblExamName" Margin="0,0,0,0" Content="考试名称：" Style="{DynamicResource text-primary}" VerticalContentAlignment="Center" />
+            <Label x:Name="LblSubject" Margin="30,0,0,0" Content="科目：" Style="{DynamicResource text-primary}" VerticalContentAlignment="Center" />
+        </StackPanel>
+        <Grid x:Name="Grid2" Grid.Row="2" Margin="5,2,5,5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="290"/>
+                <ColumnDefinition Width="95"/>
+                <ColumnDefinition Width="400*"/>
+                <ColumnDefinition Width="307*"/>
+            </Grid.ColumnDefinitions>
+            <GroupBox  Margin="0 0 5 0" Padding="0,2,0,2" Header="多步处理" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox.BorderBrush>
+                    <SolidColorBrush Color="{DynamicResource DefaultColor2}"/>
+                </GroupBox.BorderBrush>
+                <Grid>
+                    <StackPanel x:Name="Sp4" Orientation="Horizontal"  Grid.Column="0">
+                        <Button x:Name="BtnCheckWord"  Margin="15,0,0,0"  Content="标记检查" Style="{DynamicResource btn-primary}"  Click="BtnCheckWord_Click"  />
+                        <Button x:Name="BtnCutImage"  Margin="15,0,0,0"  Content="分割试题" Style="{DynamicResource btn-primary}"  Click="BtnCutImage_Click"  />
+                        <Button x:Name="BtnUpdatePaper"  Margin="15,0,0,0"  Content="保存试题" Style="{DynamicResource btn-primary}"  Click="BtnUpdatePaper_Click"  />
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+            <GroupBox Grid.Column="1" Margin="5 0 0 0" Padding="0,2,0,2" Header="单步处理" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox.BorderBrush>
+                    <SolidColorBrush Color="{DynamicResource DefaultColor2}"/>
+                </GroupBox.BorderBrush>
+                <StackPanel x:Name="Sp5" Orientation="Horizontal"  Grid.Column="0">
+                    <Button x:Name="BtnAutoDeal"  Margin="15,0,0,0"  Content="处理" Style="{DynamicResource btn-primary}"  Click="BtnAutoDeal_Click"  />
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Visibility="Hidden" Grid.Column="3" Margin="5 0 0 0" Padding="0,2,0,2" Header="设置" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox.BorderBrush>
+                    <SolidColorBrush Color="{DynamicResource DefaultColor2}"/>
+                </GroupBox.BorderBrush>
+                <StackPanel x:Name="Sp6" Orientation="Horizontal"  Grid.Column="0">
+                    <CheckBox x:Name="ChkCheckShowWord" Content="检查时显示Word" Height="Auto" Margin="10 5 5 5" Checked="ChkCheckShowWord_Checked" Unchecked="ChkCheckShowWord_Unchecked"/>
+                    <CheckBox x:Name="ChkIsRepairParagraph" Content="检查时修复段落" Height="Auto" Margin="10 5 5 5" Checked="ChkIsRepairParagraph_Checked" Unchecked="ChkIsRepairParagraph_Unchecked" IsChecked="True"/>
+
+                </StackPanel>
+            </GroupBox>
+        </Grid>
+        <TabControl Grid.Row="3" Margin="5" Padding="0">
+            <TabItem Header="日志信息">
+                <Grid Background="#FFE5E5E5">
+                    <DataGrid x:Name="dgProcessInfo"   IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding Id}" Header="序号" ElementStyle="{StaticResource DataGridTextCenter}" Width="8*" />
+                            <DataGridTextColumn Binding="{Binding Type}" Header="类型" ElementStyle="{StaticResource DataGridTextCenter}" Width="8*" />
+                            <DataGridTextColumn Binding="{Binding CreateTime}" Header="时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="20*" />
+
+                            <DataGridTemplateColumn Width="90*" Header="信息">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Info}" VerticalAlignment="Center" Foreground="{Binding Type, Converter={StaticResource batchImportProcessInfoType2ColorConverter}}" />
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="处理信息">
+                <Grid Background="#FFE5E5E5">
+                    <DataGrid x:Name="dgItemUpdate"   IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Binding="{Binding OrderNumber}" Header="题号" ElementStyle="{StaticResource DataGridTextCenter}" Width="50"  />
+                            <DataGridTextColumn Binding="{Binding OfficeItemNumber}" Header="阅卷题号" ElementStyle="{StaticResource DataGridTextCenter}" Width="70"  />
+                            <!--<DataGridTextColumn Binding="{Binding Subject}" Header="科目" ElementStyle="{StaticResource DataGridTextCenter}" Width="*"  />-->
+                            <!--<DataGridTextColumn Binding="{Binding ItemType}" Header="题型" ElementStyle="{StaticResource DataGridTextCenter}" Width="*"  />-->
+                            <DataGridTextColumn Binding="{Binding HistoryCutInfo}" Header="上一次操作" ElementStyle="{StaticResource DataGridTextCenter}" Width="90"  />
+                            <DataGridTextColumn Binding="{Binding CheckInfo}" Header="检查状态" ElementStyle="{StaticResource DataGridTextCenter}" Width="70"  />
+                            <DataGridTextColumn Binding="{Binding ContentWordUpdateInfo}" Header="题干Word" ElementStyle="{StaticResource DataGridTextCenter}" Width="*" />
+                            <DataGridTextColumn Binding="{Binding AnswerWordUpdateInfo}" Header="答案Word" ElementStyle="{StaticResource DataGridTextCenter}" Width="*" />
+                            <DataGridTextColumn Binding="{Binding ContentImgUpdateInfo}" Header="题干图片" ElementStyle="{StaticResource DataGridTextCenter}" Width="1.2*" />
+                            <DataGridTextColumn Binding="{Binding AnswerImgUpdateInfo}" Header="答案图片" ElementStyle="{StaticResource DataGridTextCenter}" Width="1.2*" />
+                            <DataGridTemplateColumn Header="操作" Width="200">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button Content="切图" Style="{DynamicResource btn-primary}" Tag="{Binding}" Visibility="{Binding IsCheckSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnSingleItemCutImage_Click" Margin="0 0 0 0"/>
+                                                <Button Content="查看" Style="{DynamicResource btn-primary}" Tag="{Binding}" Visibility="{Binding IsCheckSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnItemView_Click" Margin="15 0 0 0" />
+                                                <Button Content="上传" Style="{DynamicResource btn-warning}" Tag="{Binding}" Visibility="{Binding IsCutImgSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnReUpdate_Click"   Margin="15 0 0 0"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

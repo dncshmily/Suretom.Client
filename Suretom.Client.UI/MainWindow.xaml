@@ -1,0 +1,31 @@
+﻿<mui:ModernWindow  x:Class="Suretom.Client.UI.MainWindow"
+        xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="皖校通"
+        IsTitleVisible="True"
+        ContentSource="/Pages/Demo/DemoWin.xaml"
+        Height="450"
+        Width="800"
+        Closing="ModernWindow_Closing">
+    <mui:ModernWindow.TitleLinks>
+        <mui:Link DisplayName="设置" Source="/Pages/Set/SetDemo.xaml" />
+        <mui:Link DisplayName="站点" Source="http://suretom.com" />
+    </mui:ModernWindow.TitleLinks>
+    <mui:ModernWindow.MenuLinkGroups>
+        <mui:LinkGroup DisplayName="">
+            <mui:LinkGroup.Links>
+                <mui:Link Source="/Pages/Demo/DemoWin.xaml" />
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>
+        <mui:LinkGroup DisplayName="设置" GroupKey="settings">
+            <mui:LinkGroup.Links>
+                <!--<mui:Link DisplayName="Demo1" Source="/Pages/Settings/SyncKnowledgeTreeCtl.xaml" />
+                <mui:Link DisplayName="Demo2" Source="/Pages/Settings/SyncItemPatternCtl.xaml" />-->
+            </mui:LinkGroup.Links>
+        </mui:LinkGroup>
+    </mui:ModernWindow.MenuLinkGroups>
+</mui:ModernWindow>
