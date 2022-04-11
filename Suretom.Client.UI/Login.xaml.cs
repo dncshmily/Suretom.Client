@@ -1,6 +1,4 @@
-﻿using _7net.Tool;
-using MyOA.URIResource;
-using Suretom.Client.Common;
+﻿using Suretom.Client.Common;
 using Suretom.Client.Entity;
 using Suretom.Client.IService;
 using System;
@@ -15,7 +13,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using static Suretom.Client.Common.ValidCodeHelper;
 
 namespace Suretom.Client.UI
 {
