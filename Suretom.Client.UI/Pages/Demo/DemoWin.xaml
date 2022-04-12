@@ -7,7 +7,7 @@
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="1200" Loaded="UserControl_Loaded">
     <UserControl.Resources>
-        <local:CourseProcessInfoTypeConverter x:Key="courseInfoTypeConverter" />
+        <local:BatchImportProcessInfoTypeConverter x:Key="batchImportProcessInfoTypeConverter" />
     </UserControl.Resources>
     <Border BorderThickness="1" BorderBrush="#AAA" Margin="5">
         <Grid>
@@ -15,43 +15,53 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <Grid  Grid.Row="0" >
+            <Grid  Grid.Row="0">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300" />
+                    <ColumnDefinition Width="300" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <GroupBox  Margin="5 5 5 5"  Header="1" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox  Grid.Column="0" Margin="5 5 5 5"  Header="单步处理" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                     <GroupBox.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource DefaultColor2}"/>
+                        <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
                     </GroupBox.BorderBrush>
                     <Grid>
-                        <StackPanel x:Name="Sp1" Orientation="Horizontal" Margin="5">
-                            <Button x:Name="BtnAddWords" Content="添加学员" Margin="20,0,0,0"  Click="BtnAddWords_Click" />
-                            <Button x:Name="BtnStartDeal" Content="批量导入" Margin="20,0,0,0"  Click="BtnStartDeal_Click" />
+                        <StackPanel x:Name="Sp1"  Orientation="Horizontal" Margin="5">
+                            <Button x:Name="BtnAddWords" Content="添加学员" Margin="20,0,0,0"  Style="{DynamicResource btn-primary}"   Click="BtnAddStudent_Click" />
+                            <Button x:Name="BtnStartDeal" Content="批量导入" Margin="20,0,0,0"   Style="{DynamicResource btn-primary}"  Click="BtnBatchImport_Click" />
                         </StackPanel>
                     </Grid>
+                </GroupBox>
+                <GroupBox Grid.Column="1" Margin="5 5 5 5"   Header="批量处理" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                    <GroupBox.BorderBrush>
+                        <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
+                    </GroupBox.BorderBrush>
+                    <StackPanel x:Name="Sp2" Orientation="Horizontal"  Grid.Column="0">
+                        <Button x:Name="BtnAutoDeal"  Margin="20,0,0,0"  Content="开始学习" Style="{DynamicResource btn-primary}"  Click="BtnAutoDeal_Click" />
+                    </StackPanel>
                 </GroupBox>
             </Grid>
 
             <Grid Grid.Row="1" Margin="5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <GroupBox  Margin="0 0 5 0"   Grid.Column="0"  Padding="0,2,0,2" Header="2" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox  Margin="0 0 5 0"   Grid.Column="0"  Padding="0,2,0,2" Header="" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                     <GroupBox.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource DefaultColor2}"/>
+                        <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
                     </GroupBox.BorderBrush>
-                            <ScrollViewer  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
-                                <TreeView x:Name="treeView" Height="Auto"  Grid.Column="0" BorderThickness="0" HorizontalAlignment="Stretch" IsTextSearchEnabled="True" 
-                                          TreeViewItem.Collapsed="OnTreeViewItemCollapsed" TreeViewItem.Expanded="OnTreeViewItemExpanded" 
-                                          TreeViewItem.Selected="OnTreeViewItemSelected" TreeViewItem.Unselected="OnTreeViewItemUnselected" >
-                                </TreeView>
-                            </ScrollViewer>
+                    <ScrollViewer  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                        <TreeView x:Name="treeView" Height="Auto"  Grid.Column="0" BorderThickness="0" HorizontalAlignment="Stretch" IsTextSearchEnabled="True"
+                                          TreeViewItem.Collapsed="OnTreeViewItemCollapsed" TreeViewItem.Expanded="OnTreeViewItemExpanded"
+                                          TreeViewItem.Selected="OnTreeViewItemSelected" TreeViewItem.Unselected="OnTreeViewItemUnselected">
+                        </TreeView>
+                    </ScrollViewer>
                 </GroupBox>
 
-                <GroupBox  Margin="0 0 5 0" Grid.Column="1" Padding="0,2,0,2" Header="3" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox  Margin="0 0 5 0" Grid.Column="1" Padding="0,2,0,2" Header="" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                     <GroupBox.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource DefaultColor2}"/>
+                        <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
                     </GroupBox.BorderBrush>
                     <Grid>
                         <Grid.RowDefinitions>
@@ -61,7 +71,7 @@
                         </Grid.RowDefinitions>
 
                         <TabControl  Grid.Row="0" Margin="5"  Padding="0">
-                            <TabItem Header="个人信息" >
+                            <TabItem Header="个人信息">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -74,34 +84,34 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
                                     <Grid Grid.Column="0" Grid.Row="0">
-                                        <StackPanel x:Name="spName" Margin="10 5 0 0" Orientation="Horizontal" >
-                                            <Label Content="姓名：" FontSize="15"   VerticalContentAlignment="Center"/>
+                                        <StackPanel x:Name="spName" Margin="10 5 0 0" Orientation="Horizontal">
+                                            <Label Content="姓名：" FontSize="15"   VerticalContentAlignment="Center" />
                                             <Label x:Name="labNane"   Margin="0 5 0 0" VerticalContentAlignment="Center" />
                                         </StackPanel>
                                     </Grid>
                                     <Grid Grid.Column="1" Grid.Row="0">
-                                        <StackPanel x:Name="spId"   Orientation="Horizontal" >
-                                            <Label Content="身  份  证："   Margin="10 5 0 0" FontSize="15"   />
+                                        <StackPanel x:Name="spId"   Orientation="Horizontal">
+                                            <Label Content="身  份  证："   Margin="10 5 0 0" FontSize="15" />
                                             <Label x:Name="labIdCard" Margin="0 5 0 0" VerticalContentAlignment="Center" />
                                         </StackPanel>
                                     </Grid>
                                     <Grid Grid.Column="2" Grid.Row="0"></Grid>
                                     <Grid Grid.Column="0" Grid.Row="1">
-                                        <StackPanel x:Name="spNo" Orientation="Horizontal" >
-                                            <Label Content="学号：" Margin="10 5 0 0" FontSize="15"  VerticalContentAlignment="Center"/>
+                                        <StackPanel x:Name="spNo" Orientation="Horizontal">
+                                            <Label Content="学号：" Margin="10 5 0 0" FontSize="15"  VerticalContentAlignment="Center" />
                                             <Label x:Name="labNo"   Margin="0 5 0 0" VerticalContentAlignment="Center" />
                                         </StackPanel>
                                     </Grid>
                                     <Grid Grid.Column="1" Grid.Row="1">
-                                        <StackPanel x:Name="sptype" Orientation="Horizontal" >
-                                            <Label Content="学习形式：" Margin="10 10 0 0" FontSize="15"   />
+                                        <StackPanel x:Name="sptype" Orientation="Horizontal">
+                                            <Label Content="学习形式：" Margin="10 10 0 0" FontSize="15" />
                                             <Label x:Name="labIdType"  Margin="0 5 0 -10" VerticalContentAlignment="Center" />
                                         </StackPanel>
                                     </Grid>
                                     <Grid Grid.Column="2" Grid.Row="1"></Grid>
                                     <Grid Grid.Column="0" Grid.Row="2">
-                                        <StackPanel x:Name="spClass" Orientation="Horizontal" >
-                                            <Label Content="班级："  Margin="10 5 0 5" FontSize="15"  VerticalContentAlignment="Center"/>
+                                        <StackPanel x:Name="spClass" Orientation="Horizontal">
+                                            <Label Content="班级："  Margin="10 5 0 5" FontSize="15"  VerticalContentAlignment="Center" />
                                             <Label x:Name="labClass"  Margin="0 5 0 5" VerticalContentAlignment="Center" />
                                         </StackPanel>
                                     </Grid>
@@ -111,10 +121,29 @@
                             </TabItem>
                         </TabControl>
 
-                        <TabControl  Grid.Row="1"  Margin="5" Padding="0" >
+                        <TabControl  Grid.Row="1"  Margin="5" Padding="0">
+                            <TabItem Header="日志信息">
+                                <Grid Background="#FFE5E5E5">
+                                    <DataGrid x:Name="dgProcessInfo"   IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Binding="{Binding Id}" Header="序号" ElementStyle="{StaticResource DataGridTextCenter}" Width="8*" />
+                                            <DataGridTextColumn Binding="{Binding Type}" Header="类型" ElementStyle="{StaticResource DataGridTextCenter}" Width="8*" />
+                                            <DataGridTextColumn Binding="{Binding CreateTime}" Header="时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="20*" />
+
+                                            <DataGridTemplateColumn Width="90*" Header="信息">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding Info}" VerticalAlignment="Center" Foreground="{Binding Type, Converter={StaticResource batchImportProcessInfoTypeConverter}}" />
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Grid>
+                            </TabItem>
                             <TabItem Header="课程信息">
                                 <Grid Background="#FFE5E5E5">
-                                    <DataGrid x:Name="dgCourseInfo" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}" Height="Auto" >
+                                    <DataGrid x:Name="dgCourseInfo" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}" Height="Auto">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn  Binding="{Binding CourseName}" Header="课程名称" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
                                             <DataGridTextColumn Binding="{Binding ExpiredTime}" Header="截止时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
@@ -131,186 +160,488 @@
                                 </Grid>
                             </TabItem>
                         </TabControl>
-                            
-                        <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="320" />
-                                            <ColumnDefinition Width="320" />
-                                            <ColumnDefinition Width="320" />
-                                            <ColumnDefinition Width="320" />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="320" />
-                                            <RowDefinition Height="320" />
-                                        </Grid.RowDefinitions>
 
-                                        <Grid Grid.Column="0"  Margin="5 5 0 0" Grid.Row="0">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="*" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                </Grid.RowDefinitions>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal" >
-                                                    <Image Source="/Resources/kcfm-pic.jpg" />
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal" >
-                                                    <Label Name="lab1"  Content="农业推广学校" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal" >
-                                                    <Label Name="lab12"  Content="2022年春季学期开课" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal" >
-                                                    <Label Name="lab13"  Content="结束时间：2022/06/25 23:59:59" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Grid.Row="4" Orientation="Horizontal">
-                                                    <ProgressBar Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="75" />
-                                                    <Label Name="lab14"   Margin="10 0 0 0" Content="80%" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal" >
-                                                    <Label Name="lab15"  Content="文采老师" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                            </Grid>
-                                        </Grid>
-                                        <Grid Grid.Column="1"  Margin="5 5 0 0"  Grid.Row="0">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="*" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                </Grid.RowDefinitions>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal" >
-                                                    <Image Source="/Resources/kcfm-pic.jpg" />
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal" >
-                                                    <Label Name="lab2"  Content="农业推广学校" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal" >
-                                                    <Label Name="lab22"  Content="2022年春季学期开课" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal" >
-                                                    <Label Name="lab23"  Content="结束时间：2022/06/25 23:59:59" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Grid.Row="4" Orientation="Horizontal">
-                                                    <ProgressBar Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="75" />
-                                                    <Label Name="lab24"   Margin="10 0 0 0" Content="80%" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal" >
-                                                    <Label Name="lab25"  Content="文采老师" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                            </Grid>
-                                        </Grid>
-                                        <Grid Grid.Column="2"  Margin="5 5 0 0" Grid.Row="0">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="*" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                </Grid.RowDefinitions>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal" >
-                                                    <Image Source="/Resources/kcfm-pic.jpg" />
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal" >
-                                                    <Label Name="lab3"  Content="农业推广学校" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal" >
-                                                    <Label Name="lab32"  Content="2022年春季学期开课" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal" >
-                                                    <Label Name="lab33"  Content="结束时间：2022/06/25 23:59:59" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Grid.Row="4" Orientation="Horizontal">
-                                                    <ProgressBar Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="75" />
-                                                    <Label Name="lab34"   Margin="10 0 0 0" Content="80%" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal" >
-                                                    <Label Name="lab35"  Content="文采老师" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                            </Grid>
-                                        </Grid>
-                                        <Grid Grid.Column="3"  Margin="5 5 0 0" Grid.Row="0">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="*" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                </Grid.RowDefinitions>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal" >
-                                                    <Image Source="/Resources/kcfm-pic.jpg" />
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal" >
-                                                    <Label Name="lab4"  Content="农业推广学校" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal" >
-                                                    <Label Name="lab42"  Content="2022年春季学期开课" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal" >
-                                                    <Label Name="lab43"  Content="结束时间：2022/06/25 23:59:59" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Grid.Row="4" Orientation="Horizontal">
-                                                    <ProgressBar Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="75" />
-                                                    <Label Name="lab44"   Margin="10 0 0 0" Content="80%" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal" >
-                                                    <Label Name="lab45"  Content="文采老师1" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                            </Grid>
-                                        </Grid>
-                                        <Grid Grid.Column="0"   Margin="5 5 0 0" Grid.Row="1">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="*" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                </Grid.RowDefinitions>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal" >
-                                                    <Image Source="/Resources/kcfm-pic.jpg" />
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal" >
-                                                    <Label Name="laba5"  Content="农业推广学校" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal" >
-                                                    <Label Name="laba51"  Content="2022年春季学期开课" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal" >
-                                                    <Label Name="laba52"  Content="结束时间：2022/06/25 23:59:59" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel  Grid.Row="4" Orientation="Horizontal">
-                                                    <ProgressBar Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="75" />
-                                                    <Label Name="laba53"   Margin="10 0 0 0" Content="80%" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                                <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal" >
-                                                    <Label Name="laba54"  Content="文采老师" Grid.Row="1"></Label>
-                                                </StackPanel>
-                                            </Grid>
-                                        </Grid>
-                                        <Grid Grid.Column="1"  Margin="5 5 0 0"  Grid.Row="1">
-                                            <StackPanel x:Name="spCourse5" Orientation="Horizontal" >
-                                                <Label Name="lab5"></Label>
-                                            </StackPanel>
-                                        </Grid>
-                                        <Grid Grid.Column="2"  Margin="5 5 0 0"   Grid.Row="1">
-                                            <StackPanel x:Name="spCourse6" Orientation="Horizontal" >
-                                                <Label Name="lab6"></Label>
-                                            </StackPanel>
-                                        </Grid>
+                        <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                            <Grid  x:Name="grid1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="320" />
+                                    <ColumnDefinition Width="320" />
+                                    <ColumnDefinition Width="320" />
+                                    <ColumnDefinition Width="320" />
+                                    <ColumnDefinition Width="320" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="320" />
+                                    <RowDefinition Height="320" />
+                                    <RowDefinition Height="320" />
+                                </Grid.RowDefinitions>
+
+                                <Grid Grid.Column="0" x:Name="dgrA"  Visibility="Hidden"   Margin="10 10 0 0" Grid.Row="0">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image x:Name="imgA" Source="/Resources/kcfm-pic.jpg"  MouseDown="Image_OnMouseDown" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labA1"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labA2"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labA3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbA" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labA4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labA5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
                                     </Grid>
+                                </Grid>
+                                <Grid Grid.Column="1"  x:Name="dgrB"  Visibility="Hidden"   Margin="10 10 0 0"  Grid.Row="0">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image x:Name="imgB" Source="/Resources/kcfm-pic.jpg"  MouseDown="Image_OnMouseDown" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labB1"  Content="" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labB2"  Content="" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labB3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbB" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labB4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labB5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                                <Grid Grid.Column="2"  x:Name="dgrC"   Visibility="Hidden"  Margin="10 10 0 0" Grid.Row="0">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image Source="/Resources/kcfm-pic.jpg" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labC1"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labC2"  Content="" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labC3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbC" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labC4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labC5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                                <Grid Grid.Column="3"  x:Name="dgrD"   Visibility="Hidden"  Margin="10 10 0 0" Grid.Row="0">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image Source="/Resources/kcfm-pic.jpg" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labD1"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labD2"  Content="" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labD3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbD" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labD4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labD5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                                <Grid Grid.Column="4"  x:Name="dgrM"   Visibility="Hidden"  Margin="10 10 0 0" Grid.Row="0">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image Source="/Resources/kcfm-pic.jpg" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labM1"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labM2"  Content="" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labM3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbM" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labM4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labM5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                                <Grid Grid.Column="0"    x:Name="dgrE"  Visibility="Hidden"  Margin="10 10 0 0" Grid.Row="1">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image Source="/Resources/kcfm-pic.jpg" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labE1"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labE2"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labE3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbE" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labE4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labE5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                                <Grid Grid.Column="1"   x:Name="dgrF"  Visibility="Hidden"  Margin="10 10 0 0"  Grid.Row="1">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image Source="/Resources/kcfm-pic.jpg" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labF1"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labF2"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labF3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbF" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labF4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labF5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                                <Grid Grid.Column="2"   x:Name="dgrG"  Visibility="Hidden"  Margin="10 10 0 0"   Grid.Row="1">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image Source="/Resources/kcfm-pic.jpg" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labG1"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labG2"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labG3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbG" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labG4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labG5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                                <Grid Grid.Column="3"   x:Name="dgrH"  Visibility="Hidden"  Margin="10 10 0 0"   Grid.Row="1">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image Source="/Resources/kcfm-pic.jpg" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labH1"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labH2"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labH3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbH" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labH4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labH5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                                <Grid Grid.Column="4"  x:Name="dgrN"   Visibility="Hidden"  Margin="10 10 0 0" Grid.Row="1">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image Source="/Resources/kcfm-pic.jpg" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labN1"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labN2"  Content="" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labN3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbN" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labN4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labN5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                                <Grid Grid.Column="0"   x:Name="dgrI"  Visibility="Hidden"  Margin="10 10 0 0"   Grid.Row="2">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image Source="/Resources/kcfm-pic.jpg" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labI1"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labI2"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labI3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbI" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labI4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labI5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                                <Grid Grid.Column="1"   x:Name="dgrJ"  Visibility="Hidden"  Margin="10 10 0 0"   Grid.Row="2">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image Source="/Resources/kcfm-pic.jpg" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labJ1"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labJ2"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labJ3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbJ" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labJ4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labJ5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                                <Grid Grid.Column="2"   x:Name="dgrK"  Visibility="Hidden"  Margin="10 10 0 0"   Grid.Row="2">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image Source="/Resources/kcfm-pic.jpg" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labK1"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labK2"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labK3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbK" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labK4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labK5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                                <Grid Grid.Column="3"   x:Name="dgrL"  Visibility="Hidden"  Margin="10 10 0 0"   Grid.Row="2">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image Source="/Resources/kcfm-pic.jpg" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labL1"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labL2"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labL3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbL" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labL4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labL5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                                <Grid Grid.Column="4"  x:Name="dgrO"   Visibility="Hidden"  Margin="10 10 0 0" Grid.Row="2">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="0" Orientation="Horizontal">
+                                            <Image Source="/Resources/kcfm-pic.jpg" />
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="1" Orientation="Horizontal">
+                                            <Label Name="labO1"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1"  Grid.Row="2" Orientation="Horizontal">
+                                            <Label Name="labO2"  Content="" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Margin="1 1 1 1" Grid.Row="3" Orientation="Horizontal">
+                                            <Label Name="labO3"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel  Grid.Row="4" Orientation="Horizontal">
+                                            <ProgressBar x:Name="pbO" Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="0" />
+                                            <Label Name="labO4"   Margin="10 0 0 0" Content="0%" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                        <StackPanel   Margin="1 1 1 1" Grid.Row="5" Orientation="Horizontal">
+                                            <Label Name="labO5"  Content="-" Grid.Row="1"></Label>
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
                         </ScrollViewer>
                     </Grid>
                 </GroupBox>

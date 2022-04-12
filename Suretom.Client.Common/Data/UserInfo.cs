@@ -1,4 +1,7 @@
-﻿namespace Suretom.Client.Common
+﻿using Suretom.Client.Entity;
+using System.Collections.Generic;
+
+namespace Suretom.Client.Common
 {
     /// <summary>
     /// 数据平台，用户登陆信息
@@ -64,6 +67,30 @@
         /// <summary>
         ///
         /// </summary>
-        public UserInfo userInfo { get; set; } = new UserInfo();
+        /// <returns></returns>
+        public string Id { get; set; } = string.Empty;
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public string Name { get; set; } = string.Empty;
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public string Phone { get; set; } = string.Empty;
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public int Number { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public List<StudentInfo> studentInfos { get; set; } = new List<StudentInfo>();
     }
 }

@@ -282,6 +282,23 @@ namespace Suretom.Client.Common
 
         #endregion 文件后缀类型
 
+        #region MyRegion
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="t1"></param>
+        /// <returns></returns>
+        public static DateTime ToConvertTime(String t1)
+        {
+            String t2 = t1.Substring(6, 13);//截取其中的一串数字
+            long milliTime = long.Parse(t2);//String转long
+            long timeTricks = new DateTime(1970, 1, 1).Ticks + milliTime * 10000 + TimeZone.CurrentTimeZone.GetUtcOffset(DateTime.Now).Hours * 3600 * (long)10000000;
+            return new DateTime(timeTricks);
+        }
+
+        #endregion
+
         /// <summary>
         /// 得到私有字段的值
         /// </summary>

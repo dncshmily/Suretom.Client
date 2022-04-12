@@ -13,6 +13,10 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Suretom.Client.IService;
 using Suretom.Client.Common;
+using System.Threading.Tasks;
+using Suretom.Client.UI.Others;
+using Microsoft.Win32;
+using Suretom.Client.UI.Pages.User;
 
 namespace Suretom.Client.UI.Pages.Demo
 {
@@ -21,14 +25,19 @@ namespace Suretom.Client.UI.Pages.Demo
     /// </summary>
     public partial class DemoWin : UserControl
     {
-        private static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
+        /// <summary>
+        ///
+        /// </summary>
+        private NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        ///
+        /// </summary>
         private ObservableCollection<BatchImportInfo> _batchImprotInfoList = new ObservableCollection<BatchImportInfo>();
 
-        private List<string> schoolList = new List<string>() { "安徽大学", "安徽师范大学", "阜阳师范学院", "北京大学", "清华大学", "科技大学", "中科院" };
-
-        private List<string> studentList = new List<string>() { "张三", "李四", "王五", "赵六", "孙七" };
-
+        /// <summary>
+        ///
+        /// </summary>
         private IUserService userService;
 
         /// <summary>
@@ -36,44 +45,27 @@ namespace Suretom.Client.UI.Pages.Demo
         /// </summary>
         private bool _isStopDeal = false;
 
+        /// <summary>
+        ///
+        /// </summary>
+        private DemoData demoData;
+
+        /// <summary>
+        ///
+        /// </summary>
+        private List<CourseDto> coursesList = new List<CourseDto>();
+
+        /// <summary>
+        ///
+        /// </summary>
         public DemoWin()
         {
             InitializeComponent();
 
             userService = GlobalContext.Resolve<IUserService>();
 
-            FillTreeView(schoolList);
+            dgProcessInfo.DataContext = _processInfoList;
         }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public class CourseInfo
-        {
-            public string Name { get; set; }
-            public string State { get; set; }
-            public string DeadlineTime { get; set; }
-        }
-
-        private List<CourseInfo> courseInfos = new List<CourseInfo>()
-        {
-            new CourseInfo()
-            {
-                Name=".Net",
-                State="已学完",
-                DeadlineTime=DateTime.Now.ToString()
-            }, new CourseInfo()
-            {
-                Name="Java",
-                State="学习中",
-                DeadlineTime=DateTime.Now.ToString()
-            }, new CourseInfo()
-            {
-                Name="Python",
-                State="未开始",
-                DeadlineTime=DateTime.Now.ToString()
-            }
-        };
 
         /// <summary>
         ///
@@ -84,45 +76,7 @@ namespace Suretom.Client.UI.Pages.Demo
         {
             try
             {
-                //学生
-                var studentInfo = new StudentInfo()
-                {
-                };
-
-                //labNane.Content = studentInfo.Name;
-                //labIdCard.Content = studentInfo.IdCard;
-                //labNo.Content = studentInfo.No;
-                //labClass.Content = studentInfo.ClassName;
-                //labIdType.Content = studentInfo.Type;
-
-                //课程
-                var courseList = new DemoData(studentInfo).GetCourseList();
-
-                var courseInfos = courseList.List.ToList();
-
-                dgCourseInfo.DataContext = courseList.List.ToList();
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        #region 按钮
-
-        private void BtnAddWords_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
-                ofd.DefaultExt = ".docx";
-                ofd.Filter = "Word 文件|*.docx";
-                ofd.Multiselect = true;
-                if (ofd.ShowDialog() == true)
-                {
-                    var fileNames = ofd.FileNames;
-                }
+                FillTreeView(GlobalContext.UserInfo.studentInfos);
             }
             catch (Exception ex)
             {
@@ -132,32 +86,278 @@ namespace Suretom.Client.UI.Pages.Demo
         }
 
         /// <summary>
-        /// 开始处理
+        ///
+        /// </summary>
+        /// <param name="student"></param>
+        public void DataBind(Student student)
+        {
+            labNane.Content =  student.StudentName;
+            labIdCard.Content =student.IdCard;
+            labNo.Content =student.StudyCode;
+            labClass.Content = student.MoviePwd;
+            labIdType.Content = student.StudyType;
+
+            demoData = new DemoData(student);
+            //课程
+            var courses = demoData.GetCourseList();
+
+            coursesList = courses.List;
+            dgCourseInfo.DataContext =coursesList;
+
+            int i = 0;
+
+            coursesList.ForEach(f =>
+            {
+                f.ExpiredTime=UtilityHelper.ToConvertTime(f.ExpiredTime).ToString();
+
+                switch (i)
+                {
+                    case 0:
+                        f.imgStr="imgA";
+                        dgrA.Visibility = Visibility.Visible;
+                        labA1.Content =f.CourseName;
+                        labA2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labA3.Content =f.ExpiredTime;
+                        pbA.Value=f.Schedule;
+                        labA4.Content =$"{(f.Schedule/100)*100}%";
+                        labA5.Content =f.DisplayName;
+                        break;
+
+                    case 1:
+                        f.imgStr="imgB";
+                        dgrB.Visibility = Visibility.Visible;
+                        labB1.Content =f.CourseName;
+                        labB2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labB3.Content =f.ExpiredTime;
+                        pbB.Value=f.Schedule;
+                        labB4.Content =$"{(f.Schedule/100)*100}%";
+                        labB5.Content =f.DisplayName;
+                        break;
+
+                    case 2:
+                        f.imgStr="imgC";
+                        dgrC.Visibility = Visibility.Visible;
+                        labC1.Content =f.CourseName;
+                        labC2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labC3.Content =f.ExpiredTime;
+                        pbC.Value=f.Schedule;
+                        labC4.Content =$"{(f.Schedule/100)*100}%";
+                        labC5.Content =f.DisplayName;
+                        break;
+
+                    case 3:
+                        f.imgStr="imgD";
+                        dgrD.Visibility = Visibility.Visible;
+                        labD1.Content =f.CourseName;
+                        labD2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labD3.Content =f.ExpiredTime;
+                        pbD.Value=f.Schedule;
+                        labD4.Content =$"{(f.Schedule/100)*100}%";
+                        labD5.Content =f.DisplayName;
+                        break;
+
+                    case 4:
+                        f.imgStr="imgE";
+                        dgrE.Visibility = Visibility.Visible;
+                        labE1.Content =f.CourseName;
+                        labE2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labE3.Content =f.ExpiredTime;
+                        pbE.Value=f.Schedule;
+                        labE4.Content =$"{(f.Schedule/100)*100}%";
+                        labE5.Content =f.DisplayName;
+                        break;
+
+                    case 5:
+                        f.imgStr="imgF";
+                        dgrF.Visibility = Visibility.Visible;
+                        labF1.Content =f.CourseName;
+                        labF2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labF3.Content =f.ExpiredTime;
+                        pbF.Value=f.Schedule;
+                        labF4.Content =$"{(f.Schedule/100)*100}%";
+                        labF5.Content =f.DisplayName;
+                        break;
+
+                    case 6:
+                        f.imgStr="imgG";
+                        dgrG.Visibility = Visibility.Visible;
+                        labG1.Content =f.CourseName;
+                        labG2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labG3.Content =f.ExpiredTime;
+                        pbG.Value=f.Schedule;
+                        labG4.Content =$"{(f.Schedule/100)*100}%";
+                        labG5.Content =f.DisplayName;
+                        break;
+
+                    case 7:
+                        f.imgStr="imgH";
+                        dgrH.Visibility = Visibility.Visible;
+                        labH1.Content =f.CourseName;
+                        labH2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labH3.Content =f.ExpiredTime;
+                        pbH.Value=f.Schedule;
+                        labH4.Content =$"{(f.Schedule/100)*100}%";
+                        labH5.Content =f.DisplayName;
+                        break;
+
+                    case 8:
+                        f.imgStr="imgI";
+                        dgrI.Visibility = Visibility.Visible;
+                        labI1.Content =f.CourseName;
+                        labI2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labI3.Content =f.ExpiredTime;
+                        pbI.Value=f.Schedule;
+                        labI4.Content =$"{(f.Schedule/100)*100}%";
+                        labI5.Content =f.DisplayName;
+                        break;
+
+                    case 9:
+                        f.imgStr="imgJ";
+                        dgrJ.Visibility = Visibility.Visible;
+                        labJ1.Content =f.CourseName;
+                        labJ2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labJ3.Content =f.ExpiredTime;
+                        pbJ.Value=f.Schedule;
+                        labJ4.Content =$"{(f.Schedule/100)*100}%";
+                        labJ5.Content =f.DisplayName;
+                        break;
+
+                    case 10:
+                        f.imgStr="imgK";
+                        dgrK.Visibility = Visibility.Visible;
+                        labK1.Content =f.CourseName;
+                        labK2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labK3.Content =f.ExpiredTime;
+                        pbK.Value=f.Schedule;
+                        labK4.Content =$"{(f.Schedule/100)*100}%";
+                        labK5.Content =f.DisplayName;
+                        break;
+
+                    case 11:
+                        f.imgStr="imgL";
+                        dgrL.Visibility = Visibility.Visible;
+                        labL1.Content =f.CourseName;
+                        labL2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labL3.Content =f.ExpiredTime;
+                        pbL.Value=f.Schedule;
+                        labL4.Content =$"{(f.Schedule/100)*100}%";
+                        labL5.Content =f.DisplayName;
+                        break;
+
+                    case 12:
+                        f.imgStr="imgM";
+                        dgrM.Visibility = Visibility.Visible;
+                        labM1.Content =f.CourseName;
+                        labM2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labM3.Content =f.ExpiredTime;
+                        pbM.Value=f.Schedule;
+                        labM4.Content =$"{(f.Schedule/100)*100}%";
+                        labM5.Content =f.DisplayName;
+                        break;
+
+                    case 13:
+                        f.imgStr="imgN";
+                        dgrN.Visibility = Visibility.Visible;
+                        labN1.Content =f.CourseName;
+                        labN2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labN3.Content =f.ExpiredTime;
+                        pbN.Value=f.Schedule;
+                        labN4.Content =$"{(f.Schedule/100)*100}%";
+                        labN5.Content =f.DisplayName;
+                        break;
+
+                    case 14:
+                        f.imgStr="imgO";
+                        dgrO.Visibility = Visibility.Visible;
+                        labO1.Content =f.CourseName;
+                        labO2.Content =$"{f.StudyYear}-{f.StudyTerm}";
+                        labO3.Content =f.ExpiredTime;
+                        pbO.Value=f.Schedule;
+                        labO4.Content =$"{(f.Schedule/100)*100}%";
+                        labO5.Content =f.DisplayName;
+                        break;
+
+                    default:
+                        break;
+                }
+                i++;
+            });
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="dgrStr"></param>
+        /// <returns></returns>
+        public async Task<bool> BatchCourseStart(string dgrStr = "")
+        {
+            try
+            {
+                AddProcessInfo("开始学习");
+
+                await Task.Run(() =>
+                {
+                    AddProcessInfo("学习中...");
+
+                    //未完成的课程
+                    var coursesInfos = coursesList.Where(f => f.Schedule < 100&&string.IsNullOrEmpty(dgrStr) ? true : (f.imgStr==dgrStr)).ToList();
+
+                    if (coursesInfos.Count>0)
+                    {
+                        demoData.PostCourseStart(coursesInfos);
+                    }
+                }).ContinueWith(t =>
+                {
+                    try
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            OperationBtnEnable(true);
+                        });
+                    }
+                    catch (Exception inEx)
+                    {
+                        log.Error(inEx);
+                    }
+                });
+
+                AddProcessInfo("学习结束");
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                AddProcessError($"{ex.Message}");
+                return false;
+            }
+            finally
+            {
+                OperationBtnEnable(true);
+            }
+            return true;
+        }
+
+        #region 按钮
+
+        /// <summary>
+        ///添加学员
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void BtnStartDeal_Click(object sender, RoutedEventArgs e)
+        private async void BtnAddStudent_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 _isStopDeal = false;
                 this.Sp1.IsEnabled = false;
 
-                foreach (var item in _batchImprotInfoList)
-                {
-                    if (_isStopDeal)
-                        break;
-                    //初始化失败的，不处理
-                    if (item.Status == BatchImportStatus.初始化失败)
-                        continue;
-                    //处理成功的，不处理，只支持手动单独点击
-                    if (item.Status == BatchImportStatus.成功)
-                        continue;
-                    //处于手动处理状态的，只能手动完成，检查开启此状态,上传成功->成功，上传失败->失败
-                    if (item.Status == BatchImportStatus.手动处理)
-                        continue;
+                AddStudentPage addStudentPage = new AddStudentPage();
 
-                    item.Status = BatchImportStatus.正在处理;
+                if (addStudentPage.ShowDialog()==true)
+                {
+                }
+                else
+                {
+                    MessageBox.Show("添加学员失败");
                 }
             }
             catch (Exception ex)
@@ -171,18 +371,231 @@ namespace Suretom.Client.UI.Pages.Demo
             }
         }
 
+        /// <summary>
+        /// 批量导入
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void BtnBatchImport_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _isStopDeal = false;
+                this.Sp1.IsEnabled = false;
+
+                var dialog = new OpenFileDialog()
+                {
+                    DefaultExt = ".docx",
+                    Filter = "Word 文件|*.docx",
+                    Multiselect = true
+                };
+
+                if (dialog.ShowDialog() == true)
+                {
+                    var fileNames = dialog.FileNames;
+                    //AddWords(fileNames);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                this.Sp1.IsEnabled = true;
+            }
+        }
+
+        /// <summary>
+        /// 开始学习-自动处理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void BtnAutoDeal_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (CurrentStatus == BatchImportStatus.初始化失败)
+                {
+                    MessageBox.Show("初始化失败");
+                    return;
+                }
+
+                CurrentStatus = BatchImportStatus.手动处理;
+                OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
+
+                var result = await BatchCourseStart();
+
+                if (result)
+                {
+                    CurrentStatus = BatchImportStatus.成功;
+                    OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
+                }
+                else
+                {
+                    CurrentStatus = BatchImportStatus.失败;
+                    OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 当前的处理状态
+        /// </summary>
+        public BatchImportStatus CurrentStatus
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public event EventHandler<StatusChangeEventArgs> StatusChangeEvent;
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="args"></param>
+        private void OnStatusChangeEvent(StatusChangeEventArgs args)
+        {
+            this.StatusChangeEvent?.Invoke(this, args);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Image_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var name = ((FrameworkElement)sender).Name;
+
+            if (e.ChangedButton == MouseButton.Left && e.ClickCount == 2)
+            {
+                if (CurrentStatus == BatchImportStatus.初始化失败)
+                {
+                    MessageBox.Show("初始化失败");
+                    return;
+                }
+
+                CurrentStatus = BatchImportStatus.手动处理;
+                OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
+
+                var result = await BatchCourseStart(name);
+
+                if (result)
+                {
+                    CurrentStatus = BatchImportStatus.成功;
+                    OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
+                }
+                else
+                {
+                    CurrentStatus = BatchImportStatus.失败;
+                    OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
+                }
+
+                MessageBox.Show("双击");
+                e.Handled = true;
+            }
+        }
+
+        /// <summary>
+        /// 操作按钮是否可用
+        /// </summary>
+        /// <param name="isEnable"></param>
+        private void OperationBtnEnable(bool isEnable)
+        {
+            try
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    Sp1.IsEnabled = isEnable;
+                    Sp2.IsEnabled = isEnable;
+                    grid1.IsEnabled = isEnable;
+                });
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         #endregion 按钮
 
-        private ImageSource _folderClose;
-        private ImageSource _folderOpen;
-        private ImageSource _fileThumbnail;
+        #region 更新状态
+
+        private ObservableCollection<BatchImportProcessInfo> _processInfoList = new ObservableCollection<BatchImportProcessInfo>();
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="info"></param>
+        private void AddProcessError(string info)
+        {
+            AddProcessMsg(info, BatchImportProcessInfoType.错误);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="info"></param>
+        private void AddProcessInfo(string info)
+        {
+            AddProcessMsg(info, BatchImportProcessInfoType.信息);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="info"></param>
+        private void AddProcessWarn(string info)
+        {
+            AddProcessMsg(info, BatchImportProcessInfoType.警告);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="type"></param>
+        private void AddProcessMsg(string msg, BatchImportProcessInfoType type)
+        {
+            this.Dispatcher.Invoke(() =>
+            {
+                _processInfoList.Add(new BatchImportProcessInfo
+                {
+                    Id = _processInfoList.Count,
+                    Info = msg,
+                    Type = type,
+                });
+            });
+        }
+
+        #endregion
 
         #region TreeView Event Handlers
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnTreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnTreeViewItemSelected(object sender, RoutedEventArgs e)
         {
             TreeViewItem selItem = treeView.SelectedItem as TreeViewItem;
@@ -191,18 +604,20 @@ namespace Suretom.Client.UI.Pages.Demo
                 return;
             }
 
-            string selectedName = selItem.Tag as string;
-            if (string.IsNullOrWhiteSpace(selectedName))
+            var student = selItem.Tag as Student;
+
+            if (student==null)
             {
                 return;
             }
 
             e.Handled = true;
-
             treeView.IsEnabled = false;
 
             try
             {
+                DataBind(student);
+
                 this.Cursor = Cursors.Wait;
                 this.ForceCursor = true;
             }
@@ -220,10 +635,20 @@ namespace Suretom.Client.UI.Pages.Demo
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnTreeViewItemUnselected(object sender, RoutedEventArgs e)
         {
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnTreeViewItemCollapsed(object sender, RoutedEventArgs e)
         {
             if (_folderClose == null)
@@ -253,6 +678,11 @@ namespace Suretom.Client.UI.Pages.Demo
             e.Handled = true;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnTreeViewItemExpanded(object sender, RoutedEventArgs e)
         {
             if (_folderOpen == null)
@@ -286,24 +716,24 @@ namespace Suretom.Client.UI.Pages.Demo
 
         #region FillTreeView Methods
 
+        private ImageSource _folderClose;
+        private ImageSource _folderOpen;
+        private ImageSource _fileThumbnail;
+
         /// <summary>
         ///
         /// </summary>
         /// <param name="list"></param>
-        private void FillTreeView(List<string> schoolList)
+        private void FillTreeView(List<StudentInfo> studentInfos)
         {
-            if (schoolList.Count == 0)
-            {
-                return;
-            }
-
             treeView.BeginInit();
             treeView.Items.Clear();
+            int i = 0;
 
-            for (int i = 0; i < schoolList.Count; i++)
+            studentInfos.ForEach(student =>
             {
                 TextBlock headerText = new TextBlock();
-                headerText.Text = schoolList[i];
+                headerText.Text = student.SchoolName;
                 headerText.Margin = new Thickness(3, 0, 0, 0);
 
                 BulletDecorator decorator = new BulletDecorator();
@@ -338,27 +768,32 @@ namespace Suretom.Client.UI.Pages.Demo
 
                 treeView.Items.Add(categoryItem);
 
-                FillTreeView(studentList, categoryItem);
+                FillTreeView(student, categoryItem);
 
                 categoryItem.IsExpanded = (i == 0);
-            }
+                i++;
+            });
 
             treeView.EndInit();
         }
 
-        private void FillTreeView(List<string> studentList, TreeViewItem treeItem)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="studentInfo"></param>
+        /// <param name="treeItem"></param>
+        private void FillTreeView(StudentInfo studentInfo, TreeViewItem treeItem)
         {
-            if (studentList == null || studentList.Count == 0)
-            {
-                return;
-            }
-
             int itemCount = 0;
 
-            foreach (var student in studentList)
+            studentInfo.List.ForEach(student =>
             {
+                if (itemCount==0)
+                {
+                    DataBind(student);
+                }
                 TextBlock itemText = new TextBlock();
-                itemText.Text = $"{student}";
+                itemText.Text = $"{student.StudentName}";
                 itemText.Margin = new Thickness(3, 0, 0, 0);
 
                 BulletDecorator fileItem = new BulletDecorator();
@@ -396,7 +831,7 @@ namespace Suretom.Client.UI.Pages.Demo
                 treeItem.Items.Add(item);
 
                 itemCount++;
-            }
+            });
         }
 
         #endregion

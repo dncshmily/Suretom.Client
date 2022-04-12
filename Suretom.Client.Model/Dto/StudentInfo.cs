@@ -11,7 +11,12 @@ namespace Suretom.Client.Entity
         /// <summary>
         /// 学校名称
         /// </summary>
-        public string SchoolName { get; set; }
+        public string SchoolName { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 学生集合
+        /// </summary>
+         //public string List { get; set; } = string.Empty;
 
         /// <summary>
         /// 学生集合

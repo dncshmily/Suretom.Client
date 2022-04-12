@@ -28,33 +28,42 @@ namespace Suretom.Client.Service
         /// <param name=""></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public HttpResult AddStudent(NameValueCollection paramValue)
+        public bool AddStudent(Student student)
         {
-            if (string.IsNullOrEmpty(paramValue["schoolName"]))
+            if (string.IsNullOrEmpty(student.SchoolName))
                 throw new ArgumentException("schoolName");
-            if (string.IsNullOrEmpty(paramValue["idCard"]))
+            if (string.IsNullOrEmpty(student.IdCard))
                 throw new ArgumentException("idCard");
-            if (string.IsNullOrEmpty(paramValue["moviePwd"]))
+            if (string.IsNullOrEmpty(student.MoviePwd))
                 throw new ArgumentException("moviePwd");
-            if (string.IsNullOrEmpty(paramValue["studyType"]))
-                throw new ArgumentException("studyType");
-            if (string.IsNullOrEmpty(paramValue["className"]))
+            if (string.IsNullOrEmpty(student.ClassName))
                 throw new ArgumentException("className");
-            if (string.IsNullOrEmpty(paramValue["studyCode"]))
+            if (string.IsNullOrEmpty(student.StudyCode))
                 throw new ArgumentException("studyCode");
-            if (string.IsNullOrEmpty(paramValue["studentName"]))
+            if (string.IsNullOrEmpty(student.StudentName))
                 throw new ArgumentException("studentName");
+
+            var paramValue = new NameValueCollection() {
+                       { "schoolName",student.SchoolName},
+                       { "idCard",student.IdCard},
+                       { "moviePwd",student.MoviePwd},
+                       { "studyType",student.StudyType.ToString()},
+                       { "className",student.ClassName},
+                       { "studyCode",student.StudyCode},
+                       { "studentName",student.StudentName},
+                       { "token",GlobalContext.Token}
+                };
 
             var result = PostForm(Urls["Add"], paramValue);
 
-            return result;
+            return result.Success;
         }
 
         /// <summary>
         ///获取学生信息
         /// </summary>
         /// <returns></returns>
-        public StudentInfo GetStudentList()
+        public List<StudentInfo> GetStudentList()
         {
             var param = new { GlobalContext.Token, };
 
@@ -62,9 +71,21 @@ namespace Suretom.Client.Service
 
             if (result.Success)
             {
-                return JsonConvert.DeserializeObject<StudentInfo>(result.Data.ToString());
-            }
+                var data = result.Data.ToString();
 
+                try
+                {
+                    //data= data.Remove(0, 1);
+                    //data= data.Remove(data.Length-1, 1);
+
+                    // var ss = JsonConvert.DeserializeObject<List<StudentInfo>>(data);
+
+                    return JsonConvert.DeserializeObject<List<StudentInfo>>(data);
+                }
+                catch (Exception)
+                {
+                }
+            }
             return null;
         }
     }

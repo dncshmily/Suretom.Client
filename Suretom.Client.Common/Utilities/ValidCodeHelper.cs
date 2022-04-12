@@ -30,7 +30,11 @@ namespace Suretom.Client.Common
 
             #endregion Private Fields
 
-            #region Constructors
+            /// <summary>
+            ///
+            /// </summary>
+            public ValidCode()
+            { }
 
             /// <summary>
             /// public constructors
@@ -41,11 +45,8 @@ namespace Suretom.Client.Common
             public ValidCode(int len, CodeTypeEnum ctype)
             {
                 this._len = len;
-
                 this._codetype = ctype;
             }
-
-            #endregion Constructors
 
             #region Private Methods
 

@@ -53,8 +53,19 @@ namespace Suretom.Client.UI.Others
         }
     }
 
-    public class BatchImportProcessInfoType2ColorConverter : IValueConverter
+    /// <summary>
+    ///
+    /// </summary>
+    public class BatchImportProcessInfoTypeConverter : IValueConverter
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="targetType"></param>
+        /// <param name="parameter"></param>
+        /// <param name="culture"></param>
+        /// <returns></returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var infoType = (BatchImportProcessInfoType)value;
@@ -71,33 +82,6 @@ namespace Suretom.Client.UI.Others
 
                 default:
                     return Brushes.Black;
-            }
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public class CourseProcessInfoTypeConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var infoType = (int)value;
-            switch (infoType)
-            {
-                case 100:
-                    return "已修课程";
-
-                case 0:
-                    return "未修课程";
-
-                default:
-                    return "在修课程";
             }
         }
 

@@ -21,12 +21,12 @@ namespace Suretom.Client.IService
         /// <param name=""></param>
         /// <param name=""></param>
         /// <returns></returns>
-        HttpResult AddStudent(NameValueCollection paramValue);
+        bool AddStudent(Student student);
 
         /// <summary>
         ///
         /// </summary>
         /// <returns></returns>
-        StudentInfo GetStudentList();
+        List<StudentInfo> GetStudentList();
     }
 }

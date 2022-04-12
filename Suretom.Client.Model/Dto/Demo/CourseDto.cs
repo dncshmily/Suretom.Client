@@ -20,5 +20,7 @@ namespace Suretom.Client.Entity
         public int StudyYear { get; set; }
         public int TotalCount { get; set; }
         public string ScheduleTxt { get; set; }
+
+        public string imgStr { get; set; }
     }
 }

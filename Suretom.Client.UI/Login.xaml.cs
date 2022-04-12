@@ -25,7 +25,7 @@ namespace Suretom.Client.UI
         private NameValueCollection config = ConfigurationManager.AppSettings;
         private ILoginService loginService;
         private IUserService userService;
-
+        private IStudentService studentService;
         private ValidCodeHelper.ValidCode validCode;
 
         public Login()
@@ -45,6 +45,9 @@ namespace Suretom.Client.UI
             //2
             userService = GlobalContext.Resolve<IUserService>();
 
+            //3
+            studentService = GlobalContext.Resolve<IStudentService>();
+
             //参数一：产生几个字符的验证码图片
             //参数二：验证码的形式(数字、字母、数字字母混合都有)
             validCode = new ValidCodeHelper.ValidCode(5, CodeTypeEnum.Alphas);
@@ -52,11 +55,108 @@ namespace Suretom.Client.UI
             MageCodeSource();
         }
 
+        /// <summary>
+        /// 登录
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnLogin_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var userCode = txtName.Text.Trim();
+                var userPwd = txtPassword.Password.Trim();
+                var verifycode = txtCode.Text.Trim();
+
+                if (string.IsNullOrEmpty(userCode) || string.IsNullOrEmpty(txtPassword.Password.Trim()))
+                {
+                    MessageBox.Show("用户名密码输入完整");
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(txtCode.Text.Trim()))
+                {
+                    MessageBox.Show("请输入验证码");
+                    return;
+                }
+
+                btnLogin.Content = "登录中...";
+
+                var paramValue = new NameValueCollection() {
+                        { "userCode",userCode},
+                       { "userPwd",userPwd},
+                       { "verifycode",verifycode}
+                };
+
+                var result = loginService.Login(paramValue);
+
+                if (result.Success)
+                {
+                    //记录用户名密码
+                    if (chkName.IsChecked.Value)
+                    {
+                        SetValue("checked", "true");
+                        SetValue("login", userCode);
+                        SetValue("password", encode(txtPassword.Password.Trim()));
+                    }
+
+                    loginService.SetLoginInfo(result.Data.ToString());
+
+                    //
+                    var userInfo = userService.GetUserInfo();
+
+                    if (userInfo==null)
+                    {
+                        MessageBox.Show("获取用户信息失败");
+                        return;
+                    }
+
+                    //
+                    var studentInfos = studentService.GetStudentList();
+
+                    if (studentInfos.Count==0l)
+                    {
+                        MessageBox.Show("获取学生信息失败");
+                        return;
+                    }
+
+                    GlobalContext.UserInfo = new UserInfo
+                    {
+                        UserName = userCode,
+                        PassWord = userPwd,
+                        Verifycode = verifycode,
+                        Id=userInfo.Id,
+                        Phone = userInfo.Phone,
+                        Number = userInfo.Number,
+                        Name = userInfo.Name,
+                        studentInfos = studentInfos,
+                    };
+
+                    var mainForm = new MainWindow();
+                    mainForm.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                    mainForm.WindowState = WindowState.Maximized;
+                    mainForm.Show();
+                    this.Close();
+                }
+                else
+                {
+                    btnLogin.Content = "安 全 登 录";
+                    MessageBox.Show(this, "登录失败");
+                }
+            }
+            catch (Exception ex)
+            {
+                btnLogin.Content = "安 全 登 录";
+                log.Error(ex);
+            }
+        }
+
         public void MageCodeSource()
         {
             var code = loginService.GetVerifyCode();
             if (!string.IsNullOrEmpty(code))
             {
+                txtCode.Text = code;
                 var uri = validCode.CreateCheckCodeImage(code);
                 this.imageCode.Source = BitmapFrame.Create(uri);
             }
@@ -110,89 +210,6 @@ namespace Suretom.Client.UI
         {
             this.Close();
         }
-
-        /// <summary>
-        /// 登录
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnLogin_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var userCode = txtName.Text.Trim();
-                var userPwd = txtPassword.Password.Trim();
-                var verifycode = txtCode.Text.Trim();
-
-                if (string.IsNullOrEmpty(userCode) || string.IsNullOrEmpty(txtPassword.Password.Trim()))
-                {
-                    MessageBox.Show("用户名密码输入完整");
-                    return;
-                }
-
-                if (string.IsNullOrEmpty(txtCode.Text.Trim()))
-                {
-                    MessageBox.Show("请输入验证码");
-                    return;
-                }
-
-                btnLogin.Content = "登录中...";
-
-                var paramValue = new NameValueCollection() {
-                        { "userCode",userCode},
-                       { "userPwd",userPwd},
-                       { "verifycode",verifycode}
-                };
-
-                var result = loginService.Login(paramValue);
-
-                if (result.Success)
-                {
-                    //记录用户名密码
-                    if (chkName.IsChecked.Value)
-                    {
-                        SetValue("checked", "true");
-                        SetValue("login", userCode);
-                        SetValue("password", encode(txtPassword.Password.Trim()));
-                    }
-
-                    loginService.SetLoginInfo(result.Data.ToString());
-
-                    var userInfo = userService.GetUserInfo();
-
-                    if (userInfo==null)
-                    {
-                        MessageBox.Show("获取用户信息失败");
-                        return;
-                    }
-
-                    GlobalContext.UserInfo = new UserInfo
-                    {
-                        UserName = userCode,
-                        PassWord = userPwd,
-                        Verifycode = verifycode
-                    };
-
-                    var mainForm = new MainWindow();
-                    mainForm.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                    mainForm.WindowState = WindowState.Maximized;
-                    mainForm.Show();
-                    this.Close();
-                }
-                else
-                {
-                    btnLogin.Content = "安 全 登 录";
-                    MessageBox.Show(this, "登录失败");
-                }
-            }
-            catch (Exception ex)
-            {
-                btnLogin.Content = "安 全 登 录";
-                log.Error(ex);
-            }
-        }
-
-        private bool CheckKey(string key) => config.AllKeys.Contains(key);
 
         private string GetValue(string key) => config.AllKeys.Contains(key) ? config[key]?.ToString() : "";
 
