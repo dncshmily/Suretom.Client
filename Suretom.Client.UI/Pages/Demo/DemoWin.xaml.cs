@@ -392,7 +392,6 @@ namespace Suretom.Client.UI.Pages.Demo
                 var dialog = new OpenFileDialog()
                 {
                     DefaultExt = ".xlsx",
-                    //Filter = "Word 文件|*.docx;",
                     Filter = "Excel文件|*.xlsx;",
                     Multiselect = true
                 };
