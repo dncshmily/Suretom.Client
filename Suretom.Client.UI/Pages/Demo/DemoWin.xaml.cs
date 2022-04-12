@@ -58,11 +58,17 @@ namespace Suretom.Client.UI.Pages.Demo
         /// <summary>
         ///
         /// </summary>
+        private IStudentService studentService;
+
+        /// <summary>
+        ///
+        /// </summary>
         public DemoWin()
         {
             InitializeComponent();
 
             userService = GlobalContext.Resolve<IUserService>();
+            studentService = GlobalContext.Resolve<IStudentService>();
 
             dgProcessInfo.DataContext = _processInfoList;
         }
@@ -91,9 +97,9 @@ namespace Suretom.Client.UI.Pages.Demo
         /// <param name="student"></param>
         public void DataBind(Student student)
         {
-            labNane.Content =  student.StudentName;
-            labIdCard.Content =student.IdCard;
-            labNo.Content =student.StudyCode;
+            labNane.Content = student.StudentName;
+            labIdCard.Content = student.IdCard;
+            labNo.Content = student.StudyCode;
             labClass.Content = student.MoviePwd;
             labIdType.Content = student.StudyType;
 
@@ -102,179 +108,179 @@ namespace Suretom.Client.UI.Pages.Demo
             var courses = demoData.GetCourseList();
 
             coursesList = courses.List;
-            dgCourseInfo.DataContext =coursesList;
+            dgCourseInfo.DataContext = coursesList;
 
             int i = 0;
 
             coursesList.ForEach(f =>
             {
-                f.ExpiredTime=UtilityHelper.ToConvertTime(f.ExpiredTime).ToString();
+                f.ExpiredTime = UtilityHelper.ToConvertTime(f.ExpiredTime).ToString();
 
                 switch (i)
                 {
                     case 0:
-                        f.imgStr="imgA";
+                        f.imgStr = "imgA";
                         dgrA.Visibility = Visibility.Visible;
-                        labA1.Content =f.CourseName;
-                        labA2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labA3.Content =f.ExpiredTime;
-                        pbA.Value=f.Schedule;
-                        labA4.Content =$"{(f.Schedule/100)*100}%";
-                        labA5.Content =f.DisplayName;
+                        labA1.Content = f.CourseName;
+                        labA2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labA3.Content = f.ExpiredTime;
+                        pbA.Value = f.Schedule;
+                        labA4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labA5.Content = f.DisplayName;
                         break;
 
                     case 1:
-                        f.imgStr="imgB";
+                        f.imgStr = "imgB";
                         dgrB.Visibility = Visibility.Visible;
-                        labB1.Content =f.CourseName;
-                        labB2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labB3.Content =f.ExpiredTime;
-                        pbB.Value=f.Schedule;
-                        labB4.Content =$"{(f.Schedule/100)*100}%";
-                        labB5.Content =f.DisplayName;
+                        labB1.Content = f.CourseName;
+                        labB2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labB3.Content = f.ExpiredTime;
+                        pbB.Value = f.Schedule;
+                        labB4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labB5.Content = f.DisplayName;
                         break;
 
                     case 2:
-                        f.imgStr="imgC";
+                        f.imgStr = "imgC";
                         dgrC.Visibility = Visibility.Visible;
-                        labC1.Content =f.CourseName;
-                        labC2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labC3.Content =f.ExpiredTime;
-                        pbC.Value=f.Schedule;
-                        labC4.Content =$"{(f.Schedule/100)*100}%";
-                        labC5.Content =f.DisplayName;
+                        labC1.Content = f.CourseName;
+                        labC2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labC3.Content = f.ExpiredTime;
+                        pbC.Value = f.Schedule;
+                        labC4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labC5.Content = f.DisplayName;
                         break;
 
                     case 3:
-                        f.imgStr="imgD";
+                        f.imgStr = "imgD";
                         dgrD.Visibility = Visibility.Visible;
-                        labD1.Content =f.CourseName;
-                        labD2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labD3.Content =f.ExpiredTime;
-                        pbD.Value=f.Schedule;
-                        labD4.Content =$"{(f.Schedule/100)*100}%";
-                        labD5.Content =f.DisplayName;
+                        labD1.Content = f.CourseName;
+                        labD2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labD3.Content = f.ExpiredTime;
+                        pbD.Value = f.Schedule;
+                        labD4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labD5.Content = f.DisplayName;
                         break;
 
                     case 4:
-                        f.imgStr="imgE";
+                        f.imgStr = "imgE";
                         dgrE.Visibility = Visibility.Visible;
-                        labE1.Content =f.CourseName;
-                        labE2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labE3.Content =f.ExpiredTime;
-                        pbE.Value=f.Schedule;
-                        labE4.Content =$"{(f.Schedule/100)*100}%";
-                        labE5.Content =f.DisplayName;
+                        labE1.Content = f.CourseName;
+                        labE2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labE3.Content = f.ExpiredTime;
+                        pbE.Value = f.Schedule;
+                        labE4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labE5.Content = f.DisplayName;
                         break;
 
                     case 5:
-                        f.imgStr="imgF";
+                        f.imgStr = "imgF";
                         dgrF.Visibility = Visibility.Visible;
-                        labF1.Content =f.CourseName;
-                        labF2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labF3.Content =f.ExpiredTime;
-                        pbF.Value=f.Schedule;
-                        labF4.Content =$"{(f.Schedule/100)*100}%";
-                        labF5.Content =f.DisplayName;
+                        labF1.Content = f.CourseName;
+                        labF2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labF3.Content = f.ExpiredTime;
+                        pbF.Value = f.Schedule;
+                        labF4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labF5.Content = f.DisplayName;
                         break;
 
                     case 6:
-                        f.imgStr="imgG";
+                        f.imgStr = "imgG";
                         dgrG.Visibility = Visibility.Visible;
-                        labG1.Content =f.CourseName;
-                        labG2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labG3.Content =f.ExpiredTime;
-                        pbG.Value=f.Schedule;
-                        labG4.Content =$"{(f.Schedule/100)*100}%";
-                        labG5.Content =f.DisplayName;
+                        labG1.Content = f.CourseName;
+                        labG2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labG3.Content = f.ExpiredTime;
+                        pbG.Value = f.Schedule;
+                        labG4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labG5.Content = f.DisplayName;
                         break;
 
                     case 7:
-                        f.imgStr="imgH";
+                        f.imgStr = "imgH";
                         dgrH.Visibility = Visibility.Visible;
-                        labH1.Content =f.CourseName;
-                        labH2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labH3.Content =f.ExpiredTime;
-                        pbH.Value=f.Schedule;
-                        labH4.Content =$"{(f.Schedule/100)*100}%";
-                        labH5.Content =f.DisplayName;
+                        labH1.Content = f.CourseName;
+                        labH2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labH3.Content = f.ExpiredTime;
+                        pbH.Value = f.Schedule;
+                        labH4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labH5.Content = f.DisplayName;
                         break;
 
                     case 8:
-                        f.imgStr="imgI";
+                        f.imgStr = "imgI";
                         dgrI.Visibility = Visibility.Visible;
-                        labI1.Content =f.CourseName;
-                        labI2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labI3.Content =f.ExpiredTime;
-                        pbI.Value=f.Schedule;
-                        labI4.Content =$"{(f.Schedule/100)*100}%";
-                        labI5.Content =f.DisplayName;
+                        labI1.Content = f.CourseName;
+                        labI2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labI3.Content = f.ExpiredTime;
+                        pbI.Value = f.Schedule;
+                        labI4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labI5.Content = f.DisplayName;
                         break;
 
                     case 9:
-                        f.imgStr="imgJ";
+                        f.imgStr = "imgJ";
                         dgrJ.Visibility = Visibility.Visible;
-                        labJ1.Content =f.CourseName;
-                        labJ2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labJ3.Content =f.ExpiredTime;
-                        pbJ.Value=f.Schedule;
-                        labJ4.Content =$"{(f.Schedule/100)*100}%";
-                        labJ5.Content =f.DisplayName;
+                        labJ1.Content = f.CourseName;
+                        labJ2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labJ3.Content = f.ExpiredTime;
+                        pbJ.Value = f.Schedule;
+                        labJ4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labJ5.Content = f.DisplayName;
                         break;
 
                     case 10:
-                        f.imgStr="imgK";
+                        f.imgStr = "imgK";
                         dgrK.Visibility = Visibility.Visible;
-                        labK1.Content =f.CourseName;
-                        labK2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labK3.Content =f.ExpiredTime;
-                        pbK.Value=f.Schedule;
-                        labK4.Content =$"{(f.Schedule/100)*100}%";
-                        labK5.Content =f.DisplayName;
+                        labK1.Content = f.CourseName;
+                        labK2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labK3.Content = f.ExpiredTime;
+                        pbK.Value = f.Schedule;
+                        labK4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labK5.Content = f.DisplayName;
                         break;
 
                     case 11:
-                        f.imgStr="imgL";
+                        f.imgStr = "imgL";
                         dgrL.Visibility = Visibility.Visible;
-                        labL1.Content =f.CourseName;
-                        labL2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labL3.Content =f.ExpiredTime;
-                        pbL.Value=f.Schedule;
-                        labL4.Content =$"{(f.Schedule/100)*100}%";
-                        labL5.Content =f.DisplayName;
+                        labL1.Content = f.CourseName;
+                        labL2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labL3.Content = f.ExpiredTime;
+                        pbL.Value = f.Schedule;
+                        labL4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labL5.Content = f.DisplayName;
                         break;
 
                     case 12:
-                        f.imgStr="imgM";
+                        f.imgStr = "imgM";
                         dgrM.Visibility = Visibility.Visible;
-                        labM1.Content =f.CourseName;
-                        labM2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labM3.Content =f.ExpiredTime;
-                        pbM.Value=f.Schedule;
-                        labM4.Content =$"{(f.Schedule/100)*100}%";
-                        labM5.Content =f.DisplayName;
+                        labM1.Content = f.CourseName;
+                        labM2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labM3.Content = f.ExpiredTime;
+                        pbM.Value = f.Schedule;
+                        labM4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labM5.Content = f.DisplayName;
                         break;
 
                     case 13:
-                        f.imgStr="imgN";
+                        f.imgStr = "imgN";
                         dgrN.Visibility = Visibility.Visible;
-                        labN1.Content =f.CourseName;
-                        labN2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labN3.Content =f.ExpiredTime;
-                        pbN.Value=f.Schedule;
-                        labN4.Content =$"{(f.Schedule/100)*100}%";
-                        labN5.Content =f.DisplayName;
+                        labN1.Content = f.CourseName;
+                        labN2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labN3.Content = f.ExpiredTime;
+                        pbN.Value = f.Schedule;
+                        labN4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labN5.Content = f.DisplayName;
                         break;
 
                     case 14:
-                        f.imgStr="imgO";
+                        f.imgStr = "imgO";
                         dgrO.Visibility = Visibility.Visible;
-                        labO1.Content =f.CourseName;
-                        labO2.Content =$"{f.StudyYear}-{f.StudyTerm}";
-                        labO3.Content =f.ExpiredTime;
-                        pbO.Value=f.Schedule;
-                        labO4.Content =$"{(f.Schedule/100)*100}%";
-                        labO5.Content =f.DisplayName;
+                        labO1.Content = f.CourseName;
+                        labO2.Content = $"{f.StudyYear}-{f.StudyTerm}";
+                        labO3.Content = f.ExpiredTime;
+                        pbO.Value = f.Schedule;
+                        labO4.Content = $"{(f.Schedule / 100) * 100}%";
+                        labO5.Content = f.DisplayName;
                         break;
 
                     default:
@@ -294,15 +300,15 @@ namespace Suretom.Client.UI.Pages.Demo
             try
             {
                 AddProcessInfo("开始学习");
-
                 await Task.Run(() =>
                 {
                     AddProcessInfo("学习中...");
+                    OperationBtnEnable(false);
 
                     //未完成的课程
-                    var coursesInfos = coursesList.Where(f => f.Schedule < 100&&string.IsNullOrEmpty(dgrStr) ? true : (f.imgStr==dgrStr)).ToList();
+                    var coursesInfos = coursesList.Where(f => f.Schedule < 100 && string.IsNullOrEmpty(dgrStr) ? true : (f.imgStr == dgrStr)).ToList();
 
-                    if (coursesInfos.Count>0)
+                    if (coursesInfos.Count > 0)
                     {
                         demoData.PostCourseStart(coursesInfos);
                     }
@@ -352,7 +358,7 @@ namespace Suretom.Client.UI.Pages.Demo
 
                 AddStudentPage addStudentPage = new AddStudentPage();
 
-                if (addStudentPage.ShowDialog()==true)
+                if (addStudentPage.ShowDialog() == true)
                 {
                 }
                 else
@@ -386,14 +392,45 @@ namespace Suretom.Client.UI.Pages.Demo
                 var dialog = new OpenFileDialog()
                 {
                     DefaultExt = ".docx",
-                    Filter = "Word 文件|*.docx",
+                    //Filter = "Word 文件|*.docx.xlsx",
+                    Filter = "All files（*.*）|*.*|All files(*.*)|*.*",
                     Multiselect = true
                 };
 
                 if (dialog.ShowDialog() == true)
                 {
                     var fileNames = dialog.FileNames;
-                    //AddWords(fileNames);
+                    var exMsgs = new List<EXMessageDto>();
+
+                    foreach (var fileName in fileNames)
+                    {
+                        var dataTable = new ExcelHelper(fileName).ExcelToDataTable("Sheet1");
+
+                        var studentList = JsonHelper.DeserializeObject<List<Student>>(dataTable.ToJson());
+
+                        studentList.ForEach(student =>
+                        {
+                            var result = studentService.AddStudent(student);
+
+                            if (!result.Success)
+                            {
+                                exMsgs.Add(new EXMessageDto()
+                                {
+                                    Id = student.Id,
+                                    Message = result.Message,
+                                });
+                            }
+                        });
+                    }
+
+                    if (exMsgs.Count == 0)
+                    {
+                        MessageBox.Show("导入成功！");
+                    }
+                    else
+                    {
+                        MessageBox.Show($"导入失败！{exMsgs.ToJson()}");
+                    }
                 }
             }
             catch (Exception ex)
@@ -606,7 +643,7 @@ namespace Suretom.Client.UI.Pages.Demo
 
             var student = selItem.Tag as Student;
 
-            if (student==null)
+            if (student == null)
             {
                 return;
             }
@@ -788,7 +825,7 @@ namespace Suretom.Client.UI.Pages.Demo
 
             studentInfo.List.ForEach(student =>
             {
-                if (itemCount==0)
+                if (itemCount == 0)
                 {
                     DataBind(student);
                 }
