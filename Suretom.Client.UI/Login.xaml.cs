@@ -105,7 +105,7 @@ namespace Suretom.Client.UI
                     //
                     var userInfo = userService.GetUserInfo();
 
-                    if (userInfo==null)
+                    if (userInfo == null)
                     {
                         MessageBox.Show("获取用户信息失败");
                         return;
@@ -114,7 +114,7 @@ namespace Suretom.Client.UI
                     //
                     var studentInfos = studentService.GetStudentList();
 
-                    if (studentInfos.Count==0l)
+                    if (studentInfos.Count == 0)
                     {
                         MessageBox.Show("获取学生信息失败");
                         return;
@@ -125,7 +125,7 @@ namespace Suretom.Client.UI
                         UserName = userCode,
                         PassWord = userPwd,
                         Verifycode = verifycode,
-                        Id=userInfo.Id,
+                        Id = userInfo.Id,
                         Phone = userInfo.Phone,
                         Number = userInfo.Number,
                         Name = userInfo.Name,
