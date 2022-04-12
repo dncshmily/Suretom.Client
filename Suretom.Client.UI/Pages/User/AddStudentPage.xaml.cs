@@ -68,7 +68,7 @@ namespace Suretom.Client.UI.Pages.User
         }
 
         /// <summary>
-        /// 保存配置
+        /// 添加学生
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -84,12 +84,15 @@ namespace Suretom.Client.UI.Pages.User
                 ClassName=txtClassName.Text,
                 StudyType=1
             };
-            if (studentService.AddStudent(student))
+
+            var result = studentService.AddStudent(student);
+            if (result.Success)
             {
+                MessageBox.Show("添加成功");
             }
             else
             {
-                MessageBox.Show("添加失败");
+                MessageBox.Show($"添加失败:{result.Message}");
             }
 
             this.Close();

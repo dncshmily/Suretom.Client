@@ -28,7 +28,7 @@ namespace Suretom.Client.Service
         /// <param name=""></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public bool AddStudent(Student student)
+        public HttpResult AddStudent(Student student)
         {
             if (string.IsNullOrEmpty(student.SchoolName))
                 throw new ArgumentException("schoolName");
@@ -56,7 +56,7 @@ namespace Suretom.Client.Service
 
             var result = PostForm(Urls["Add"], paramValue);
 
-            return result.Success;
+            return result;
         }
 
         /// <summary>

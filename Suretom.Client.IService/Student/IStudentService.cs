@@ -21,7 +21,7 @@ namespace Suretom.Client.IService
         /// <param name=""></param>
         /// <param name=""></param>
         /// <returns></returns>
-        bool AddStudent(Student student);
+        HttpResult AddStudent(Student student);
 
         /// <summary>
         ///
