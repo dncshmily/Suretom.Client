@@ -391,15 +391,27 @@ namespace Suretom.Client.UI.Pages.Demo
 
                 var dialog = new OpenFileDialog()
                 {
-                    DefaultExt = ".docx",
-                    //Filter = "Word 文件|*.docx.xlsx",
-                    Filter = "All files（*.*）|*.*|All files(*.*)|*.*",
+                    DefaultExt = ".xlsx",
+                    //Filter = "Word 文件|*.docx;",
+                    Filter = "Excel文件|*.xlsx;",
                     Multiselect = true
                 };
 
                 if (dialog.ShowDialog() == true)
                 {
                     var fileNames = dialog.FileNames;
+
+                    foreach (var item in fileNames)
+                    {
+                        var ext = System.IO.Path.GetExtension(item);
+
+                        if (ext.ToLower() != ".xlsx")
+                        {
+                            MessageBox.Show($"不支持{ext.ToLower() }的后缀名！");
+                            return;
+                        }
+                    }
+
                     var exMsgs = new List<EXMessageDto>();
 
                     foreach (var fileName in fileNames)
@@ -426,10 +438,12 @@ namespace Suretom.Client.UI.Pages.Demo
                     if (exMsgs.Count == 0)
                     {
                         MessageBox.Show("导入成功！");
+                        return;
                     }
                     else
                     {
                         MessageBox.Show($"导入失败！{exMsgs.ToJson()}");
+                        return;
                     }
                 }
             }
