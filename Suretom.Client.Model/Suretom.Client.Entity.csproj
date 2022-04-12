@@ -53,6 +53,7 @@
     <Compile Include="Dto\Demo\DesignDto.cs" />
     <Compile Include="Dto\Demo\DoingCellsDto.cs" />
     <Compile Include="Dto\Demo\ResultDto.cs" />
+    <Compile Include="Dto\EXMessageDto.cs" />
     <Compile Include="Dto\PaperParam.cs" />
     <Compile Include="Dto\StudentInfo.cs" />
     <Compile Include="Dto\Userinfo.cs" />
