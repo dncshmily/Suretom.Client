@@ -42,6 +42,11 @@ namespace Suretom.Client.UI.Pages.Demo
         /// <summary>
         ///
         /// </summary>
+        private ObservableCollection<BatchImportProcessInfo> ez_processInfoList = new ObservableCollection<BatchImportProcessInfo>();
+
+        /// <summary>
+        ///
+        /// </summary>
         private IUserService userService;
 
         /// <summary>
@@ -75,6 +80,11 @@ namespace Suretom.Client.UI.Pages.Demo
         private List<CoursesInfo> do_coursesList = new List<CoursesInfo>();
 
         /// <summary>
+        /// 试卷里解析出的题目
+        /// </summary>
+        private ObservableCollection<CourseDto> ez_courseDtoList = new ObservableCollection<CourseDto>();
+
+        /// <summary>
         ///
         /// </summary>
         public class CoursesInfo
@@ -95,7 +105,9 @@ namespace Suretom.Client.UI.Pages.Demo
             public CourseDto course = new CourseDto();
         }
 
-        //声明CancellationTokenSource对象
+        /// <summary>
+        /// 声明CancellationTokenSource对象
+        /// </summary>
         private static CancellationTokenSource tokenSource = new CancellationTokenSource();
 
         /// <summary>
@@ -122,7 +134,7 @@ namespace Suretom.Client.UI.Pages.Demo
 
             userService = GlobalContext.Resolve<IUserService>();
             studentService = GlobalContext.Resolve<IStudentService>();
-            dgProcessInfo.DataContext = _processInfoList;
+            dgProcessInfo.DataContext = ez_processInfoList;
         }
 
         #region MyRegion
@@ -234,7 +246,15 @@ namespace Suretom.Client.UI.Pages.Demo
 
             if (ez_coursesList!=null&&ez_coursesList.Count>0)
             {
-                dgCourseInfo.DataContext = ez_coursesList;
+                dgCourseInfo.DataContext = ez_coursesList.Where(f => f.Schedule < 100).ToList();
+                dgFinishCourseInfo.DataContext = ez_coursesList.Where(f => f.Schedule == 100).ToList();
+
+                ez_coursesList.ForEach(course =>
+                {
+                    ez_courseDtoList.Add(course);
+                });
+
+                dgItemUpdate.DataContext = ez_courseDtoList;
 
                 int i = 0;
 
@@ -493,6 +513,8 @@ namespace Suretom.Client.UI.Pages.Demo
 
                 labFinish.Content =0;
                 labTotal.Content=0;
+                ez_coursesList =new List<CourseDto>();
+                do_coursesList=new List<CoursesInfo>();
 
                 OperationBtnEnable(true);
 
@@ -509,6 +531,28 @@ namespace Suretom.Client.UI.Pages.Demo
                 OperationBtnEnable(true);
             }
             return true;
+        }
+
+        /// <summary>
+        /// 当前的处理状态
+        /// </summary>
+        public BatchImportStatus CurrentStatus
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public event EventHandler<StatusChangeEventArgs> StatusChangeEvent;
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="args"></param>
+        private void OnStatusChangeEvent(StatusChangeEventArgs args)
+        {
+            this.StatusChangeEvent?.Invoke(this, args);
         }
 
         #endregion
@@ -555,6 +599,16 @@ namespace Suretom.Client.UI.Pages.Demo
                 {
                 });
             }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Timer2_Tick(object sender, EventArgs e)
+        {
+            AddProcessInfo($"数据初始化...");
         }
 
         /// <summary>
@@ -775,25 +829,106 @@ namespace Suretom.Client.UI.Pages.Demo
         }
 
         /// <summary>
-        /// 当前的处理状态
+        /// 开始
         /// </summary>
-        public BatchImportStatus CurrentStatus
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnItemStart_Click(object sender, RoutedEventArgs e)
         {
-            get; private set;
+            try
+            {
+                var button = sender as Button;
+                var wordItem = button.Tag as CourseDto;
+                if (wordItem != null)
+                {
+                    if (!wordItem.IsStartSuccess)
+                    {
+                        MessageBox.Show("111");
+
+                        return;
+                    }
+
+                    button.IsEnabled = false;
+
+                    Task.Run(() =>
+                    {
+                        try
+                        {
+                            //
+                        }
+                        catch (Exception inEx)
+                        {
+                            log.Error(inEx);
+                            MessageBox.Show(inEx.Message);
+                        }
+                    }).ContinueWith(t =>
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            button.IsEnabled = true;
+                        });
+                    });
+                }
+
+                ez_timer = new DispatcherTimer();
+                ez_timer.Interval = TimeSpan.FromMinutes(0.1);
+                ez_timer.Tick += Timer2_Tick;
+                ez_timer.Start();
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                MessageBox.Show(ex.Message);
+            }
         }
 
         /// <summary>
-        ///
+        /// 暂停
         /// </summary>
-        public event EventHandler<StatusChangeEventArgs> StatusChangeEvent;
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="args"></param>
-        private void OnStatusChangeEvent(StatusChangeEventArgs args)
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnItemPause_Click(object sender, RoutedEventArgs e)
         {
-            this.StatusChangeEvent?.Invoke(this, args);
+            try
+            {
+                var button = sender as Button;
+                var wordItem = button.Tag as CourseDto;
+                if (wordItem != null)
+                {
+                    if (!wordItem.IsPauseSuccess)
+                    {
+                        MessageBox.Show("切图失败，不能上传");
+
+                        return;
+                    }
+
+                    button.IsEnabled = false;
+
+                    Task.Run(() =>
+                    {
+                        try
+                        {
+                            //DoWork
+                        }
+                        catch (Exception inEx)
+                        {
+                            log.Error(inEx);
+                            MessageBox.Show(inEx.Message);
+                        }
+                    }).ContinueWith(t =>
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            button.IsEnabled = true;
+                        });
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                MessageBox.Show(ex.Message);
+            }
         }
 
         /// <summary>
@@ -850,7 +985,7 @@ namespace Suretom.Client.UI.Pages.Demo
                 this.Dispatcher.Invoke(() =>
                 {
                     Sp1.IsEnabled = isEnable;
-                    Sp2.IsEnabled = isEnable;
+                    BtnAutoStart.IsEnabled = isEnable;
                     grid1.IsEnabled = isEnable;
                     gb1.IsEnabled = isEnable;
                 });
@@ -865,8 +1000,6 @@ namespace Suretom.Client.UI.Pages.Demo
         #endregion 按钮
 
         #region 更新状态
-
-        private ObservableCollection<BatchImportProcessInfo> _processInfoList = new ObservableCollection<BatchImportProcessInfo>();
 
         /// <summary>
         ///
@@ -904,14 +1037,14 @@ namespace Suretom.Client.UI.Pages.Demo
         {
             this.Dispatcher.Invoke(() =>
             {
-                _processInfoList.Add(new BatchImportProcessInfo
+                ez_processInfoList.Add(new BatchImportProcessInfo
                 {
-                    Id = _processInfoList.Count,
+                    Id = ez_processInfoList.Count,
                     Info = msg,
                     Type = type
                 });
 
-                ObservableHelper.ObservableMySort(_processInfoList);
+                ObservableHelper.ObservableMySort(ez_processInfoList);
             });
         }
 

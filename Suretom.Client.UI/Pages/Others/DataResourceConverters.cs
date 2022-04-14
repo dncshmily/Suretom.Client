@@ -108,6 +108,9 @@ namespace Suretom.Client.UI.Others
         }
     }
 
+    /// <summary>
+    ///
+    /// </summary>
     public class BatchImportProcessInfoType2ColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -27,5 +27,15 @@ namespace Suretom.Client.Entity
         /// 0：未开始 1：学习中 2：已完成
         /// </summary>
         public int Status { get; set; } = 0;
+
+        /// <summary>
+        ///是否开始
+        /// </summary>
+        public bool IsStartSuccess = false;
+
+        /// <summary>
+        ///是否暂停
+        /// </summary>
+        public bool IsPauseSuccess = false;
     }
 }

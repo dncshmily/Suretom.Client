@@ -2,11 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:local="clr-namespace:Suretom.Client.UI.Others"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Suretom.Client.UI.Others"
              mc:Ignorable="d"
              d:DesignHeight="800" d:DesignWidth="1200" Loaded="UserControl_Loaded">
     <UserControl.Resources>
-        <local:BatchImportProcessInfoTypeConverter x:Key="BatchImportProcessInfoTypeConverter" />
+        <local:Bool2VisibilityConverter x:Key="bool2VisibilityConverter" />
+        <local:BatchImportProcessInfoTypeConverter x:Key="batchImportProcessInfoTypeConverter" />
     </UserControl.Resources>
     <Border BorderThickness="1" BorderBrush="#AAA" Margin="5">
         <Grid>
@@ -152,7 +154,7 @@
                                             <DataGridTemplateColumn Width="90*" Header="信息">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
-                                                        <TextBlock Text="{Binding Info}" VerticalAlignment="Center" Foreground="{Binding Type, Converter={StaticResource BatchImportProcessInfoTypeConverter}}" />
+                                                        <TextBlock Text="{Binding Info}" VerticalAlignment="Center" Foreground="{Binding Type, Converter={StaticResource batchImportProcessInfoTypeConverter}}" />
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn>
@@ -160,7 +162,7 @@
                                     </DataGrid>
                                 </Grid>
                             </TabItem>
-                            <TabItem Header="课程信息">
+                            <TabItem Header="未结束课程">
                                 <Grid Background="#FFE5E5E5">
                                     <DataGrid x:Name="dgCourseInfo" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}" Height="Auto">
                                         <DataGrid.Columns>
@@ -171,6 +173,58 @@
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
                                                         <!--<TextBlock Text="{Binding Info}" VerticalAlignment="Center" Foreground="{Binding Schedule, Converter={StaticResource courseInfoTypeConverter}}" />-->
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="已结束课程">
+                                <Grid Background="#FFE5E5E5">
+                                    <DataGrid x:Name="dgFinishCourseInfo"  IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}" Height="Auto">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn  Binding="{Binding CourseName}" Header="课程名称" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
+                                            <DataGridTextColumn Binding="{Binding ExpiredTime}" Header="截止时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
+                                            <DataGridTextColumn Binding="{Binding ScheduleTxt}" Header="状态" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
+                                            <DataGridTemplateColumn Width="20*" Header="信息">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <!--<TextBlock Text="{Binding Info}" VerticalAlignment="Center" Foreground="{Binding Schedule, Converter={StaticResource courseInfoTypeConverter}}" />-->
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </Grid>
+                            </TabItem>
+                            <TabItem Header="处理信息">
+                                <Grid Background="#FFE5E5E5">
+                                    <DataGrid x:Name="dgItemUpdate"   IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn  Binding="{Binding CourseName}" Header="课程名称" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
+                                            <DataGridTextColumn Binding="{Binding ExpiredTime}" Header="截止时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
+                                            <DataGridTextColumn Binding="{Binding ScheduleTxt}" Header="状态" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
+                                            <DataGridTemplateColumn Header="进度" Width="200">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <ProgressBar  Tag="{Binding}"  Minimum="0"  Maximum="100"   Width="150"  Height="10" Value="{Binding Schedule}" />
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTemplateColumn Header="操作" Width="200">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Grid>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Button Content="开始" Style="{DynamicResource btn-primary}" Tag="{Binding}" Visibility="{Binding IsCheckSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnItemStart_Click" Margin="15 0 0 0" />
+                                                                <Button Content="暂停" Style="{DynamicResource btn-warning}" Tag="{Binding}" Visibility="{Binding IsCutImgSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnItemPause_Click"   Margin="15 0 0 0" />
+                                                            </StackPanel>
+                                                        </Grid>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn>

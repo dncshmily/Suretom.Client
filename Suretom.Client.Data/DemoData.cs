@@ -140,7 +140,7 @@ namespace Suretom.Client.Data
         public void SingeSyudentStart(CourseDto course)
         {
             //章
-            var designresult = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDto<DesignDto>>(CourseHelper.FromPost($"{apiUrl}/study/design/design", header, $"courseOpenId={course.CourseOpenId}&schoolCode={schoolcode}"));
+            var designresult = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDto<DesignDto>>(CourseHelper.FromPost($"{apiUrl}/study/design/design", header, $"courseOpenId={course.CourseOpenId}&schoolCode={schoolcode}&icon=video"));
             if (designresult.Code != 1) return;
 
             foreach (var l in designresult.List)
@@ -151,7 +151,7 @@ namespace Suretom.Client.Data
                 foreach (var design in undodesignlist)
                 {
                     //节
-                    var undocells = design.Cells.Where(p => p.Status == false); //未完成的
+                    var undocells = design.Cells.Where(p => p.Status == false&&p.Title!="总论"); //未完成的
                     foreach (var cells in undocells)
                     {
                         var doingcellsjson = CourseHelper.FromPost($"{apiUrl}/study/studying/studying", header, $"courseOpenId={course.CourseOpenId}&cellId={cells.Id}&schoolCode={schoolcode}");
@@ -168,6 +168,7 @@ namespace Suretom.Client.Data
                             try
                             {
                                 var recordjson = CourseHelper.FromPost($"{apiUrl}/study/studying/recordVideoPosition", header, $"courseOpenId={course.CourseOpenId}&cellId={cells.Id}&schoolCode={schoolcode}&position={doingcells.Cell.LastTime}");
+
                                 if (recordjson.Contains("基础连接已经关闭")) continue;
                                 var record = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDto<DoingCellsDto>>(recordjson);
 
