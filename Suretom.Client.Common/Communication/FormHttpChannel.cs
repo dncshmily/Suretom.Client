@@ -89,6 +89,7 @@ namespace Suretom.Client.Common
             {
                 request.CookieContainer = cookie;
             }
+            request.Headers.Add("token", GlobalContext.Token);
 
             StringBuilder stringBuilder = new StringBuilder();
             foreach (string key in postData.Keys)

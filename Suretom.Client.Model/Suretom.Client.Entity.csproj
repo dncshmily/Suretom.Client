@@ -55,11 +55,13 @@
     <Compile Include="Dto\Demo\ResultDto.cs" />
     <Compile Include="Dto\EXMessageDto.cs" />
     <Compile Include="Dto\PaperParam.cs" />
+    <Compile Include="Dto\StudentDto.cs" />
     <Compile Include="Dto\StudentInfo.cs" />
     <Compile Include="Dto\Userinfo.cs" />
     <Compile Include="Enum\AliyunEnum.cs" />
     <Compile Include="Enum\CodeTypeEnum.cs" />
     <Compile Include="Enum\DownloadStatus.cs" />
+    <Compile Include="Enum\LearnTypeEnum.cs" />
     <Compile Include="Enum\LoginReslt.cs" />
     <Compile Include="Enum\ScopeType.cs" />
     <Compile Include="Model\ServiceInfo.cs" />

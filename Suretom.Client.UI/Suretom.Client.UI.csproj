@@ -250,6 +250,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\File\model.xlsx" />
     <Resource Include="Resources\kcfm-pic.jpg" />
     <Resource Include="Resources\demo.png" />
     <None Include="Resources\app.ico" />

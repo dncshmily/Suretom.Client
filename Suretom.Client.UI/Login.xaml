@@ -34,7 +34,7 @@
     <Grid>
         <StackPanel Width="450" Height="110" Background="#009aD4" Margin="0,0,0,230">
             <Image x:Name="BtnClose" Height="28" Source="Resources/btn_close_disable.png" Margin="413,0,0,0" Cursor="Hand" MouseDown="BtnClose_MouseDown" />
-            <Label FontSize="30" Foreground="White" Height="60" Margin="0,0,0,0" Content="皖 校 通" Width="166" />
+            <Label FontSize="30" Foreground="White" Height="60" Margin="50,10,0,0" Content="皖 校 通" Width="166" />
         </StackPanel>
         <StackPanel Width="450" Height="230" Margin="0,100,0,0" Background="#EBF2F9">
             <TextBox Name="txtName" Text="测试1" Width="200" Margin="125,20" Height="35" BorderThickness="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" />
@@ -43,7 +43,7 @@
                 <Image  x:Name="image1" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Width="200"  Margin="0,-5,0,0">
-                <TextBox Name="txtCode" Text="" Width="100" Height="35" BorderThickness="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" />
+                <TextBox Name="txtCode" MaxLength="5" Text="" Width="70" Height="35" BorderThickness="1" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" />
                 <Image  x:Name="imageCode" Margin="10,0,0,0" MouseDown="Image_OnMouseDown" />
             </StackPanel>
             <CheckBox Name="chkName" Margin="125,5,239,155" Content="记住密码" RenderTransformOrigin="0.5,0.5" Height="25" />

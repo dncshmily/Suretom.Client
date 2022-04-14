@@ -50,12 +50,35 @@ namespace Suretom.Client.Data
         }
 
         /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public StudentDto GetStudentInfo()
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<StudentDto>(CourseHelper.FromPost($"{apiUrl}/studentstudio/ajax-config-getInfo", header, "getschoolcode=" + schoolcode));
+            }
+            catch
+            {
+                return new StudentDto();
+            }
+        }
+
+        /// <summary>
         /// 课程列表数据
         /// </summary>
         /// <returns></returns>
         public ResultDto<CourseDto> GetCourseList()
         {
-            return JsonConvert.DeserializeObject<ResultDto<CourseDto>>(CourseHelper.FromPost($"{apiUrl}/studentstudio/ajax-course-list", header, $"type=studying&courseType=0&getschoolcode={schoolcode}&studyYear=&studyTerm=&courseName="));
+            try
+            {
+                return JsonConvert.DeserializeObject<ResultDto<CourseDto>>(CourseHelper.FromPost($"{apiUrl}/studentstudio/ajax-course-list", header, $"type=studying&courseType=0&getschoolcode={schoolcode}&studyYear=&studyTerm=&courseName="));
+            }
+            catch
+            {
+                return new ResultDto<CourseDto>();
+            }
         }
 
         /// <summary>

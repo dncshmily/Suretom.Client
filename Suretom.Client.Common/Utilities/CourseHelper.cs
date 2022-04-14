@@ -64,7 +64,7 @@ namespace Suretom.Client.Common
                     newStream.Close();
                     using (HttpWebResponse response = (HttpWebResponse)webReq.GetResponse())
                     {
-                        var cookie = response.Headers["Set-Cookie"].ToString();
+                        var cookie = response.Headers["Set-Cookie"]?.ToString();
                         using (StreamReader sr = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
                         {
                             ret = cookie; //sr.ReadToEnd();
