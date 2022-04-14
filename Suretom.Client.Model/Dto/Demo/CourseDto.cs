@@ -22,5 +22,10 @@ namespace Suretom.Client.Entity
         public string ScheduleTxt { get; set; }
 
         public string imgStr { get; set; }
+
+        /// <summary>
+        /// 0：未开始 1：学习中 2：已完成
+        /// </summary>
+        public int Status { get; set; } = 0;
     }
 }

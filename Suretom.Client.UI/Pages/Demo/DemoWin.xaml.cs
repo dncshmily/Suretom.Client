@@ -20,6 +20,7 @@ using Suretom.Client.UI.Pages.User;
 using System.Threading;
 using System.Windows.Data;
 using System.Globalization;
+using System.Windows.Threading;
 
 namespace Suretom.Client.UI.Pages.Demo
 {
@@ -51,11 +52,6 @@ namespace Suretom.Client.UI.Pages.Demo
         /// <summary>
         ///
         /// </summary>
-        private DemoData demoData;
-
-        /// <summary>
-        ///
-        /// </summary>
         private IStudentService studentService;
 
         /// <summary>
@@ -69,9 +65,35 @@ namespace Suretom.Client.UI.Pages.Demo
         private StudentDto ez_studentInfo = new StudentDto();
 
         /// <summary>
-        ///学生课程信息
+        ///当前学生课程信息
         /// </summary>
         private List<CourseDto> ez_coursesList = new List<CourseDto>();
+
+        /// <summary>
+        /// 学习中的课程
+        /// </summary>
+        private List<CoursesInfo> do_coursesList = new List<CoursesInfo>();
+
+        /// <summary>
+        ///
+        /// </summary>
+        public class CoursesInfo
+        {
+            /// <summary>
+            ///
+            /// </summary>
+            public Guid guid { get; set; } = Guid.NewGuid();
+
+            /// <summary>
+            ///学生信息
+            /// </summary>
+            public Student student { get; set; } = new Student();
+
+            /// <summary>
+            ///课程信息
+            /// </summary>
+            public CourseDto course = new CourseDto();
+        }
 
         //声明CancellationTokenSource对象
         private static CancellationTokenSource tokenSource = new CancellationTokenSource();
@@ -85,6 +107,11 @@ namespace Suretom.Client.UI.Pages.Demo
         ///
         /// </summary>
         private CancellationToken token = tokenSource.Token;
+
+        /// <summary>
+        ///
+        /// </summary>
+        private DispatcherTimer ez_timer;
 
         /// <summary>
         ///
@@ -110,7 +137,6 @@ namespace Suretom.Client.UI.Pages.Demo
             try
             {
                 FillTreeView(GlobalContext.UserInfo.studentInfos);
-                strInfo = $"{ez_student.SchoolName}-{ez_student.ClassName}-{ez_student.StudentName}-";
             }
             catch (Exception ex)
             {
@@ -176,19 +202,35 @@ namespace Suretom.Client.UI.Pages.Demo
         ///
         /// </summary>
         /// <param name="student"></param>
-        public void StudentDataBind()
+        public void StudentDataBind(Student student)
         {
+            ez_student = student;
+
+            strInfo = $"{ez_student.SchoolName}-{ez_student.StudentName}-{ez_student.IdCard}";
+
             labNane.Content = ez_student.StudentName;
             labIdCard.Content = ez_student.IdCard;
             labNo.Content = ez_student.StudyCode;
             labClass.Content = ez_student.MoviePwd;
             labIdType.Content = StudyTypeConverter(ez_student.StudyType);
 
-            demoData = new DemoData(ez_student);
             //课程信息
-            ez_coursesList= demoData.GetCourseList().List;
-            //学生信息
-            //ez_studentInfo = demoData.GetStudentInfo();
+            ez_coursesList= new DemoData(ez_student).GetCourseList().List;
+
+            //未完成的课程
+            var coursesList = ez_coursesList.Where(f => f.Schedule < 100).ToList();
+
+            coursesList.ForEach(course =>
+            {
+                if (!do_coursesList.Exists(f => f.student.IdCard==ez_student.IdCard&&f.course.CourseOpenId==course.CourseOpenId))
+                {
+                    do_coursesList.Add(new CoursesInfo()
+                    {
+                        student=ez_student,
+                        course=course
+                    });
+                }
+            });
 
             if (ez_coursesList!=null&&ez_coursesList.Count>0)
             {
@@ -380,41 +422,45 @@ namespace Suretom.Client.UI.Pages.Demo
         /// </summary>
         /// <param name="dgrStr"></param>
         /// <returns></returns>
-        public async Task<bool> BatchCourseStart(string dgrStr = "")
+        public async Task<bool> SigneCourseStart(CoursesInfo info)
         {
             try
             {
-                AddProcessInfo($"{strInfo}-开始学习");
+                var idx = do_coursesList.IndexOf(info);
+
+                AddProcessInfo($"{strInfo}-开始学习{info.course.CourseName}");
 
                 await Task.Run(() =>
-                 {
-                     AddProcessInfo($"{strInfo}-学习中...");
+                {
+                    AddProcessInfo($"{strInfo}-学习中...");
 
-                     OperationBtnEnable(false);
+                    OperationBtnEnable(false);
 
-                     _isStopDeal=true;
+                    do_coursesList[idx].course.Status=1;
 
-                     //未完成的课程
-                     var coursesInfos = ez_coursesList.Where(f => f.Schedule < 100 && string.IsNullOrEmpty(dgrStr) ? true : (f.imgStr == dgrStr)).ToList();
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        labFinish.Content=do_coursesList.Count(f => f.course.Status==2);
+                        pbProcess.Value= do_coursesList.Count(f => f.course.Status==2);
+                    });
 
-                     if (coursesInfos.Count > 0)
-                     {
-                         demoData.PostCourseStart(coursesInfos);
-                     }
-                 }, token).ContinueWith(t =>
-                 {
-                     try
-                     {
-                         this.Dispatcher.Invoke(() =>
-                         {
-                             OperationBtnEnable(true);
-                         });
-                     }
-                     catch (Exception inEx)
-                     {
-                         log.Error(inEx);
-                     }
-                 });
+                    //开始学习
+                    new DemoData(info.student).SingeSyudentStart(info.course);
+                }, token).ContinueWith(t =>
+                {
+                    try
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            do_coursesList[idx].course.Status=2;
+                            OperationBtnEnable(true);
+                        });
+                    }
+                    catch (Exception inEx)
+                    {
+                        log.Error(inEx);
+                    }
+                });
 
                 AddProcessInfo($"{strInfo}学习结束");
             }
@@ -440,13 +486,17 @@ namespace Suretom.Client.UI.Pages.Demo
         {
             try
             {
-                AddProcessWarn($"{strInfo}停止学习");
+                AddProcessError($"{strInfo}停止学习");
 
                 tokenSource.Cancel();
+                ez_timer.Stop();
+
+                labFinish.Content =0;
+                labTotal.Content=0;
 
                 OperationBtnEnable(true);
 
-                AddProcessWarn($"{strInfo}学习结束");
+                AddProcessError($"{strInfo}学习结束");
             }
             catch (Exception ex)
             {
@@ -466,6 +516,48 @@ namespace Suretom.Client.UI.Pages.Demo
         #region 按钮
 
         /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Timer1_Tick(object sender, EventArgs e)
+        {
+            var doCoursesList = do_coursesList.Where(f => f.course.Status==0).ToList();
+
+            labTitle.Visibility = Visibility.Visible;
+            labTotal.Content=do_coursesList.Count;
+            pbProcess.Maximum= do_coursesList.Count;
+
+            if (doCoursesList.Count>0)
+            {
+                try
+                {
+                    foreach (var course in doCoursesList)
+                    {
+                        await SigneCourseStart(course);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex);
+                    MessageBox.Show(ex.Message);
+                }
+                finally
+                {
+                    this.Sp1.IsEnabled = true;
+                }
+            }
+            else
+            {
+                OperationBtnEnable(true);
+
+                this.Dispatcher.Invoke(() =>
+                {
+                });
+            }
+        }
+
+        /// <summary>
         ///添加学员
         /// </summary>
         /// <param name="sender"></param>
@@ -474,8 +566,6 @@ namespace Suretom.Client.UI.Pages.Demo
         {
             try
             {
-                _isStopDeal = false;
-
                 AddStudentPage addStudentPage = new AddStudentPage();
 
                 addStudentPage.ShowDialog();
@@ -507,7 +597,6 @@ namespace Suretom.Client.UI.Pages.Demo
         {
             try
             {
-                _isStopDeal = false;
                 this.Sp1.IsEnabled = false;
 
                 var dialog = new OpenFileDialog()
@@ -564,11 +653,6 @@ namespace Suretom.Client.UI.Pages.Demo
                                 if (!result.Success)
                                 {
                                     sucessCount++;
-                                    //exMsgs.Add(new EXMessageDto()
-                                    //{
-                                    //    Id = s.Id,
-                                    //    Message = result.Message,
-                                    //});
                                     AddProcessError($"新增学生:{s.StudentName}_{s.IdCard}失败，{result.Message}");
                                 }
                                 else
@@ -579,12 +663,6 @@ namespace Suretom.Client.UI.Pages.Demo
                             else
                             {
                                 AddProcessError($"新增学生:{s.StudentName}_{s.IdCard}失败，数据格式错误");
-
-                                //exMsgs.Add(new EXMessageDto()
-                                //{
-                                //    Id = s.IdCard,
-                                //    Message ="格式错误",
-                                //});
                             }
                         });
                     }
@@ -627,33 +705,29 @@ namespace Suretom.Client.UI.Pages.Demo
                         MessageBox.Show("初始化失败");
                         return;
                     }
-
-                    CurrentStatus = BatchImportStatus.手动处理;
-                    OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
-
-                    //var t = Task.Run(() =>
-                    //{
-                    //    OperationBtnEnable(false);
-
-                    //    Thread.Sleep(5000);
-                    //    return "Hello I am TimeConsumingMethod";
-                    //});
-
-                    //textBox1.Text = await t;
-
-                    //await Task.Factory.StartNew(MyTask, cancelTokenSource.Token);
-
-                    var resultData = await BatchCourseStart();
-
-                    if (resultData)
+                    if (do_coursesList.Count(f => f.course.Status==0)>0)
                     {
-                        CurrentStatus = BatchImportStatus.成功;
+                        if (!_isStopDeal)
+                        {
+                            AddProcessInfo($"————————开始学习————————");
+
+                            AddProcessInfo($"数据初始化...");
+
+                            _isStopDeal=true;
+                        }
+
+                        ez_timer = new DispatcherTimer();
+                        ez_timer.Interval = TimeSpan.FromMinutes(0.1);
+                        ez_timer.Tick += Timer1_Tick;
+                        ez_timer.Start();
+
+                        OperationBtnEnable(false);
+                        CurrentStatus = BatchImportStatus.手动处理;
                         OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
                     }
                     else
                     {
-                        CurrentStatus = BatchImportStatus.失败;
-                        OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
+                        AddProcessError($"请选择要学习的学生！");
                     }
                 }
             }
@@ -686,6 +760,8 @@ namespace Suretom.Client.UI.Pages.Demo
                     OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
 
                     await StopMyTask();
+
+                    _isStopDeal=false;
 
                     CurrentStatus = BatchImportStatus.成功;
                     OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
@@ -740,20 +816,25 @@ namespace Suretom.Client.UI.Pages.Demo
                 CurrentStatus = BatchImportStatus.手动处理;
                 OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
 
-                var result = await BatchCourseStart(name);
+                //var doCourses = do_coursesList.FirstOrDefault(f => f.course.Status==0);
 
-                if (result)
-                {
-                    CurrentStatus = BatchImportStatus.成功;
-                    OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
-                }
-                else
-                {
-                    CurrentStatus = BatchImportStatus.失败;
-                    OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
-                }
+                //if (doCourses != null)
+                //{
+                //    var result = await SigneCourseStart(doCourses);
 
-                MessageBox.Show("双击");
+                //    if (result)
+                //    {
+                //        CurrentStatus = BatchImportStatus.成功;
+                //        OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
+                //    }
+                //    else
+                //    {
+                //        CurrentStatus = BatchImportStatus.失败;
+                //        OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
+                //    }
+                //}
+
+                //MessageBox.Show("双击");
                 e.Handled = true;
             }
         }
@@ -769,8 +850,9 @@ namespace Suretom.Client.UI.Pages.Demo
                 this.Dispatcher.Invoke(() =>
                 {
                     Sp1.IsEnabled = isEnable;
-                    //BtnAutoStart.IsEnabled = isEnable;
+                    Sp2.IsEnabled = isEnable;
                     grid1.IsEnabled = isEnable;
+                    gb1.IsEnabled = isEnable;
                 });
             }
             catch (Exception ex)
@@ -826,8 +908,10 @@ namespace Suretom.Client.UI.Pages.Demo
                 {
                     Id = _processInfoList.Count,
                     Info = msg,
-                    Type = type,
+                    Type = type
                 });
+
+                ObservableHelper.ObservableMySort(_processInfoList);
             });
         }
 
@@ -869,9 +953,7 @@ namespace Suretom.Client.UI.Pages.Demo
 
             try
             {
-                ez_student=student;
-
-                StudentDataBind();
+                StudentDataBind(student);
 
                 this.Cursor = Cursors.Wait;
                 this.ForceCursor = true;
@@ -1045,11 +1127,10 @@ namespace Suretom.Client.UI.Pages.Demo
 
             studentInfo.List.ForEach(student =>
             {
-                if (studentCount == 0)
-                {
-                    ez_student=student;
-                    StudentDataBind();
-                }
+                //if (studentCount == 0)
+                //{
+                //    StudentDataBind(student);
+                //}
                 TextBlock itemText = new TextBlock();
                 itemText.Text = $"{student.StudentName}";
                 itemText.Margin = new Thickness(3, 0, 0, 0);

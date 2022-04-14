@@ -155,6 +155,7 @@
     <Compile Include="Utilities\HttpQueryHelper.cs" />
     <Compile Include="Utilities\JsonHelper.cs" />
     <Compile Include="Utilities\MemoryCacheHelper.cs" />
+    <Compile Include="Utilities\ObservableHelper.cs" />
     <Compile Include="Utilities\OperationHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\SQLiteHelper.cs" />

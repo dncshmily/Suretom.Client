@@ -7,7 +7,6 @@
              d:DesignHeight="800" d:DesignWidth="1200" Loaded="UserControl_Loaded">
     <UserControl.Resources>
         <local:BatchImportProcessInfoTypeConverter x:Key="BatchImportProcessInfoTypeConverter" />
-        <local:LearnTypeResultConverter x:Key="LearnTypeResultConverter" />
     </UserControl.Resources>
     <Border BorderThickness="1" BorderBrush="#AAA" Margin="5">
         <Grid>
@@ -17,6 +16,7 @@
             </Grid.RowDefinitions>
             <Grid  Grid.Row="0">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300" />
                     <ColumnDefinition Width="300" />
                     <ColumnDefinition Width="300" />
                     <ColumnDefinition Width="Auto" />
@@ -38,15 +38,25 @@
                     </GroupBox.BorderBrush>
                     <StackPanel x:Name="Sp2" Orientation="Horizontal"  Grid.Column="0">
                         <Button x:Name="BtnAutoStart"  Margin="20,0,0,0"  Content="开始学习" Style="{DynamicResource btn-primary}"  Click="BtnAutoStart_Click" />
-                        <Button x:Name="BtnAutoStop"  Margin="20,0,0,0"  Content="停止学习" Style="{DynamicResource btn-primary}"  Click="BtnAutoStopClick" />
+                        <Button x:Name="BtnAutoStop"  Margin="20,0,0,0"  Content="停止学习" Style="{DynamicResource btn-danger}"  Click="BtnAutoStopClick" />
                     </StackPanel>
                 </GroupBox>
-                <GroupBox Grid.Column="2" Margin="5 5 5 5"  Visibility="Hidden"  Header="1111" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox Grid.Column="2" Margin="5 5 5 5" Visibility="Hidden"  Header="正在学习" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                     <GroupBox.BorderBrush>
                         <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
                     </GroupBox.BorderBrush>
                     <StackPanel x:Name="Sp3" Orientation="Horizontal"  Grid.Column="0">
-                        <TextBox x:Name="textBox1" Width="200" />
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Grid.Column="3" Margin="5 5 5 5"   Header="学习进度" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                    <GroupBox.BorderBrush>
+                        <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
+                    </GroupBox.BorderBrush>
+                    <StackPanel x:Name="Sp4" Orientation="Horizontal"  Grid.Column="1">
+                        <ProgressBar x:Name="pbProcess" Margin="5" Minimum="0"  Maximum="100"   Width="220"  Height="25" Value="0" />
+                        <Label  x:Name="labFinish"  FontSize="15" Content="0"  Margin="5 0 0 0" VerticalContentAlignment="Center" />
+                        <Label  x:Name="labTitle"  Content="/" FontSize="15"     Margin="5 0 0 0" VerticalContentAlignment="Center" />
+                        <Label  x:Name="labTotal" FontSize="15"  Content="0"  Margin="5 0 0 0" VerticalContentAlignment="Center" />
                     </StackPanel>
                 </GroupBox>
             </Grid>
@@ -56,7 +66,7 @@
                     <ColumnDefinition Width="200" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <GroupBox  Margin="0 0 5 0"   Grid.Column="0"  Padding="0,2,0,2" Header="" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox x:Name="gb1"  Margin="0 0 5 0"   Grid.Column="0"  Padding="0,2,0,2" Header="" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                     <GroupBox.BorderBrush>
                         <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
                     </GroupBox.BorderBrush>
