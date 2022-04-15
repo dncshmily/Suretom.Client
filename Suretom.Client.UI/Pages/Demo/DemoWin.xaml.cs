@@ -702,7 +702,7 @@ namespace Suretom.Client.UI.Pages.Demo
                                 student.StudyType=LearnTypeConverter(ez_studentInfo.info.LearnType);
                                 student.StudyCode=ez_studentInfo.info.StudentNumber;
 
-                                var result = studentService.AddStudent(s);
+                                var result = studentService.AddStudent(student);
 
                                 if (!result.Success)
                                 {

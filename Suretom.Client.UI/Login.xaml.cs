@@ -145,6 +145,9 @@ namespace Suretom.Client.UI
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         public void MageCodeSource()
         {
             var code = loginService.GetVerifyCode();

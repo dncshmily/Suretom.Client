@@ -198,7 +198,7 @@
                                     </DataGrid>
                                 </Grid>
                             </TabItem>
-                            <TabItem Header="处理信息">
+                            <TabItem Header="处理信息"  Visibility="Hidden">
                                 <Grid Background="#FFE5E5E5">
                                     <DataGrid x:Name="dgItemUpdate"   IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}">
                                         <DataGrid.Columns>

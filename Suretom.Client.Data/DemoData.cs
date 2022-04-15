@@ -27,6 +27,7 @@ namespace Suretom.Client.Data
         private string info = string.Empty;
         private string cookie = string.Empty;
         private Dictionary<string, string> header;
+        private NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
         public DemoData()
         { }
@@ -82,58 +83,6 @@ namespace Suretom.Client.Data
         }
 
         /// <summary>
-        ///学生所有课程学校
-        /// </summary>
-        /// <param name="undocourselist">未完成的课程</param>
-        public void BathSyudentStart(List<CourseDto> undocourselist)
-        {
-            //
-            foreach (var course in undocourselist)
-            {
-                //章
-                var designresult = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDto<DesignDto>>(CourseHelper.FromPost($"{apiUrl}/study/design/design", header, $"courseOpenId={course.CourseOpenId}&schoolCode={schoolcode}"));
-                if (designresult.Code != 1) return;
-
-                foreach (var l in designresult.List)
-                {
-                    var undodesignlist = l.Lessons.Where(p => p.Status == 0); //未完成的章
-                    if (undodesignlist.Count() == 0) continue;
-
-                    foreach (var design in undodesignlist)
-                    {
-                        //节
-                        var undocells = design.Cells.Where(p => p.Status == false); //未完成的
-                        foreach (var cells in undocells)
-                        {
-                            var doingcellsjson = CourseHelper.FromPost($"{apiUrl}/study/studying/studying", header, $"courseOpenId={course.CourseOpenId}&cellId={cells.Id}&schoolCode={schoolcode}");
-                            var doingcells = Newtonsoft.Json.JsonConvert.DeserializeObject<DoingCellsDto>(doingcellsjson);
-                            if (doingcells.Code != 1) continue;
-                            if (doingcells.Cell.Status) continue;
-
-                            for (var i = true; ;)
-                            {
-                                if (!i) break;
-                                System.Threading.Thread.Sleep(1000 * 60);
-                                doingcells.Cell.LastTime += 60;
-                                var recordjson = CourseHelper.FromPost($"{apiUrl}/study/studying/recordVideoPosition", header, $"courseOpenId={course.CourseOpenId}&cellId={cells.Id}&schoolCode={schoolcode}&position={doingcells.Cell.LastTime}");
-                                if (recordjson.Contains("基础连接已经关闭")) continue;
-                                var record = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDto<DoingCellsDto>>(recordjson);
-
-                                if (record.Passed) //完成
-                                {
-                                    var studiedjson = CourseHelper.FromPost($"{apiUrl}/study/studying/studied", header, $"courseOpenId={course.CourseOpenId}&cellId={cells.Id}&schoolCode={schoolcode}");
-
-                                    var studied = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDto<DoingCellsDto>>(studiedjson);
-                                    i = false;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        /// <summary>
         ///单课程学校
         /// </summary>
         /// <param name="undocourselist"></param>
@@ -164,25 +113,60 @@ namespace Suretom.Client.Data
                             if (!i) break;
                             System.Threading.Thread.Sleep(1000 * 60);
                             doingcells.Cell.LastTime += 60;
+                            var recordjson = string.Empty;
+                            bool isResult = false;
 
                             try
                             {
-                                var recordjson = CourseHelper.FromPost($"{apiUrl}/study/studying/recordVideoPosition", header, $"courseOpenId={course.CourseOpenId}&cellId={cells.Id}&schoolCode={schoolcode}&position={doingcells.Cell.LastTime}");
-
-                                if (recordjson.Contains("基础连接已经关闭")) continue;
-                                var record = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDto<DoingCellsDto>>(recordjson);
-
-                                if (record.Passed) //完成
+                                //重试操作
+                                OperationHelper.RetryExceptionAction(() =>
                                 {
-                                    var studiedjson = CourseHelper.FromPost($"{apiUrl}/study/studying/studied", header, $"courseOpenId={course.CourseOpenId}&cellId={cells.Id}&schoolCode={schoolcode}");
+                                    recordjson = CourseHelper.FromPost($"{apiUrl}/study/studying/recordVideoPosition", header, $"courseOpenId={course.CourseOpenId}&cellId={cells.Id}&schoolCode={schoolcode}&position={doingcells.Cell.LastTime}");
 
-                                    var studied = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDto<DoingCellsDto>>(studiedjson);
-                                    i = false;
+                                    var record = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDto<DoingCellsDto>>(recordjson);
+
+                                    if (record.Passed) //完成
+                                    {
+                                        var posturl = $"{apiUrl}/study/studying/studied";
+                                        var paramData = $"courseOpenId={course.CourseOpenId}&cellId={cells.Id}&schoolCode={schoolcode}";
+
+                                        var studiedjson = CourseHelper.FromPost(posturl, header, paramData);
+
+                                        var studied = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDto<DoingCellsDto>>(studiedjson);
+
+                                        if (studied.Code==1)
+                                        {
+                                            log.Info($"{studied}");
+                                        }
+                                        else
+                                        {
+                                            studied = JsonConvert.DeserializeObject<ResultDto<DoingCellsDto>>(CourseHelper.FromPost(posturl, header, paramData));
+
+                                            if (studied.Code==1)
+                                            {
+                                                log.Info($"{studied}");
+                                            }
+                                            else
+                                            {
+                                                log.Error($"{posturl}:{paramData}:{studied.Msg}");
+                                            }
+                                        }
+
+                                        i = false;
+                                    }
+                                }, 3, 1000, ref isResult);
+
+                                if (isResult)
+                                {
+                                    continue;
                                 }
                             }
-                            catch
+                            catch (Exception ex)
                             {
                                 i =true;
+                                log.Error($"{ex.Message}");
+                                log.Error($"{ex}");
+                                log.Error($"{recordjson}");
                             }
                         }
                     }
