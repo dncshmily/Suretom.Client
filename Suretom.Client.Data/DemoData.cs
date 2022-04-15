@@ -100,7 +100,7 @@ namespace Suretom.Client.Data
                 foreach (var design in undodesignlist)
                 {
                     //节
-                    var undocells = design.Cells.Where(p => p.Status == false&&p.Title!="总论"); //未完成的
+                    var undocells = design.Cells.Where(p => p.Status == false&&p.Icon== "video"); //未完成的
                     foreach (var cells in undocells)
                     {
                         var doingcellsjson = CourseHelper.FromPost($"{apiUrl}/study/studying/studying", header, $"courseOpenId={course.CourseOpenId}&cellId={cells.Id}&schoolCode={schoolcode}");

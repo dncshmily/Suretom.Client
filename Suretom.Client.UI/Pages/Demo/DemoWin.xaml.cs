@@ -509,7 +509,10 @@ namespace Suretom.Client.UI.Pages.Demo
                 AddProcessError($"{strInfo}停止学习");
 
                 tokenSource.Cancel();
-                ez_timer.Stop();
+                if (ez_timer!=null)
+                {
+                    ez_timer.Stop();
+                }
 
                 labFinish.Content =0;
                 labTotal.Content=0;
@@ -678,6 +681,7 @@ namespace Suretom.Client.UI.Pages.Demo
                     //var exSucess = new List<EXMessageDto>();
                     var sucessCount = 0;
 
+                    List<Student> addStudents = new List<Student>();
                     foreach (var fileName in fileNames)
                     {
                         var dataTable = new ExcelHelper(fileName).ExcelToDataTable("Sheet1", true);
@@ -701,18 +705,9 @@ namespace Suretom.Client.UI.Pages.Demo
                                 student.SchoolName=ez_studentInfo.info.SchoolName;
                                 student.StudyType=LearnTypeConverter(ez_studentInfo.info.LearnType);
                                 student.StudyCode=ez_studentInfo.info.StudentNumber;
+                                student.StudentName=ez_studentInfo.info.DisplayName.ToString();
 
-                                var result = studentService.AddStudent(student);
-
-                                if (!result.Success)
-                                {
-                                    sucessCount++;
-                                    AddProcessError($"新增学生:{s.StudentName}_{s.IdCard}失败，{result.Message}");
-                                }
-                                else
-                                {
-                                    AddProcessInfo($"新增学生:{s.StudentName}_{s.IdCard}成功");
-                                }
+                                addStudents.Add(student);
                             }
                             else
                             {
@@ -720,6 +715,20 @@ namespace Suretom.Client.UI.Pages.Demo
                             }
                         });
                     }
+
+                    addStudents.ForEach(s =>
+                    {
+                        var result = studentService.AddStudent(s);
+                        if (!result.Success)
+                        {
+                            sucessCount++;
+                            AddProcessError($"新增学生:{s.StudentName}_{s.IdCard}失败，{result.Message}");
+                        }
+                        else
+                        {
+                            AddProcessInfo($"新增学生:{s.StudentName}_{s.IdCard}成功");
+                        }
+                    });
 
                     if (sucessCount>0)
                     {
