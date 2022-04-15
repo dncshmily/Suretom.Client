@@ -136,7 +136,7 @@ namespace Suretom.Client.Data
 
                                         if (studied.Code==1)
                                         {
-                                            log.Info($"{studied}");
+                                            log.Info($"{studied.ToJson()}");
                                         }
                                         else
                                         {
@@ -144,7 +144,7 @@ namespace Suretom.Client.Data
 
                                             if (studied.Code==1)
                                             {
-                                                log.Info($"{studied}");
+                                                log.Info($"{studied.ToJson()}");
                                             }
                                             else
                                             {
