@@ -40,9 +40,6 @@ namespace Suretom.Client.Data
         /// </summary>
         public CoursesData(Student student)
         {
-            //idCard = "342422199608057015";
-            //passWord = "057015";
-
             apiUrl = "https://main.ahjxjy.cn/";
             idCard = student.IdCard;
             passWord =student.MoviePwd;
@@ -107,24 +104,34 @@ namespace Suretom.Client.Data
         {
             var courseList = new ObservableCollection<CourseDto>();
 
-            var courseResults = JsonConvert.DeserializeObject<ResultDto<CourseDto>>(CourseHelper.FromPost($"{apiUrl}/studentstudio/ajax-course-list", header, $"type=studying&courseType=0&getschoolcode={schoolcode}&studyYear=&studyTerm=&courseName="));
-
-            if (courseResults.Code != 1) return courseList;
-
-            foreach (var course in courseResults.List)
+            try
             {
-                //章
-                var designResult = JsonConvert.DeserializeObject<ResultDto<DesignDto>>(CourseHelper.FromPost($"{apiUrl}/study/design/design", header, $"courseOpenId={course.CourseOpenId}&schoolCode={schoolcode}&icon=video"));
+                var resultJson = CourseHelper.FromPost($"{apiUrl}/studentstudio/ajax-course-list", header, $"type=studying&courseType=0&getschoolcode={schoolcode}&studyYear=&studyTerm=&courseName=");
+                var courseResults = JsonConvert.DeserializeObject<ResultDto<CourseDto>>(resultJson);
 
-                if (designResult.Code == 1)
+                if (courseResults.Code != 1) return courseList;
+
+                foreach (var course in courseResults.List)
                 {
-                    continue;
+                    //章
+                    var designResult = JsonConvert.DeserializeObject<ResultDto<DesignDto>>(CourseHelper.FromPost($"{apiUrl}/study/design/design", header, $"courseOpenId={course.CourseOpenId}&schoolCode={schoolcode}&icon=video"));
+
+                    if (designResult.Code != 1)
+                    {
+                        continue;
+                    }
+
+                    course.CourseList=designResult.List;
+                    course.Student=student;
+
+                    courseList.Add(course);
                 }
-
-                course.CourseList=designResult.List;
-                course.Student=student;
             }
-
+            catch (Exception ex)
+            {
+                log.Error($"GetCourseInfoList：{ex.Message}");
+                log.Error($"GetCourseInfoList：{ex}");
+            }
             return courseList;
         }
 
@@ -226,14 +233,7 @@ namespace Suretom.Client.Data
         /// <returns></returns>
         public void GetCourseInfo()
         {
-            var apiUrl = "https://main.ahjxjy.cn/";
-            var aseKey = "342422199608057015";
-            var pass = "057015";
-
-            var key = UtilityHelper.MD5_Encrypt($"{pass}zmzrazilo7no32zysvn0ug").ToUpper();
-            var info = CourseHelper.AesEncrypt(aseKey, key);
-
-            var cookie = CourseHelper.FromPost($"{apiUrl}api/login/newLogin", $"userName={Uri.EscapeDataString(info) }&passWord={key}&userType=1", Encoding.UTF8);
+            var cookie = CourseHelper.FromPost($"{apiUrl}api/login/newLogin", $"userName={Uri.EscapeDataString(CourseHelper.AesEncrypt(idCard, key)) }&passWord={UtilityHelper.MD5_Encrypt($"{passWord}zmzrazilo7no32zysvn0ug").ToUpper()}&userType=1", Encoding.UTF8);
 
             var header = new Dictionary<string, string>()
             {

@@ -17,7 +17,7 @@ namespace Suretom.Client.Entity
         /// <returns></returns>
         public int CompareTo(CourseDto courseDto)
         {
-            return this.Completed.CompareTo(courseDto.Completed);
+            return this.Completed.CompareTo(courseDto.Id);
         }
 
         /// <summary>

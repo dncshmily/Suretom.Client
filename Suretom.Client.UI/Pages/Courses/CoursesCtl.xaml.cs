@@ -21,6 +21,7 @@ using System.Threading;
 using System.Windows.Data;
 using System.Globalization;
 using System.Windows.Threading;
+using System.ComponentModel;
 
 /// <summary>
 ///
@@ -36,11 +37,6 @@ namespace Suretom.Client.UI.Pages.Courses
         ///
         /// </summary>
         private NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
-
-        /// <summary>
-        ///
-        /// </summary>
-        private ObservableCollection<BatchImportProcessInfo> ez_processInfoList = new ObservableCollection<BatchImportProcessInfo>();
 
         /// <summary>
         ///
@@ -68,29 +64,44 @@ namespace Suretom.Client.UI.Pages.Courses
         private StudentDto ez_studentInfo = new StudentDto();
 
         /// <summary>
+        ///
+        /// </summary>
+        private ObservableCollection<BatchImportProcessInfo> ez_processInfoList = new ObservableCollection<BatchImportProcessInfo>();
+
+        /// <summary>
+        ///学生列表
+        /// </summary>
+        private ObservableCollection<Student> ez_StudentList = new ObservableCollection<Student>();
+
+        /// <summary>
         ///当前学生课程信息
         /// </summary>
         private ObservableCollection<CourseDto> ez_coursesList = new ObservableCollection<CourseDto>();
 
         /// <summary>
-        /// 学习中的课程
+        ///当前学生-已完成课程信息
         /// </summary>
-        private ObservableCollection<CoursesInfo> do_coursesList = new ObservableCollection<CoursesInfo>();
+        private ObservableCollection<CourseDto> ez_CompletedCoursesList = new ObservableCollection<CourseDto>();
 
         /// <summary>
-        ///
+        ///当前学生-未完成课程信息
         /// </summary>
-        private ObservableCollection<CourseDto> ez_courseDtoList = new ObservableCollection<CourseDto>();
+        private ObservableCollection<CourseDto> ez_UndoneCoursesList = new ObservableCollection<CourseDto>();
+
+        /// <summary>
+        /// 当前学生-学习中的课程
+        /// </summary>
+        private ObservableCollection<CourseDto> do_CoursesList = new ObservableCollection<CourseDto>();
+
+        /// <summary>
+        /// 学习中的课程
+        /// </summary>
+        private ObservableCollection<CourseDto> do_AllCoursesList = new ObservableCollection<CourseDto>();
 
         /// <summary>
         /// 声明CancellationTokenSource对象
         /// </summary>
         private static CancellationTokenSource tokenSource = new CancellationTokenSource();
-
-        /// <summary>
-        ///
-        /// </summary>
-        private string strInfo = string.Empty;
 
         /// <summary>
         ///
@@ -105,16 +116,30 @@ namespace Suretom.Client.UI.Pages.Courses
         /// <summary>
         ///
         /// </summary>
+        private string strInfo = string.Empty;
+
+        /// <summary>
+        ///
+        /// </summary>
         public CoursesCtl()
         {
             InitializeComponent();
 
+            //
             userService = GlobalContext.Resolve<IUserService>();
+            //
             studentService = GlobalContext.Resolve<IStudentService>();
+            //日志信息
             dgProcessInfo.DataContext = ez_processInfoList;
+            //未完成课程
+            dgCourseInfo.DataContext = ez_UndoneCoursesList;
+            //已完成课程
+            dgFinishCourseInfo.DataContext =ez_CompletedCoursesList;
+            //学习课程列表
+            dgCourseList.DataContext = do_CoursesList;
+            //
+            dgStudents.DataContext = ez_StudentList;
         }
-
-        #region MyRegion
 
         /// <summary>
         ///
@@ -125,7 +150,9 @@ namespace Suretom.Client.UI.Pages.Courses
         {
             try
             {
-                FillTreeView(GlobalContext.UserInfo.studentInfos);
+                //FillTreeView(GlobalContext.UserInfo.studentInfos);
+
+                DataBindStudentList();
             }
             catch (Exception ex)
             {
@@ -134,306 +161,62 @@ namespace Suretom.Client.UI.Pages.Courses
             }
         }
 
+        #region 事件
+
         /// <summary>
         ///
         /// </summary>
-        /// <param name="studyType"></param>
-        /// <returns></returns>
-        public string StudyTypeConverter(int studyType)
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DataGrid_LoadingRow(object sender, DataGridRowEventArgs e)
         {
-            switch (studyType)
+            e.Row.Header = e.Row.GetIndex() + 1;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DataGrid_MouseUpClick(object sender, MouseButtonEventArgs e)
+        {
+            var student = ((System.Windows.Controls.DataGrid)e.Source).CurrentItem as Student;
+
+            if (student != null)
             {
-                case 0:
-                    return LearnTypeEnum.本科.ToString();
-
-                    break;
-
-                case 1:
-                    return LearnTypeEnum.函授.ToString();
-
-                    break;
-
-                case 2:
-                    return LearnTypeEnum.成教.ToString();
-                    break;
-
-                default:
-                    return LearnTypeEnum.其它.ToString();
-
-                    break;
+                DataBindStudentCourses(student);
             }
         }
 
         /// <summary>
         ///
         /// </summary>
-        /// <param name="learnTypeEnum"></param>
-        /// <returns></returns>
-        public int LearnTypeConverter(string learnType)
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnDropDownClosed_CmbSemester(object sender, EventArgs e)
         {
-            switch (learnType)
+            if (CmbSchool.IsDropDownOpen == true)
             {
-                case "本科":
-                    return LearnTypeEnum.本科.GetHashCode();
-                    break;
-
-                case "函授":
-                    return LearnTypeEnum.函授.GetHashCode();
-
-                    break;
-
-                case "成教":
-                    return LearnTypeEnum.成教.GetHashCode();
-                    break;
-
-                default:
-                    return LearnTypeEnum.其它.GetHashCode();
-                    break;
+                var s = CmbSemester.Text;
             }
         }
 
         /// <summary>
-        ///
+        /// CmbSchool
         /// </summary>
-        /// <param name="student"></param>
-        public void StudentDataBind(Student student)
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void OnDropDownClosed_CmbSchool(object sender, EventArgs e)
         {
-            ez_student = student;
-
-            strInfo = $"{ez_student.SchoolName}-{ez_student.StudentName}-{ez_student.IdCard}";
-
-            labNane.Content = ez_student.StudentName;
-            labIdCard.Content = ez_student.IdCard;
-            labNo.Content = ez_student.StudyCode;
-            labClass.Content = ez_student.MoviePwd;
-            labIdType.Content = StudyTypeConverter(ez_student.StudyType);
-
-            //课程信息
-            ez_coursesList = new CoursesData(ez_student).GetCourseInfoList();
-
-            //未完成的课程
-            var coursesList = ez_coursesList.Where(f => f.Schedule < 100).ToList();
-
-            coursesList.ForEach(course =>
+            if (CmbSchool.IsDropDownOpen == false)
             {
-                if (!(do_coursesList.Count(f => f.student.IdCard == ez_student.IdCard && f.course.CourseOpenId == course.CourseOpenId)==0))
-                {
-                    do_coursesList.Add(new CoursesInfo()
-                    {
-                        student = ez_student,
-                        course = course
-                    });
-                }
-            });
-
-            if (ez_coursesList != null && ez_coursesList.Count > 0)
-            {
-                //未完成课程
-                dgCourseInfo.DataContext = ez_coursesList.Where(f => f.Schedule < 100).ToList();
-
-                //已完成课程
-                dgFinishCourseInfo.DataContext = ez_coursesList.Where(f => f.Schedule == 100).ToList();
-
-                //课程列表
-                dgCourseList.DataContext = ez_coursesList;
-
-                int i = 0;
-
-                ez_coursesList.ToSort();
-
-                //ez_coursesList = (ObservableCollection)ez_coursesList.OrderBy(f => f.Completed);
-
-                //ez_coursesList.ForEach(f =>
-                //{
-                //    f.ExpiredTime = UtilityHelper.ToConvertTime(f.ExpiredTime).ToString();
-
-                //    i++;
-                //    f.Id = i;
-                //});
-
-                dgStudents.DataContext = ez_coursesList;
+                DataBindStudentList(string.IsNullOrEmpty(CmbSchool.Text) ? "" : CmbSchool.Text);
             }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="dgrStr"></param>
-        /// <returns></returns>
-        public async Task<bool> SigneCourseStart(CoursesInfo info)
-        {
-            try
-            {
-                var idx = do_coursesList.IndexOf(info);
-
-                AddProcessInfo($"{strInfo}-开始学习{info.course.CourseName}");
-
-                await Task.Run(() =>
-                {
-                    AddProcessInfo($"{strInfo}-学习中...");
-
-                    OperationBtnEnable(false);
-
-                    do_coursesList[idx].course.Status = 1;
-
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        labFinish.Content = do_coursesList.Count(f => f.course.Status == 2);
-                        pbProcess.Value = do_coursesList.Count(f => f.course.Status == 2);
-                    });
-
-                    //开始学习
-                    new CoursesData(info.student).SingeSyudentStart(info.course);
-                }, token).ContinueWith(t =>
-                {
-                    try
-                    {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            do_coursesList[idx].course.Status = 2;
-                            OperationBtnEnable(true);
-                        });
-                    }
-                    catch (Exception inEx)
-                    {
-                        log.Error(inEx);
-                    }
-                });
-
-                AddProcessInfo($"{strInfo}学习结束");
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                AddProcessError($"{strInfo}{ex.Message}");
-                return false;
-            }
-            finally
-            {
-                OperationBtnEnable(true);
-            }
-            return true;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="dgrStr"></param>
-        /// <returns></returns>
-        public async Task<bool> StopMyTask()
-        {
-            try
-            {
-                AddProcessError($"{strInfo}停止学习");
-
-                tokenSource.Cancel();
-                if (ez_timer != null)
-                {
-                    ez_timer.Stop();
-                }
-
-                this.Dispatcher.Invoke(() =>
-                {
-                    labFinish.Content = 0;
-                    labTotal.Content = 0;
-                    ez_coursesList = new ObservableCollection<CourseDto>();
-                    do_coursesList =new ObservableCollection<CoursesInfo>();
-                });
-
-                OperationBtnEnable(true);
-
-                AddProcessError($"{strInfo}学习结束");
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                AddProcessError($"{ex.Message}");
-                return false;
-            }
-            finally
-            {
-                OperationBtnEnable(true);
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// 当前的处理状态
-        /// </summary>
-        public BatchImportStatus CurrentStatus
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public event EventHandler<StatusChangeEventArgs> StatusChangeEvent;
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="args"></param>
-        private void OnStatusChangeEvent(StatusChangeEventArgs args)
-        {
-            this.StatusChangeEvent?.Invoke(this, args);
         }
 
         #endregion
 
         #region 按钮
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void Timer1_Tick(object sender, EventArgs e)
-        {
-            var doCoursesList = do_coursesList.Where(f => f.course.Status == 0).ToList();
-
-            labTitle.Visibility = Visibility.Visible;
-            labTotal.Content = do_coursesList.Count;
-            pbProcess.Maximum = do_coursesList.Count;
-
-            if (doCoursesList.Count > 0)
-            {
-                try
-                {
-                    foreach (var course in doCoursesList)
-                    {
-                        await SigneCourseStart(course);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    log.Error(ex);
-                    MessageBox.Show(ex.Message);
-                }
-                finally
-                {
-                    this.Sp1.IsEnabled = true;
-                }
-            }
-            else
-            {
-                OperationBtnEnable(true);
-
-                this.Dispatcher.Invoke(() =>
-                {
-                });
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void Timer2_Tick(object sender, EventArgs e)
-        {
-            AddProcessInfo($"数据初始化...");
-        }
 
         /// <summary>
         ///添加学员
@@ -592,7 +375,7 @@ namespace Suretom.Client.UI.Pages.Courses
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void BtnAutoStart_Click(object sender, RoutedEventArgs e)
+        private void BtnAutoStart_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -605,7 +388,7 @@ namespace Suretom.Client.UI.Pages.Courses
                         MessageBox.Show("初始化失败");
                         return;
                     }
-                    if (do_coursesList.Count(f => f.course.Status == 0) > 0)
+                    if (do_AllCoursesList.Count(f => f.Status == 0) > 0)
                     {
                         if (!_isStopDeal)
                         {
@@ -675,6 +458,76 @@ namespace Suretom.Client.UI.Pages.Courses
         }
 
         /// <summary>
+        ///学员管理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+
+        private void BtnStudentManageClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        //DoWork
+                    }
+                    catch (Exception inEx)
+                    {
+                        log.Error(inEx);
+                        MessageBox.Show(inEx.Message);
+                    }
+                }).ContinueWith(t =>
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                    });
+                });
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
+        ///个人中心
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+
+        private void BtnPersonCenterClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        //DoWork
+                    }
+                    catch (Exception inEx)
+                    {
+                        log.Error(inEx);
+                        MessageBox.Show(inEx.Message);
+                    }
+                }).ContinueWith(t =>
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                    });
+                });
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// 开始
         /// </summary>
         /// <param name="sender"></param>
@@ -683,24 +536,31 @@ namespace Suretom.Client.UI.Pages.Courses
         {
             try
             {
-                var button = sender as Button;
-                var wordItem = button.Tag as CourseDto;
-                if (wordItem != null)
+                var result = MessageBox.Show("是否确定开始学习？", "提示", MessageBoxButton.OKCancel);
+
+                if (CurrentStatus == BatchImportStatus.初始化失败)
                 {
-                    if (!wordItem.IsStartSuccess)
-                    {
-                        MessageBox.Show("111");
+                    MessageBox.Show("初始化失败");
+                    return;
+                }
+                var button = sender as Button;
+                var course = button.Tag as CourseDto;
 
-                        return;
-                    }
+                //ez_timer = new DispatcherTimer();
+                //ez_timer.Interval = TimeSpan.FromMinutes(0.1);
+                //ez_timer.Tick += Timer2_Tick;
+                //ez_timer.Start();
 
-                    button.IsEnabled = false;
+                if (course != null)
+                {
+                    button.IsEnabled=false;
 
                     Task.Run(() =>
                     {
                         try
                         {
                             //
+                            StudyCourses(course);
                         }
                         catch (Exception inEx)
                         {
@@ -715,11 +575,6 @@ namespace Suretom.Client.UI.Pages.Courses
                         });
                     });
                 }
-
-                ez_timer = new DispatcherTimer();
-                ez_timer.Interval = TimeSpan.FromMinutes(0.1);
-                ez_timer.Tick += Timer2_Tick;
-                ez_timer.Start();
             }
             catch (Exception ex)
             {
@@ -738,16 +593,10 @@ namespace Suretom.Client.UI.Pages.Courses
             try
             {
                 var button = sender as Button;
-                var wordItem = button.Tag as CourseDto;
-                if (wordItem != null)
+                var course = button.Tag as CourseDto;
+
+                if (course != null)
                 {
-                    if (!wordItem.IsPauseSuccess)
-                    {
-                        MessageBox.Show("切图失败，不能上传");
-
-                        return;
-                    }
-
                     button.IsEnabled = false;
 
                     Task.Run(() =>
@@ -782,7 +631,7 @@ namespace Suretom.Client.UI.Pages.Courses
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void Image_OnMouseDown(object sender, MouseButtonEventArgs e)
+        private void Image_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
             var name = ((FrameworkElement)sender).Name;
 
@@ -797,11 +646,11 @@ namespace Suretom.Client.UI.Pages.Courses
                 CurrentStatus = BatchImportStatus.手动处理;
                 OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
 
-                //var doCourses = do_coursesList.FirstOrDefault(f => f.course.Status==0);
+                //var doCourses = do_CoursesList.FirstOrDefault(f => f.course.Status==0);
 
                 //if (doCourses != null)
                 //{
-                //    var result = await SigneCourseStart(doCourses);
+                //    var result = await SigneCourseStudy(doCourses);
 
                 //    if (result)
                 //    {
@@ -818,6 +667,405 @@ namespace Suretom.Client.UI.Pages.Courses
                 //MessageBox.Show("双击");
                 e.Handled = true;
             }
+        }
+
+        #endregion 按钮
+
+        #region Timer
+
+        /// <summary>
+        ///Timer
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Timer1_Tick(object sender, EventArgs e)
+        {
+            var doCoursesList = do_AllCoursesList.Where(f => f.Status == 0).ToList();
+
+            if (doCoursesList.Count > 0)
+            {
+                try
+                {
+                    foreach (var course in doCoursesList)
+                    {
+                        await SigneCourseStudy(course);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex);
+                    MessageBox.Show(ex.Message);
+                }
+                finally
+                {
+                    this.Sp1.IsEnabled = true;
+                }
+            }
+            else
+            {
+                OperationBtnEnable(true);
+
+                this.Dispatcher.Invoke(() =>
+                {
+                });
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Timer2_Tick(object sender, EventArgs e)
+        {
+            var doCoursesList = do_AllCoursesList.Where(f => f.Status == 0).ToList();
+
+            if (doCoursesList.Count > 0)
+            {
+                try
+                {
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        doCoursesList.ForEach(f =>
+                        {
+                            f.Schedule+=1;
+                        });
+
+                        do_AllCoursesList.Clear();
+
+                        doCoursesList.ForEach((f) =>
+                        {
+                            do_AllCoursesList.Add(f);
+                        });
+                    });
+                }
+                catch (Exception ex)
+                {
+                    log.Error(ex);
+                    MessageBox.Show(ex.Message);
+                }
+                finally
+                {
+                    this.Sp1.IsEnabled = true;
+                }
+            }
+            else
+            {
+                OperationBtnEnable(true);
+
+                this.Dispatcher.Invoke(() =>
+                {
+                });
+            }
+        }
+
+        #endregion
+
+        #region DoWork
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="student"></param>
+        public void DataBindStudentList(string schoolName = "")
+        {
+            var userInfos = GlobalContext.UserInfo.studentInfos;
+
+            var cmbSchoolDic = new Dictionary<int, string>();
+            var cmbSemesterDic = new Dictionary<int, string>();
+
+            int selectIndex = 0;
+
+            if (!string.IsNullOrEmpty(schoolName))
+            {
+                selectIndex = CmbSchool.SelectedIndex;
+                userInfos= userInfos.Where(f => f.SchoolName==schoolName).ToList();
+            }
+
+            ez_StudentList.Clear();
+
+            //CmbSemester.Items.Clear();
+
+            for (int i = 0; i < userInfos.Count; i++)
+            {
+                var userInfo = userInfos[i];
+
+                userInfo.List.ForEach(s =>
+                {
+                    ez_StudentList.Add(s);
+                });
+
+                if (!cmbSchoolDic.ContainsValue(schoolName))
+                {
+                    cmbSchoolDic.Add(i, userInfo.SchoolName);
+                }
+            }
+
+            CmbSchool.SelectedValuePath = "Key";
+            CmbSchool.DisplayMemberPath = "Value";
+            CmbSchool.ItemsSource = cmbSchoolDic;
+            CmbSchool.SelectedIndex = selectIndex;
+
+            CmbSemester.SelectedValuePath = "Key";
+            CmbSemester.DisplayMemberPath = "Value";
+            CmbSemester.ItemsSource = cmbSemesterDic;
+            CmbSemester.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="student"></param>
+        public void DataBindStudentCourses(Student student)
+        {
+            ez_student = student;
+
+            strInfo = $"{ez_student.SchoolName}-{ez_student.StudentName}-{ez_student.IdCard}";
+
+            labNane.Content = ez_student.StudentName;
+            labIdCard.Content = ez_student.IdCard;
+            labNo.Content = ez_student.StudyCode;
+            labClass.Content = ez_student.MoviePwd;
+            labIdType.Content = StudyTypeConverter(ez_student.StudyType);
+
+            //课程信息
+            ez_coursesList = new CoursesData(ez_student).GetCourseInfoList();
+
+            for (int i = 0; i < ez_coursesList.Count; i++)
+            {
+                var time = UtilityHelper.ToConvertTime(ez_coursesList[i].ExpiredTime).ToString();
+                ez_coursesList[i].ExpiredTime = time;
+                ez_coursesList[i].Id = i+1;
+            }
+
+            ObservableHelper.ObservableMySort(ez_coursesList, 1);
+
+            //未完成的课程
+            var coursesList = ez_coursesList.Where(f => f.Schedule < 100).ToList();
+
+            if (ez_coursesList != null && ez_coursesList.Count > 0)
+            {
+                //do_CoursesList.Clear();
+
+                //coursesList.ForEach(course =>
+                //{
+                //    do_CoursesList.Add(course);
+
+                //    if (do_AllCoursesList.Count(f => f.Student.IdCard == ez_student.IdCard && f.CourseOpenId == course.CourseOpenId)==0)
+                //    {
+                //        do_AllCoursesList.Add(course);
+                //    }
+                //});
+
+                ez_UndoneCoursesList.Clear();
+                ez_CompletedCoursesList.Clear();
+
+                foreach (var courses in ez_coursesList)
+                {
+                    if (courses.Schedule < 100)
+                    {
+                        //未完成课程
+                        ez_UndoneCoursesList.Add(courses);
+                    }
+                    else
+                    {
+                        //已完成课程
+                        ez_CompletedCoursesList.Add(courses);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="dgrStr"></param>
+        /// <returns></returns>
+        public async Task<bool> SigneCourseStudy(CourseDto course)
+        {
+            try
+            {
+                var idx = do_AllCoursesList.IndexOf(course);
+
+                AddProcessInfo($"{strInfo}-开始学习{course.CourseName}");
+
+                await Task.Run(() =>
+                {
+                    AddProcessInfo($"{strInfo}-学习中...");
+
+                    OperationBtnEnable(false);
+
+                    this.Dispatcher.Invoke(() =>
+                    {
+                        do_AllCoursesList[idx].Status = 1;
+                    });
+
+                    //开始学习
+                    new CoursesData(course.Student).SingeSyudentStart(course);
+                }, token).ContinueWith(t =>
+                {
+                    try
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            do_AllCoursesList[idx].Status = 2;
+                            OperationBtnEnable(true);
+                        });
+                    }
+                    catch (Exception inEx)
+                    {
+                        log.Error(inEx);
+                    }
+                });
+
+                AddProcessInfo($"{strInfo}学习结束");
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                AddProcessError($"{strInfo}{ex.Message}");
+                return false;
+            }
+            finally
+            {
+                OperationBtnEnable(true);
+            }
+            return true;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="dgrStr"></param>
+        /// <returns></returns>
+        public async Task<bool> StopMyTask()
+        {
+            try
+            {
+                AddProcessError($"{strInfo}停止学习");
+
+                tokenSource.Cancel();
+                if (ez_timer != null)
+                {
+                    ez_timer.Stop();
+                }
+
+                this.Dispatcher.Invoke(() =>
+                {
+                    ez_coursesList.Clear();
+                    do_AllCoursesList.Clear();
+                });
+
+                OperationBtnEnable(true);
+
+                AddProcessError($"{strInfo}学习结束");
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                AddProcessError($"{ex.Message}");
+                return false;
+            }
+            finally
+            {
+                OperationBtnEnable(true);
+            }
+            return true;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public async void StudyCourses(CourseDto course)
+        {
+            try
+            {
+                await SigneCourseStudy(course);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                this.Dispatcher.Invoke(() =>
+                {
+                    this.Sp1.IsEnabled = true;
+                });
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="studyType"></param>
+        /// <returns></returns>
+        public string StudyTypeConverter(int studyType)
+        {
+            switch (studyType)
+            {
+                case 0:
+                    return LearnTypeEnum.本科.ToString();
+
+                case 1:
+                    return LearnTypeEnum.函授.ToString();
+
+                case 2:
+                    return LearnTypeEnum.成教.ToString();
+
+                default:
+                    return LearnTypeEnum.其它.ToString();
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="learnTypeEnum"></param>
+        /// <returns></returns>
+        public int LearnTypeConverter(string learnType)
+        {
+            switch (learnType)
+            {
+                case "本科":
+                    return LearnTypeEnum.本科.GetHashCode();
+
+                case "函授":
+                    return LearnTypeEnum.函授.GetHashCode();
+
+                case "成教":
+                    return LearnTypeEnum.成教.GetHashCode();
+
+                default:
+                    return LearnTypeEnum.其它.GetHashCode();
+            }
+        }
+
+        #endregion
+
+        #region 更新状态
+
+        /// <summary>
+        /// 当前的处理状态
+        /// </summary>
+        public BatchImportStatus CurrentStatus
+        {
+            get; private set;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public event EventHandler<StatusChangeEventArgs> StatusChangeEvent;
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="args"></param>
+        private void OnStatusChangeEvent(StatusChangeEventArgs args)
+        {
+            this.StatusChangeEvent?.Invoke(this, args);
         }
 
         /// <summary>
@@ -841,10 +1089,6 @@ namespace Suretom.Client.UI.Pages.Courses
                 MessageBox.Show(ex.Message);
             }
         }
-
-        #endregion 按钮
-
-        #region 更新状态
 
         /// <summary>
         ///
@@ -931,7 +1175,7 @@ namespace Suretom.Client.UI.Pages.Courses
 
             try
             {
-                StudentDataBind(student);
+                DataBindStudentCourses(student);
 
                 this.Cursor = Cursors.Wait;
                 this.ForceCursor = true;
@@ -1114,10 +1358,6 @@ namespace Suretom.Client.UI.Pages.Courses
 
             studentInfo.List.ForEach(student =>
             {
-                //if (studentCount == 0)
-                //{
-                //    StudentDataBind(student);
-                //}
                 TextBlock itemText = new TextBlock();
                 itemText.Text = $"{student.StudentName}";
                 itemText.Margin = new Thickness(3, 0, 0, 0);
@@ -1162,43 +1402,5 @@ namespace Suretom.Client.UI.Pages.Courses
         }
 
         #endregion
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    public class BatchImportProcessInfoConverter : IValueConverter
-    {
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            var infoType = (BatchImportProcessInfoType)value;
-            switch (infoType)
-            {
-                case BatchImportProcessInfoType.信息:
-                    return Brushes.Black;
-
-                case BatchImportProcessInfoType.警告:
-                    return Brushes.Green;
-
-                case BatchImportProcessInfoType.错误:
-                    return Brushes.Red;
-
-                default:
-                    return Brushes.Black;
-            }
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return null;
-        }
     }
 }

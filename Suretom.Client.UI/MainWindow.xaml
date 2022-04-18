@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="皖校通"
         IsTitleVisible="True"
-        ContentSource="/Pages/Demo/DemoWin.xaml"
+        ContentSource="/Pages/Courses/CoursesCtl.xaml"
         Height="450"
         Width="800"
         Closing="ModernWindow_Closing">

@@ -18,54 +18,37 @@
             </Grid.RowDefinitions>
             <Grid  Grid.Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="300" />
-                    <ColumnDefinition Width="300" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="300" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <GroupBox  Grid.Column="0" Margin="5 5 5 5"  Header="单步处理" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox  Grid.Column="0" Margin="5 5 5 5"  Header="" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                     <GroupBox.BorderBrush>
                         <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
                     </GroupBox.BorderBrush>
                     <Grid>
-                        <StackPanel x:Name="Sp1"  Orientation="Horizontal" Margin="5">
+                        <StackPanel x:Name="Sp1"  Orientation="Horizontal" Margin="5 5 5 5">
                             <Button x:Name="BtnAddWords" Content="添加学员" Margin="20,0,0,0"  Style="{DynamicResource btn-primary}"   Click="BtnAddStudent_Click" />
-                            <Button x:Name="BtnStartDeal" Content="批量导入" Margin="20,0,0,0"   Style="{DynamicResource btn-primary}"  Click="BtnBatchImport_Click" />
+                            <Button x:Name="BtnStartDeal" Content="批量导入" Margin="20,0,0,0"   Style="{DynamicResource btn-warning}"  Click="BtnBatchImport_Click" />
+                            <Button x:Name="BtnAuto1"  Margin="20,0,0,0"  Content="学员管理" Style="{DynamicResource btn-info}"  Click="BtnStudentManageClick" />
+                            <Button x:Name="BtnAuto2"  Margin="20,0,0,0"  Content="个人中心" Style="{DynamicResource btn-success}"  Click="BtnPersonCenterClick" />
+                            <Button x:Name="BtnAutoStart"  Margin="20,0,20,0"  Content="智能刷课" Style="{ DynamicResource btn-danger}"  Click="BtnAutoStart_Click" />
                         </StackPanel>
                     </Grid>
                 </GroupBox>
-                <GroupBox Grid.Column="1" Margin="5 5 5 5"   Header="批量处理" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox Grid.Column="1" Margin="5 5 5 5" Visibility="Hidden"   Header="批量处理" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                     <GroupBox.BorderBrush>
                         <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
                     </GroupBox.BorderBrush>
                     <StackPanel x:Name="Sp2" Orientation="Horizontal"  Grid.Column="0">
-                        <Button x:Name="BtnAutoStart"  Margin="20,0,0,0"  Content="开始学习" Style="{DynamicResource btn-primary}"  Click="BtnAutoStart_Click" />
-                        <Button x:Name="BtnAutoStop"  Margin="20,0,0,0"  Content="停止学习" Style="{DynamicResource btn-danger}"  Click="BtnAutoStopClick" />
-                    </StackPanel>
-                </GroupBox>
-                <GroupBox Grid.Column="2" Margin="5 5 5 5" Visibility="Hidden"  Header="正在学习" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
-                    <GroupBox.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
-                    </GroupBox.BorderBrush>
-                    <StackPanel x:Name="Sp3" Orientation="Horizontal"  Grid.Column="0">
-                    </StackPanel>
-                </GroupBox>
-                <GroupBox Grid.Column="3" Margin="5 5 5 5"   Header="学习进度" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
-                    <GroupBox.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
-                    </GroupBox.BorderBrush>
-                    <StackPanel x:Name="Sp4" Orientation="Horizontal"  Grid.Column="1">
-                        <ProgressBar x:Name="pbProcess" Margin="5" Minimum="0"  Maximum="100"   Width="220"  Height="25" Value="0" />
-                        <Label  x:Name="labFinish"  FontSize="15" Content="0"  Margin="5 0 0 0" VerticalContentAlignment="Center" />
-                        <Label  x:Name="labTitle"  Content="/" FontSize="15"     Margin="5 0 0 0" VerticalContentAlignment="Center" />
-                        <Label  x:Name="labTotal" FontSize="15"  Content="0"  Margin="5 0 0 0" VerticalContentAlignment="Center" />
+                        <Button x:Name="BtnAutoStop" Visibility="Hidden"  Margin="20,0,0,0"  Content="停止学习" Style="{DynamicResource btn-danger}"  Click="BtnAutoStopClick" />
                     </StackPanel>
                 </GroupBox>
             </Grid>
 
             <Grid Grid.Row="1" Margin="5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="220" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <GroupBox x:Name="gb1" Header="1"  Margin="0 0 5 0"   Grid.Column="0"  Padding="0,2,0,2"  Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
@@ -76,37 +59,31 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <TabControl    Margin="5" Padding="0">
-                            <TabItem Header="tab1">
-                                <Grid Background="#FFE5E5E5">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="35" />
-                                        <RowDefinition Height="35" />
-                                        <RowDefinition Height="*" />
-                                    </Grid.RowDefinitions>
-                                    <StackPanel x:Name="SpSchool" Grid.Row="0" Orientation="Horizontal"  Grid.Column="1">
-                                        <ComboBox x:Name="CmbSchool"   Width="150"  Height="30" Margin="10,0" />
-                                    </StackPanel>
-                                    <StackPanel x:Name="SpSemester" Grid.Row="1" Orientation="Horizontal"  Grid.Column="1">
-                                        <ComboBox x:Name="CmbSemester"   Width="150" Height="30" Margin="10,0" />
-                                    </StackPanel>
-                                    <DataGrid x:Name="dgStudents" Grid.Row="2"   IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}">
-                                        <DataGrid.Columns>
-                                            <DataGridTextColumn   Binding="{Binding Id}"  Header="序号" ElementStyle="{StaticResource DataGridTextCenter}" Width="Auto" />
-                                            <DataGridTextColumn Binding="{Binding DisplayName}" Header="姓名" ElementStyle="{StaticResource DataGridTextCenter}" Width="Auto" />
-                                        </DataGrid.Columns>
-                                    </DataGrid>
-                                </Grid>
-                            </TabItem>
-                            <TabItem Header="tab2">
-                                <ScrollViewer  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                                    <TreeView x:Name="treeView" Height="Auto"  Grid.Column="0" BorderThickness="0" HorizontalAlignment="Stretch" IsTextSearchEnabled="True"
+                        <Grid Background="#FFE5E5E5">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <StackPanel x:Name="SpSchool" Grid.Row="0" Orientation="Horizontal"  Grid.Column="1">
+                                <ComboBox x:Name="CmbSchool"  DropDownClosed="OnDropDownClosed_CmbSchool"  Width="190"  Height="30" Margin="5" />
+                            </StackPanel>
+                            <StackPanel x:Name="SpSemester"   Grid.Row="1" Orientation="Horizontal"  Grid.Column="1" Margin="5">
+                                <ComboBox x:Name="CmbSemester"   DropDownClosed="OnDropDownClosed_CmbSemester"   Width="190" Height="30" />
+                            </StackPanel>
+                            <DataGrid x:Name="dgStudents" Grid.Row="2"   IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" DataGridRow.MouseUp="DataGrid_MouseUpClick" LoadingRow="DataGrid_LoadingRow"  ItemsSource="{Binding}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn   Header="序号" Width="80" Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGridRow}},Path=Header}" />
+                                    <DataGridTextColumn   Binding="{Binding Id}" Visibility="Hidden"  Header="序号" ElementStyle="{StaticResource DataGridTextCenter}" Width="Auto" />
+                                    <DataGridTextColumn Binding="{Binding StudentName}" Header="姓名" ElementStyle="{StaticResource DataGridTextCenter}" Width="Auto" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+
+                        <TreeView x:Name="treeView" Visibility="Hidden" Height="Auto"  Grid.Column="0" BorderThickness="0" HorizontalAlignment="Stretch" IsTextSearchEnabled="True"
                                           TreeViewItem.Collapsed="OnTreeViewItemCollapsed" TreeViewItem.Expanded="OnTreeViewItemExpanded"
                                           TreeViewItem.Selected="OnTreeViewItemSelected" TreeViewItem.Unselected="OnTreeViewItemUnselected">
-                                    </TreeView>
-                                </ScrollViewer>
-                            </TabItem>
-                        </TabControl>
+                        </TreeView>
                     </Grid>
                 </GroupBox>
 
@@ -175,15 +152,30 @@
                         <TabControl  Grid.Row="1"  Margin="5" Padding="0">
                             <TabItem Header="未结束课程">
                                 <Grid Background="#FFE5E5E5">
-                                    <DataGrid x:Name="dgCourseInfo" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}" Height="Auto">
+                                    <DataGrid x:Name="dgCourseInfo"  IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}" Height="Auto">
                                         <DataGrid.Columns>
-                                            <DataGridTextColumn  Binding="{Binding CourseName}" Header="课程名称" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
-                                            <DataGridTextColumn Binding="{Binding ExpiredTime}" Header="截止时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
-                                            <DataGridTextColumn Binding="{Binding ScheduleTxt}" Header="状态" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
-                                            <DataGridTemplateColumn Width="20*" Header="信息">
+                                            <DataGridTextColumn  Binding="{Binding CourseName}" Header="课程名称" ElementStyle="{StaticResource DataGridTextCenter}" Width="200" />
+                                            <DataGridTextColumn  Binding="{Binding StudyYear}" Header="学年" ElementStyle="{StaticResource DataGridTextCenter}" Width="150" />
+                                            <DataGridTextColumn  Binding="{Binding StudyTerm}" Header="季度" ElementStyle="{StaticResource DataGridTextCenter}" Width="150" />
+                                            <DataGridTextColumn  Binding="{Binding DisplayName}" Header="教师" ElementStyle="{StaticResource DataGridTextCenter}" Width="150" />
+                                            <DataGridTemplateColumn Header="进度"   Width="300">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
-                                                        <!--<TextBlock Text="{Binding Info}" VerticalAlignment="Center" Foreground="{Binding Schedule, Converter={StaticResource courseInfoTypeConverter}}" />-->
+                                                        <Grid>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <ProgressBar  Tag="{Binding}"  Minimum="0"  Maximum="100"   Width="150"  Height="20" Foreground="SkyBlue" Background="LightGray" Value="{Binding Schedule}" />
+                                                                <Label  x:Name="labFinish1"  FontSize="15" Content="{Binding Schedule}"  Margin="15 0 0 0" VerticalContentAlignment="Center" />
+                                                                <Label  x:Name="labTitle1"  Content="%" FontSize="15"     Margin="5 0 0 0" VerticalContentAlignment="Center" />
+                                                            </StackPanel>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>
+                                            <DataGridTextColumn Binding="{Binding ExpiredTime}" Header="截止时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="200" />
+                                            <DataGridTemplateColumn Width="150" Header="信息">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Button Content="添加刷课" Style="{DynamicResource btn-primary}" Tag="{Binding}" Visibility="{Binding IsCheckSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnItemStart_Click" Margin="15 0 0 0" />
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn>
@@ -195,33 +187,50 @@
                                 <Grid Background="#FFE5E5E5">
                                     <DataGrid x:Name="dgFinishCourseInfo"  IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}" Height="Auto">
                                         <DataGrid.Columns>
-                                            <DataGridTextColumn  Binding="{Binding CourseName}" Header="课程名称" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
-                                            <DataGridTextColumn Binding="{Binding ExpiredTime}" Header="截止时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
-                                            <DataGridTextColumn Binding="{Binding ScheduleTxt}" Header="状态" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
-                                            <DataGridTemplateColumn Width="20*" Header="信息">
+                                            <DataGridTextColumn  Binding="{Binding CourseName}" Header="课程名称" ElementStyle="{StaticResource DataGridTextCenter}" Width="200" />
+                                            <DataGridTextColumn  Binding="{Binding StudyYear}" Header="学年" ElementStyle="{StaticResource DataGridTextCenter}" Width="200" />
+                                            <DataGridTextColumn  Binding="{Binding StudyTerm}" Header="季度" ElementStyle="{StaticResource DataGridTextCenter}" Width="200" />
+                                            <DataGridTextColumn  Binding="{Binding DisplayName}" Header="教师" ElementStyle="{StaticResource DataGridTextCenter}" Width="200" />
+                                            <DataGridTemplateColumn Header="进度"   Width="*">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
-                                                        <!--<TextBlock Text="{Binding Info}" VerticalAlignment="Center" Foreground="{Binding Schedule, Converter={StaticResource courseInfoTypeConverter}}" />-->
+                                                        <Grid>
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <ProgressBar  Tag="{Binding}"  Minimum="0"  Maximum="100"   Width="150"  Height="20" Foreground="SkyBlue" Background="LightGray" Value="{Binding Schedule}" />
+                                                                <Label  x:Name="labFinish1"  FontSize="15" Content="{Binding Schedule}"  Margin="15 0 0 0" VerticalContentAlignment="Center" />
+                                                                <Label  x:Name="labTitle1"  Content="%" FontSize="15"     Margin="5 0 0 0" VerticalContentAlignment="Center" />
+                                                            </StackPanel>
+                                                        </Grid>
                                                     </DataTemplate>
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn>
+                                            <DataGridTextColumn Binding="{Binding ExpiredTime}" Header="截止时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="*" />
+                                            <!--<DataGridTemplateColumn Width="150" Header="信息">
+                                                <DataGridTemplateColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Button Content="添加刷课" Style="{DynamicResource btn-primary}" Tag="{Binding}" Visibility="{Binding IsCheckSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnItemStart_Click" Margin="15 0 0 0" />
+                                                    </DataTemplate>
+                                                </DataGridTemplateColumn.CellTemplate>
+                                            </DataGridTemplateColumn>-->
                                         </DataGrid.Columns>
                                     </DataGrid>
                                 </Grid>
                             </TabItem>
                         </TabControl>
 
+                     
                         <TabControl  Grid.Row="2"  Margin="5" Padding="0">
-                            <TabItem Header="课程学习">
+                            <TabItem Header="刷课信息">
                                 <Grid Background="#FFE5E5E5">
+                                
                                     <DataGrid x:Name="dgCourseList"   IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn   Binding="{Binding CourseName}"  Header="课程名称" ElementStyle="{StaticResource DataGridTextCenter}" Width="*" />
                                             <!--<DataGridTextColumn Binding="{Binding ExpiredTime}" Header="截止时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
                                             <DataGridTextColumn Binding="{Binding ScheduleTxt}" Header="状态" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />-->
-                                            <DataGridTemplateColumn Header="进度"   Width="*">
+                                            <DataGridTemplateColumn Header="进度"  Width="*">
                                                 <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
+                                                    <DataTemplate >
                                                         <Grid>
                                                             <StackPanel Orientation="Horizontal">
                                                                 <ProgressBar  Tag="{Binding}"  Minimum="0"  Maximum="100"   Width="150"  Height="20" Foreground="SkyBlue" Background="LightGray" Value="{Binding Schedule}" />
@@ -248,14 +257,13 @@
                                     </DataGrid>
                                 </Grid>
                             </TabItem>
-                            <TabItem Header="日志信息">
+                            <TabItem Header="操作日志">
                                 <Grid Background="#FFE5E5E5">
                                     <DataGrid x:Name="dgProcessInfo"   IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}">
                                         <DataGrid.Columns>
                                             <DataGridTextColumn Binding="{Binding Id}" Header="序号" ElementStyle="{StaticResource DataGridTextCenter}" Width="8*" />
                                             <DataGridTextColumn Binding="{Binding Type}" Header="类型" ElementStyle="{StaticResource DataGridTextCenter}" Width="8*" />
                                             <DataGridTextColumn Binding="{Binding CreateTime}" Header="时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="20*" />
-
                                             <DataGridTemplateColumn Width="90*" Header="信息">
                                                 <DataGridTemplateColumn.CellTemplate>
                                                     <DataTemplate>
