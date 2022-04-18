@@ -3,6 +3,7 @@ using Suretom.Client.Common;
 using Suretom.Client.Entity;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -17,7 +18,7 @@ using System.Web;
 
 namespace Suretom.Client.Data
 {
-    public class DemoData
+    public class CoursesData
     {
         private string apiUrl = string.Empty;
         private string idCard = string.Empty;
@@ -29,13 +30,15 @@ namespace Suretom.Client.Data
         private Dictionary<string, string> header;
         private NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
-        public DemoData()
+        private Student student = new Student();
+
+        public CoursesData()
         { }
 
         /// <summary>
         ///
         /// </summary>
-        public DemoData(Student student)
+        public CoursesData(Student student)
         {
             //idCard = "342422199608057015";
             //passWord = "057015";
@@ -48,6 +51,7 @@ namespace Suretom.Client.Data
             cookie = CourseHelper.FromPost($"{apiUrl}api/login/newLogin", $"userName={Uri.EscapeDataString(info) }&passWord={key}&userType=1", Encoding.UTF8);
             header = new Dictionary<string, string>() { { "Cookie", cookie } };
             schoolcode = CourseHelper.ReplaceOssUrl(CourseHelper.HttpGet($"{apiUrl}/studentstudio/", header));
+            this.student=student;
         }
 
         /// <summary>
@@ -67,19 +71,61 @@ namespace Suretom.Client.Data
         }
 
         /// <summary>
-        /// 课程列表数据
+        ///课程详情数据列表
         /// </summary>
-        /// <returns></returns>
-        public ResultDto<CourseDto> GetCourseList()
+        /// <param name="undocourselist"></param>
+        public List<CourseDto> GetCourseList()
         {
-            try
+            var courseList = new List<CourseDto>();
+
+            var courseResults = JsonConvert.DeserializeObject<ResultDto<CourseDto>>(CourseHelper.FromPost($"{apiUrl}/studentstudio/ajax-course-list", header, $"type=studying&courseType=0&getschoolcode={schoolcode}&studyYear=&studyTerm=&courseName="));
+
+            if (courseResults.Code != 1) return courseList;
+
+            foreach (var course in courseResults.List)
             {
-                return JsonConvert.DeserializeObject<ResultDto<CourseDto>>(CourseHelper.FromPost($"{apiUrl}/studentstudio/ajax-course-list", header, $"type=studying&courseType=0&getschoolcode={schoolcode}&studyYear=&studyTerm=&courseName="));
+                //章
+                var designResult = JsonConvert.DeserializeObject<ResultDto<DesignDto>>(CourseHelper.FromPost($"{apiUrl}/study/design/design", header, $"courseOpenId={course.CourseOpenId}&schoolCode={schoolcode}&icon=video"));
+
+                if (designResult.Code == 1)
+                {
+                    continue;
+                }
+
+                course.CourseList=designResult.List;
+                course.Student=student;
             }
-            catch
+
+            return courseList;
+        }
+
+        /// <summary>
+        ///课程详情数据列表
+        /// </summary>
+        /// <param name="undocourselist"></param>
+        public ObservableCollection<CourseDto> GetCourseInfoList()
+        {
+            var courseList = new ObservableCollection<CourseDto>();
+
+            var courseResults = JsonConvert.DeserializeObject<ResultDto<CourseDto>>(CourseHelper.FromPost($"{apiUrl}/studentstudio/ajax-course-list", header, $"type=studying&courseType=0&getschoolcode={schoolcode}&studyYear=&studyTerm=&courseName="));
+
+            if (courseResults.Code != 1) return courseList;
+
+            foreach (var course in courseResults.List)
             {
-                return new ResultDto<CourseDto>();
+                //章
+                var designResult = JsonConvert.DeserializeObject<ResultDto<DesignDto>>(CourseHelper.FromPost($"{apiUrl}/study/design/design", header, $"courseOpenId={course.CourseOpenId}&schoolCode={schoolcode}&icon=video"));
+
+                if (designResult.Code == 1)
+                {
+                    continue;
+                }
+
+                course.CourseList=designResult.List;
+                course.Student=student;
             }
+
+            return courseList;
         }
 
         /// <summary>
@@ -100,7 +146,7 @@ namespace Suretom.Client.Data
                 foreach (var design in undodesignlist)
                 {
                     //节
-                    var undocells = design.Cells.Where(p => p.Status == false&&p.Icon== "video"); //未完成的
+                    var undocells = design.Cells.Where(p => p.Status == false&&p.Icon== "video"); //未完成的节
                     foreach (var cells in undocells)
                     {
                         var doingcellsjson = CourseHelper.FromPost($"{apiUrl}/study/studying/studying", header, $"courseOpenId={course.CourseOpenId}&cellId={cells.Id}&schoolCode={schoolcode}");

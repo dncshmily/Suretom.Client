@@ -49,6 +49,7 @@
     <Compile Include="Dto\BatchImportInfo.cs" />
     <Compile Include="Dto\BatchImportProcessInfo.cs" />
     <Compile Include="Dto\BatchImportStatus.cs" />
+    <Compile Include="Dto\CoursesInfo.cs" />
     <Compile Include="Dto\Demo\CourseDto.cs" />
     <Compile Include="Dto\Demo\DesignDto.cs" />
     <Compile Include="Dto\Demo\DoingCellsDto.cs" />

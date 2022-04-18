@@ -5,23 +5,94 @@ using System.Web;
 
 namespace Suretom.Client.Entity
 {
-    public class CourseDto
+    /// <summary>
+    ///
+    /// </summary>
+    public class CourseDto : IComparable<CourseDto>
     {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public int CompareTo(CourseDto courseDto)
+        {
+            return this.Completed.CompareTo(courseDto.Completed);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
         public int Id { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         public int Completed { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         public string CourseName { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         public string CourseOpenId { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         public string DisplayName { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         public string ExpiredTime { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         public string Hoplinks { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         public bool IsPracticeCourse { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         public string NoStudyNoExam { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         public float Schedule { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         public string StudyTerm { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         public int StudyYear { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         public int TotalCount { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         public string ScheduleTxt { get; set; }
 
+        /// <summary>
+        ///
+        /// </summary>
         public string imgStr { get; set; }
 
         /// <summary>
@@ -38,5 +109,15 @@ namespace Suretom.Client.Entity
         ///是否暂停
         /// </summary>
         public bool IsPauseSuccess = false;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public Student Student { get; set; } = new Student();
+
+        /// <summary>
+        ///章节
+        /// </summary>
+        public List<DesignDto> CourseList { get; set; } = new List<DesignDto>();
     }
 }

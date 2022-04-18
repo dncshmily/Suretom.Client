@@ -22,22 +22,20 @@ using System.Windows.Data;
 using System.Globalization;
 using System.Windows.Threading;
 
-namespace Suretom.Client.UI.Pages.Demo
+/// <summary>
+///
+/// </summary>
+namespace Suretom.Client.UI.Pages.Courses
 {
     /// <summary>
     /// DemoWin.xaml 的交互逻辑
     /// </summary>
-    public partial class DemoWin : UserControl
+    public partial class CoursesCtl : UserControl
     {
         /// <summary>
         ///
         /// </summary>
         private NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
-
-        /// <summary>
-        ///
-        /// </summary>
-        private ObservableCollection<BatchImportInfo> _batchImprotInfoList = new ObservableCollection<BatchImportInfo>();
 
         /// <summary>
         ///
@@ -72,38 +70,17 @@ namespace Suretom.Client.UI.Pages.Demo
         /// <summary>
         ///当前学生课程信息
         /// </summary>
-        private List<CourseDto> ez_coursesList = new List<CourseDto>();
+        private ObservableCollection<CourseDto> ez_coursesList = new ObservableCollection<CourseDto>();
 
         /// <summary>
         /// 学习中的课程
         /// </summary>
-        private List<CoursesInfo> do_coursesList = new List<CoursesInfo>();
-
-        /// <summary>
-        /// 试卷里解析出的题目
-        /// </summary>
-        private ObservableCollection<CourseDto> ez_courseDtoList = new ObservableCollection<CourseDto>();
+        private ObservableCollection<CoursesInfo> do_coursesList = new ObservableCollection<CoursesInfo>();
 
         /// <summary>
         ///
         /// </summary>
-        public class CoursesInfo
-        {
-            /// <summary>
-            ///
-            /// </summary>
-            public Guid guid { get; set; } = Guid.NewGuid();
-
-            /// <summary>
-            ///学生信息
-            /// </summary>
-            public Student student { get; set; } = new Student();
-
-            /// <summary>
-            ///课程信息
-            /// </summary>
-            public CourseDto course = new CourseDto();
-        }
+        private ObservableCollection<CourseDto> ez_courseDtoList = new ObservableCollection<CourseDto>();
 
         /// <summary>
         /// 声明CancellationTokenSource对象
@@ -128,7 +105,7 @@ namespace Suretom.Client.UI.Pages.Demo
         /// <summary>
         ///
         /// </summary>
-        public DemoWin()
+        public CoursesCtl()
         {
             InitializeComponent();
 
@@ -232,14 +209,14 @@ namespace Suretom.Client.UI.Pages.Demo
             labIdType.Content = StudyTypeConverter(ez_student.StudyType);
 
             //课程信息
-            ez_coursesList = new CoursesData(ez_student).GetCourseList();
+            ez_coursesList = new CoursesData(ez_student).GetCourseInfoList();
 
             //未完成的课程
             var coursesList = ez_coursesList.Where(f => f.Schedule < 100).ToList();
 
             coursesList.ForEach(course =>
             {
-                if (!do_coursesList.Exists(f => f.student.IdCard == ez_student.IdCard && f.course.CourseOpenId == course.CourseOpenId))
+                if (!(do_coursesList.Count(f => f.student.IdCard == ez_student.IdCard && f.course.CourseOpenId == course.CourseOpenId)==0))
                 {
                     do_coursesList.Add(new CoursesInfo()
                     {
@@ -260,22 +237,19 @@ namespace Suretom.Client.UI.Pages.Demo
                 //课程列表
                 dgCourseList.DataContext = ez_coursesList;
 
-                ez_coursesList.ForEach(course =>
-                {
-                    ez_courseDtoList.Add(course);
-                });
-
                 int i = 0;
 
-                ez_coursesList = ez_coursesList.OrderBy(f => f.Completed).ToList();
+                ez_coursesList.ToSort();
 
-                ez_coursesList.ForEach(f =>
-                {
-                    f.ExpiredTime = UtilityHelper.ToConvertTime(f.ExpiredTime).ToString();
+                //ez_coursesList = (ObservableCollection)ez_coursesList.OrderBy(f => f.Completed);
 
-                    i++;
-                    f.Id = i;
-                });
+                //ez_coursesList.ForEach(f =>
+                //{
+                //    f.ExpiredTime = UtilityHelper.ToConvertTime(f.ExpiredTime).ToString();
+
+                //    i++;
+                //    f.Id = i;
+                //});
 
                 dgStudents.DataContext = ez_coursesList;
             }
@@ -358,10 +332,13 @@ namespace Suretom.Client.UI.Pages.Demo
                     ez_timer.Stop();
                 }
 
-                labFinish.Content = 0;
-                labTotal.Content = 0;
-                ez_coursesList = new List<CourseDto>();
-                do_coursesList = new List<CoursesInfo>();
+                this.Dispatcher.Invoke(() =>
+                {
+                    labFinish.Content = 0;
+                    labTotal.Content = 0;
+                    ez_coursesList = new ObservableCollection<CourseDto>();
+                    do_coursesList =new ObservableCollection<CoursesInfo>();
+                });
 
                 OperationBtnEnable(true);
 

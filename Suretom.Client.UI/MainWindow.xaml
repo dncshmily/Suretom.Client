@@ -18,7 +18,7 @@
     <mui:ModernWindow.MenuLinkGroups>
         <mui:LinkGroup DisplayName="">
             <mui:LinkGroup.Links>
-                <mui:Link Source="/Pages/Demo/DemoWin.xaml" />
+                <mui:Link Source="/Pages/Courses/CoursesCtl.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="设置" GroupKey="settings">

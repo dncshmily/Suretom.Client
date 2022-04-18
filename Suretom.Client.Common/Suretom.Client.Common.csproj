@@ -138,6 +138,7 @@
     <Compile Include="Configuration\LocalDirectoryConfig.cs" />
     <Compile Include="Extention\Extention.cs" />
     <Compile Include="Data\AppType.cs" />
+    <Compile Include="Extention\ObservableExtension.cs" />
     <Compile Include="GlobalContext.cs" />
     <Compile Include="Configuration\SuretomConfig.cs" />
     <Compile Include="Configuration\AppSettingsConfig.cs" />
