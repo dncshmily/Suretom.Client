@@ -157,6 +157,11 @@ namespace Suretom.Client.UI.Pages.Demo
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="studyType"></param>
+        /// <returns></returns>
         public string StudyTypeConverter(int studyType)
         {
             switch (studyType)
@@ -227,213 +232,52 @@ namespace Suretom.Client.UI.Pages.Demo
             labIdType.Content = StudyTypeConverter(ez_student.StudyType);
 
             //课程信息
-            ez_coursesList= new DemoData(ez_student).GetCourseList().List;
+            ez_coursesList = new DemoData(ez_student).GetCourseList().List;
 
             //未完成的课程
             var coursesList = ez_coursesList.Where(f => f.Schedule < 100).ToList();
 
             coursesList.ForEach(course =>
             {
-                if (!do_coursesList.Exists(f => f.student.IdCard==ez_student.IdCard&&f.course.CourseOpenId==course.CourseOpenId))
+                if (!do_coursesList.Exists(f => f.student.IdCard == ez_student.IdCard && f.course.CourseOpenId == course.CourseOpenId))
                 {
                     do_coursesList.Add(new CoursesInfo()
                     {
-                        student=ez_student,
-                        course=course
+                        student = ez_student,
+                        course = course
                     });
                 }
             });
 
-            if (ez_coursesList!=null&&ez_coursesList.Count>0)
+            if (ez_coursesList != null && ez_coursesList.Count > 0)
             {
+                //未完成课程
                 dgCourseInfo.DataContext = ez_coursesList.Where(f => f.Schedule < 100).ToList();
+
+                //已完成课程
                 dgFinishCourseInfo.DataContext = ez_coursesList.Where(f => f.Schedule == 100).ToList();
+
+                //课程列表
+                dgCourseList.DataContext = ez_coursesList;
 
                 ez_coursesList.ForEach(course =>
                 {
                     ez_courseDtoList.Add(course);
                 });
 
-                dgItemUpdate.DataContext = ez_courseDtoList;
-
                 int i = 0;
+
+                ez_coursesList = ez_coursesList.OrderBy(f => f.Completed).ToList();
 
                 ez_coursesList.ForEach(f =>
                 {
                     f.ExpiredTime = UtilityHelper.ToConvertTime(f.ExpiredTime).ToString();
 
-                    switch (i)
-                    {
-                        case 0:
-                            f.imgStr = "imgA";
-                            dgrA.Visibility = Visibility.Visible;
-                            labA1.Content = f.CourseName;
-                            labA2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labA3.Content = f.ExpiredTime;
-                            pbA.Value = f.Schedule;
-                            labA4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labA5.Content = f.DisplayName;
-                            break;
-
-                        case 1:
-                            f.imgStr = "imgB";
-                            dgrB.Visibility = Visibility.Visible;
-                            labB1.Content = f.CourseName;
-                            labB2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labB3.Content = f.ExpiredTime;
-                            pbB.Value = f.Schedule;
-                            labB4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labB5.Content = f.DisplayName;
-                            break;
-
-                        case 2:
-                            f.imgStr = "imgC";
-                            dgrC.Visibility = Visibility.Visible;
-                            labC1.Content = f.CourseName;
-                            labC2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labC3.Content = f.ExpiredTime;
-                            pbC.Value = f.Schedule;
-                            labC4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labC5.Content = f.DisplayName;
-                            break;
-
-                        case 3:
-                            f.imgStr = "imgD";
-                            dgrD.Visibility = Visibility.Visible;
-                            labD1.Content = f.CourseName;
-                            labD2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labD3.Content = f.ExpiredTime;
-                            pbD.Value = f.Schedule;
-                            labD4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labD5.Content = f.DisplayName;
-                            break;
-
-                        case 4:
-                            f.imgStr = "imgE";
-                            dgrE.Visibility = Visibility.Visible;
-                            labE1.Content = f.CourseName;
-                            labE2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labE3.Content = f.ExpiredTime;
-                            pbE.Value = f.Schedule;
-                            labE4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labE5.Content = f.DisplayName;
-                            break;
-
-                        case 5:
-                            f.imgStr = "imgF";
-                            dgrF.Visibility = Visibility.Visible;
-                            labF1.Content = f.CourseName;
-                            labF2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labF3.Content = f.ExpiredTime;
-                            pbF.Value = f.Schedule;
-                            labF4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labF5.Content = f.DisplayName;
-                            break;
-
-                        case 6:
-                            f.imgStr = "imgG";
-                            dgrG.Visibility = Visibility.Visible;
-                            labG1.Content = f.CourseName;
-                            labG2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labG3.Content = f.ExpiredTime;
-                            pbG.Value = f.Schedule;
-                            labG4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labG5.Content = f.DisplayName;
-                            break;
-
-                        case 7:
-                            f.imgStr = "imgH";
-                            dgrH.Visibility = Visibility.Visible;
-                            labH1.Content = f.CourseName;
-                            labH2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labH3.Content = f.ExpiredTime;
-                            pbH.Value = f.Schedule;
-                            labH4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labH5.Content = f.DisplayName;
-                            break;
-
-                        case 8:
-                            f.imgStr = "imgI";
-                            dgrI.Visibility = Visibility.Visible;
-                            labI1.Content = f.CourseName;
-                            labI2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labI3.Content = f.ExpiredTime;
-                            pbI.Value = f.Schedule;
-                            labI4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labI5.Content = f.DisplayName;
-                            break;
-
-                        case 9:
-                            f.imgStr = "imgJ";
-                            dgrJ.Visibility = Visibility.Visible;
-                            labJ1.Content = f.CourseName;
-                            labJ2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labJ3.Content = f.ExpiredTime;
-                            pbJ.Value = f.Schedule;
-                            labJ4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labJ5.Content = f.DisplayName;
-                            break;
-
-                        case 10:
-                            f.imgStr = "imgK";
-                            dgrK.Visibility = Visibility.Visible;
-                            labK1.Content = f.CourseName;
-                            labK2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labK3.Content = f.ExpiredTime;
-                            pbK.Value = f.Schedule;
-                            labK4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labK5.Content = f.DisplayName;
-                            break;
-
-                        case 11:
-                            f.imgStr = "imgL";
-                            dgrL.Visibility = Visibility.Visible;
-                            labL1.Content = f.CourseName;
-                            labL2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labL3.Content = f.ExpiredTime;
-                            pbL.Value = f.Schedule;
-                            labL4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labL5.Content = f.DisplayName;
-                            break;
-
-                        case 12:
-                            f.imgStr = "imgM";
-                            dgrM.Visibility = Visibility.Visible;
-                            labM1.Content = f.CourseName;
-                            labM2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labM3.Content = f.ExpiredTime;
-                            pbM.Value = f.Schedule;
-                            labM4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labM5.Content = f.DisplayName;
-                            break;
-
-                        case 13:
-                            f.imgStr = "imgN";
-                            dgrN.Visibility = Visibility.Visible;
-                            labN1.Content = f.CourseName;
-                            labN2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labN3.Content = f.ExpiredTime;
-                            pbN.Value = f.Schedule;
-                            labN4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labN5.Content = f.DisplayName;
-                            break;
-
-                        case 14:
-                            f.imgStr = "imgO";
-                            dgrO.Visibility = Visibility.Visible;
-                            labO1.Content = f.CourseName;
-                            labO2.Content = $"{f.StudyYear}-{f.StudyTerm}";
-                            labO3.Content = f.ExpiredTime;
-                            pbO.Value = f.Schedule;
-                            labO4.Content = $"{(f.Schedule / 100) * 100}%";
-                            labO5.Content = f.DisplayName;
-                            break;
-
-                        default:
-                            break;
-                    }
                     i++;
+                    f.Id = i;
                 });
+
+                dgStudents.DataContext = ez_coursesList;
             }
         }
 
@@ -456,12 +300,12 @@ namespace Suretom.Client.UI.Pages.Demo
 
                     OperationBtnEnable(false);
 
-                    do_coursesList[idx].course.Status=1;
+                    do_coursesList[idx].course.Status = 1;
 
                     this.Dispatcher.Invoke(() =>
                     {
-                        labFinish.Content=do_coursesList.Count(f => f.course.Status==2);
-                        pbProcess.Value= do_coursesList.Count(f => f.course.Status==2);
+                        labFinish.Content = do_coursesList.Count(f => f.course.Status == 2);
+                        pbProcess.Value = do_coursesList.Count(f => f.course.Status == 2);
                     });
 
                     //开始学习
@@ -472,7 +316,7 @@ namespace Suretom.Client.UI.Pages.Demo
                     {
                         this.Dispatcher.Invoke(() =>
                         {
-                            do_coursesList[idx].course.Status=2;
+                            do_coursesList[idx].course.Status = 2;
                             OperationBtnEnable(true);
                         });
                     }
@@ -509,15 +353,15 @@ namespace Suretom.Client.UI.Pages.Demo
                 AddProcessError($"{strInfo}停止学习");
 
                 tokenSource.Cancel();
-                if (ez_timer!=null)
+                if (ez_timer != null)
                 {
                     ez_timer.Stop();
                 }
 
-                labFinish.Content =0;
-                labTotal.Content=0;
-                ez_coursesList =new List<CourseDto>();
-                do_coursesList=new List<CoursesInfo>();
+                labFinish.Content = 0;
+                labTotal.Content = 0;
+                ez_coursesList = new List<CourseDto>();
+                do_coursesList = new List<CoursesInfo>();
 
                 OperationBtnEnable(true);
 
@@ -569,13 +413,13 @@ namespace Suretom.Client.UI.Pages.Demo
         /// <param name="e"></param>
         private async void Timer1_Tick(object sender, EventArgs e)
         {
-            var doCoursesList = do_coursesList.Where(f => f.course.Status==0).ToList();
+            var doCoursesList = do_coursesList.Where(f => f.course.Status == 0).ToList();
 
             labTitle.Visibility = Visibility.Visible;
-            labTotal.Content=do_coursesList.Count;
-            pbProcess.Maximum= do_coursesList.Count;
+            labTotal.Content = do_coursesList.Count;
+            pbProcess.Maximum = do_coursesList.Count;
 
-            if (doCoursesList.Count>0)
+            if (doCoursesList.Count > 0)
             {
                 try
                 {
@@ -691,27 +535,43 @@ namespace Suretom.Client.UI.Pages.Demo
                         //学生信息
                         studentList.ForEach(s =>
                         {
-                            if (!string.IsNullOrEmpty(s.IdCard)&&s.IdCard.Length>7)
+                            try
                             {
-                                var student = new Student()
+                                if (!string.IsNullOrEmpty(s.IdCard) && s.IdCard.Length > 7)
                                 {
-                                    IdCard=s.IdCard,
-                                    MoviePwd= s.IdCard.Substring(s.IdCard.Length-6),
-                                };
+                                    var student = new Student()
+                                    {
+                                        IdCard = s.IdCard,
+                                        MoviePwd = s.IdCard.Substring(s.IdCard.Length - 6),
+                                    };
 
-                                ez_studentInfo = new DemoData(student).GetStudentInfo();
+                                    ez_studentInfo = new DemoData(student).GetStudentInfo();
 
-                                student.ClassName=ez_studentInfo.info.ClassName;
-                                student.SchoolName=ez_studentInfo.info.SchoolName;
-                                student.StudyType=LearnTypeConverter(ez_studentInfo.info.LearnType);
-                                student.StudyCode=ez_studentInfo.info.StudentNumber;
-                                student.StudentName=ez_studentInfo.info.DisplayName.ToString();
-
-                                addStudents.Add(student);
+                                    if (ez_studentInfo != null)
+                                    {
+                                        student.ClassName = ez_studentInfo.info.ClassName;
+                                        student.SchoolName = ez_studentInfo.info.SchoolName;
+                                        student.StudyType = LearnTypeConverter(ez_studentInfo.info.LearnType);
+                                        student.StudyCode = ez_studentInfo.info.StudentNumber;
+                                        student.StudentName = ez_studentInfo.info.DisplayName.ToString();
+                                        addStudents.Add(student);
+                                    }
+                                    else
+                                    {
+                                        string ex = $"新增学生:{s.StudentName}_{s.IdCard} 失败，跳过";
+                                        AddProcessError(ex);
+                                        log.Error(ex);
+                                    }
+                                }
+                                else
+                                {
+                                    AddProcessError($"新增学生:{s.StudentName}_{s.IdCard} 失败，数据格式错误");
+                                }
                             }
-                            else
+                            catch (Exception ex)
                             {
-                                AddProcessError($"新增学生:{s.StudentName}_{s.IdCard}失败，数据格式错误");
+                                AddProcessError($"新增学生:{s.StudentName}_{s.IdCard} 异常，{ex.Message}");
+                                throw;
                             }
                         });
                     }
@@ -730,7 +590,7 @@ namespace Suretom.Client.UI.Pages.Demo
                         }
                     });
 
-                    if (sucessCount>0)
+                    if (sucessCount > 0)
                     {
                         GlobalContext.UserInfo.studentInfos = studentService.GetStudentList();
 
@@ -768,7 +628,7 @@ namespace Suretom.Client.UI.Pages.Demo
                         MessageBox.Show("初始化失败");
                         return;
                     }
-                    if (do_coursesList.Count(f => f.course.Status==0)>0)
+                    if (do_coursesList.Count(f => f.course.Status == 0) > 0)
                     {
                         if (!_isStopDeal)
                         {
@@ -776,7 +636,7 @@ namespace Suretom.Client.UI.Pages.Demo
 
                             AddProcessInfo($"数据初始化...");
 
-                            _isStopDeal=true;
+                            _isStopDeal = true;
                         }
 
                         ez_timer = new DispatcherTimer();
@@ -824,7 +684,7 @@ namespace Suretom.Client.UI.Pages.Demo
 
                     await StopMyTask();
 
-                    _isStopDeal=false;
+                    _isStopDeal = false;
 
                     CurrentStatus = BatchImportStatus.成功;
                     OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
@@ -995,7 +855,6 @@ namespace Suretom.Client.UI.Pages.Demo
                 {
                     Sp1.IsEnabled = isEnable;
                     BtnAutoStart.IsEnabled = isEnable;
-                    grid1.IsEnabled = isEnable;
                     gb1.IsEnabled = isEnable;
                 });
             }
@@ -1205,12 +1064,16 @@ namespace Suretom.Client.UI.Pages.Demo
         /// <param name="list"></param>
         private void FillTreeView(List<StudentInfo> studentInfos)
         {
+            var cmbDic = new Dictionary<int, string>();
+
             treeView.BeginInit();
             treeView.Items.Clear();
             int i = 0;
 
             studentInfos.ForEach(student =>
             {
+                cmbDic.Add(i, student.SchoolName);
+
                 TextBlock headerText = new TextBlock();
                 headerText.Text = student.SchoolName;
                 headerText.Margin = new Thickness(3, 0, 0, 0);
@@ -1254,6 +1117,11 @@ namespace Suretom.Client.UI.Pages.Demo
             });
 
             treeView.EndInit();
+
+            CmbSchool.SelectedValuePath = "Key";
+            CmbSchool.DisplayMemberPath = "Value";
+            CmbSchool.ItemsSource = cmbDic;
+            CmbSchool.SelectedIndex = 0;
         }
 
         private int studentCount = 0;

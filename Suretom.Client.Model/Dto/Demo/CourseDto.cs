@@ -7,6 +7,7 @@ namespace Suretom.Client.Entity
 {
     public class CourseDto
     {
+        public int Id { get; set; }
         public int Completed { get; set; }
         public string CourseName { get; set; }
         public string CourseOpenId { get; set; }

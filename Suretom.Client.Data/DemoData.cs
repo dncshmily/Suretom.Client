@@ -62,7 +62,7 @@ namespace Suretom.Client.Data
             }
             catch
             {
-                return new StudentDto();
+                return null;
             }
         }
 

@@ -166,7 +166,7 @@ namespace Suretom.Client.UI
             var code = loginService.GetVerifyCode();
             if (!string.IsNullOrEmpty(code))
             {
-                //txtCode.Text = code;
+                txtCode.Text = code;
                 var uri = validCode.CreateCheckCodeImage(code);
                 this.imageCode.Source = BitmapFrame.Create(uri);
             }
