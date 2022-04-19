@@ -136,6 +136,46 @@ namespace Suretom.Client.Data
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public List<CourseDto> GetStudentCourseList()
+        {
+            var courses= new List<CourseDto>();
+
+            try
+            {
+                var resultJson = CourseHelper.FromPost($"{apiUrl}/studentstudio/ajax-course-list", header, $"type=studying&courseType=0&getschoolcode={schoolcode}&studyYear=&studyTerm=&courseName=");
+                var courseResults = JsonConvert.DeserializeObject<ResultDto<CourseDto>>(resultJson);
+
+                if (courseResults.Code != 1) return courses;
+
+                foreach (var course in courseResults.List)
+                {
+                    //章
+                    var designResult = JsonConvert.DeserializeObject<ResultDto<DesignDto>>(CourseHelper.FromPost($"{apiUrl}/study/design/design", header, $"courseOpenId={course.CourseOpenId}&schoolCode={schoolcode}&icon=video"));
+
+                    if (designResult.Code != 1)
+                    {
+                        continue;
+                    }
+
+                    course.CourseList=designResult.List;
+                    course.Student=student;
+
+                    courses.Add(course);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error($"GetStudentCourseList：{ex.Message}");
+                log.Error($"GetStudentCourseList：{ex}");
+            }
+            return courses;
+        }
+
+
+        /// <summary>
         ///单课程学校
         /// </summary>
         /// <param name="undocourselist"></param>

@@ -48,7 +48,7 @@
 
             <Grid Grid.Row="1" Margin="5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="220" />
+                    <ColumnDefinition Width="150" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <GroupBox x:Name="gb1" Header="1"  Margin="0 0 5 0"   Grid.Column="0"  Padding="0,2,0,2"  Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
@@ -66,24 +66,19 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <StackPanel x:Name="SpSchool" Grid.Row="0" Orientation="Horizontal"  Grid.Column="1">
-                                <ComboBox x:Name="CmbSchool"  DropDownClosed="OnDropDownClosed_CmbSchool"  Width="190"  Height="30" Margin="5" />
+                                <ComboBox x:Name="CmbSchool"  DropDownClosed="OnDropDownClosed_CmbSchool"  Width="120"  Height="30" Margin="5" />
                             </StackPanel>
                             <StackPanel x:Name="SpSemester"   Grid.Row="1" Orientation="Horizontal"  Grid.Column="1" Margin="5">
-                                <ComboBox x:Name="CmbSemester"   DropDownClosed="OnDropDownClosed_CmbSemester"   Width="190" Height="30" />
+                                <ComboBox x:Name="CmbSemester"   DropDownClosed="OnDropDownClosed_CmbSemester"   Width="120" Height="30" />
                             </StackPanel>
                             <DataGrid x:Name="dgStudents" Grid.Row="2"   IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" DataGridRow.MouseUp="DataGrid_MouseUpClick" LoadingRow="DataGrid_LoadingRow"  ItemsSource="{Binding}">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn   Header="序号" Width="80" Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGridRow}},Path=Header}" />
-                                    <DataGridTextColumn   Binding="{Binding Id}" Visibility="Hidden"  Header="序号" ElementStyle="{StaticResource DataGridTextCenter}" Width="Auto" />
-                                    <DataGridTextColumn Binding="{Binding StudentName}" Header="姓名" ElementStyle="{StaticResource DataGridTextCenter}" Width="Auto" />
+                                    <DataGridTextColumn  Header="序号"  Width="40"  Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGridRow}},Path=Header}" />
+                                    <DataGridTextColumn  Binding="{Binding Id}" Visibility="Hidden"  Header="序号" ElementStyle="{StaticResource DataGridTextCenter}" Width="Auto" />
+                                    <DataGridTextColumn  Binding="{Binding StudentName}" Header="姓名" ElementStyle="{StaticResource DataGridTextCenter}" Width="Auto" />
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Grid>
-
-                        <TreeView x:Name="treeView" Visibility="Hidden" Height="Auto"  Grid.Column="0" BorderThickness="0" HorizontalAlignment="Stretch" IsTextSearchEnabled="True"
-                                          TreeViewItem.Collapsed="OnTreeViewItemCollapsed" TreeViewItem.Expanded="OnTreeViewItemExpanded"
-                                          TreeViewItem.Selected="OnTreeViewItemSelected" TreeViewItem.Unselected="OnTreeViewItemUnselected">
-                        </TreeView>
                     </Grid>
                 </GroupBox>
 

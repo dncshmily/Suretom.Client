@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dto\AssignmentDot.cs" />
     <Compile Include="Dto\BatchImportInfo.cs" />
     <Compile Include="Dto\BatchImportProcessInfo.cs" />
     <Compile Include="Dto\BatchImportStatus.cs" />

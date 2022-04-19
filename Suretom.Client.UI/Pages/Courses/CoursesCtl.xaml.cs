@@ -76,6 +76,11 @@ namespace Suretom.Client.UI.Pages.Courses
         /// <summary>
         ///当前学生课程信息
         /// </summary>
+        private ObservableCollection<CourseDto> ez_AllCoursesList = new ObservableCollection<CourseDto>();
+
+        /// <summary>
+        ///当前学生课程信息
+        /// </summary>
         private ObservableCollection<CourseDto> ez_coursesList = new ObservableCollection<CourseDto>();
 
         /// <summary>
@@ -165,8 +170,6 @@ namespace Suretom.Client.UI.Pages.Courses
         {
             try
             {
-                //FillTreeView(GlobalContext.UserInfo.studentInfos);
-
                 DataBindStudentList();
             }
             catch (Exception ex)
@@ -250,7 +253,7 @@ namespace Suretom.Client.UI.Pages.Courses
                 {
                     GlobalContext.UserInfo.studentInfos = studentService.GetStudentList();
 
-                    FillTreeView(GlobalContext.UserInfo.studentInfos);
+                    DataBindStudentList();
                 }
             }
             catch (Exception ex)
@@ -369,7 +372,7 @@ namespace Suretom.Client.UI.Pages.Courses
                     {
                         GlobalContext.UserInfo.studentInfos = studentService.GetStudentList();
 
-                        FillTreeView(GlobalContext.UserInfo.studentInfos);
+                        DataBindStudentList();
                     }
                 }
             }
@@ -912,6 +915,9 @@ namespace Suretom.Client.UI.Pages.Courses
         /// <param name="student"></param>
         public void DataBindStudentCourses(Student student)
         {
+            do_CoursesList.Clear();
+            ez_coursesList.Clear();
+
             ez_student = student;
 
             strInfo = $"{ez_student.SchoolName}-{ez_student.StudentName}-{ez_student.IdCard}";
@@ -923,11 +929,32 @@ namespace Suretom.Client.UI.Pages.Courses
             labIdType.Content = StudyTypeConverter(ez_student.StudyType);
 
             //课程信息
-            ez_coursesList = new CoursesData(ez_student).GetCourseInfoList();
+            var studentCourses = ez_AllCoursesList.Where(f => f.Student.IdCard==student.IdCard).ToList();
+
+            if (studentCourses.Count>0)
+            {
+                foreach (var course in studentCourses)
+                {
+                    ez_coursesList.Add(course);
+                }
+            }
+            else
+            {
+                ez_coursesList = new CoursesData(student).GetCourseInfoList();
+
+                foreach (var course in ez_coursesList)
+                {
+                    //所有学生课程
+                    if (ez_AllCoursesList.Count(f => f.Student.IdCard==student.IdCard&&f.CourseName==course.CourseName)==0)
+                    {
+                        ez_AllCoursesList.Add(course);
+                    }
+                }
+            }
 
             for (int i = 0; i < ez_coursesList.Count; i++)
             {
-                var time = UtilityHelper.ToConvertTime(ez_coursesList[i].ExpiredTime).ToString();
+                var time = ez_coursesList[i].ExpiredTime.Contains("Date") ? UtilityHelper.ToConvertTime(ez_coursesList[i].ExpiredTime).ToString() : ez_coursesList[i].ExpiredTime;
                 ez_coursesList[i].ExpiredTime = time;
                 ez_coursesList[i].Id = i+1;
             }
@@ -1057,29 +1084,6 @@ namespace Suretom.Client.UI.Pages.Courses
                 OperationBtnEnable(true);
             }
             return true;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public async void StudyCourses(CourseDto course)
-        {
-            try
-            {
-                await SigneCourseStudy(course);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                MessageBox.Show(ex.Message);
-            }
-            finally
-            {
-                this.Dispatcher.Invoke(() =>
-                {
-                    this.Sp1.IsEnabled = true;
-                });
-            }
         }
 
         /// <summary>
@@ -1220,270 +1224,6 @@ namespace Suretom.Client.UI.Pages.Courses
                 });
 
                 ObservableHelper.ObservableMySort(ez_processInfoList);
-            });
-        }
-
-        #endregion
-
-        #region TreeView Event Handlers
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnTreeViewSelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnTreeViewItemSelected(object sender, RoutedEventArgs e)
-        {
-            TreeViewItem selItem = treeView.SelectedItem as TreeViewItem;
-            if (selItem == null || selItem.Tag == null)
-            {
-                return;
-            }
-
-            var student = selItem.Tag as Student;
-
-            if (student == null)
-            {
-                return;
-            }
-
-            e.Handled = true;
-            treeView.IsEnabled = false;
-
-            try
-            {
-                DataBindStudentCourses(student);
-
-                this.Cursor = Cursors.Wait;
-                this.ForceCursor = true;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString(), "", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            finally
-            {
-                this.Cursor = Cursors.Arrow;
-                this.ForceCursor = false;
-
-                treeView.IsEnabled = true;
-                treeView.Focus();
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnTreeViewItemUnselected(object sender, RoutedEventArgs e)
-        {
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnTreeViewItemCollapsed(object sender, RoutedEventArgs e)
-        {
-            if (_folderClose == null)
-            {
-                return;
-            }
-
-            TreeViewItem treeItem = e.OriginalSource as TreeViewItem;
-            if (treeItem == null || (treeItem.Tag != null
-                && !string.IsNullOrWhiteSpace(treeItem.Tag.ToString())))
-            {
-                return;
-            }
-
-            BulletDecorator decorator = treeItem.Header as BulletDecorator;
-            if (decorator == null)
-            {
-                return;
-            }
-            Image headerImage = decorator.Bullet as Image;
-            if (headerImage == null)
-            {
-                return;
-            }
-            headerImage.Source = _folderClose;
-
-            e.Handled = true;
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnTreeViewItemExpanded(object sender, RoutedEventArgs e)
-        {
-            if (_folderOpen == null)
-            {
-                return;
-            }
-
-            TreeViewItem treeItem = e.OriginalSource as TreeViewItem;
-            if (treeItem == null || (treeItem.Tag != null
-                && !string.IsNullOrWhiteSpace(treeItem.Tag.ToString())))
-            {
-                return;
-            }
-
-            BulletDecorator decorator = treeItem.Header as BulletDecorator;
-            if (decorator == null)
-            {
-                return;
-            }
-            Image headerImage = decorator.Bullet as Image;
-            if (headerImage == null)
-            {
-                return;
-            }
-            headerImage.Source = _folderOpen;
-
-            e.Handled = true;
-        }
-
-        #endregion
-
-        #region FillTreeView Methods
-
-        private ImageSource _folderClose;
-        private ImageSource _folderOpen;
-        private ImageSource _fileThumbnail;
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="list"></param>
-        private void FillTreeView(List<StudentInfo> studentInfos)
-        {
-            var cmbDic = new Dictionary<int, string>();
-
-            treeView.BeginInit();
-            treeView.Items.Clear();
-            int i = 0;
-
-            studentInfos.ForEach(student =>
-            {
-                cmbDic.Add(i, student.SchoolName);
-
-                TextBlock headerText = new TextBlock();
-                headerText.Text = student.SchoolName;
-                headerText.Margin = new Thickness(3, 0, 0, 0);
-
-                BulletDecorator decorator = new BulletDecorator();
-                if (_folderClose != null)
-                {
-                    Image image = new Image();
-                    image.Source = _folderClose;
-                    decorator.Bullet = image;
-                }
-                else
-                {
-                    Ellipse bullet = new Ellipse();
-                    bullet.Height = 10;
-                    bullet.Width = 10;
-                    bullet.Fill = Brushes.LightSkyBlue;
-                    bullet.Stroke = Brushes.DarkGray;
-                    bullet.StrokeThickness = 1;
-
-                    decorator.Bullet = bullet;
-                }
-                decorator.Margin = new Thickness(0, 0, 10, 0);
-                decorator.Child = headerText;
-                decorator.Tag = string.Empty;
-
-                TreeViewItem categoryItem = new TreeViewItem();
-                categoryItem.Tag = string.Empty;
-                categoryItem.Header = decorator;
-                categoryItem.Margin = new Thickness(0);
-                categoryItem.Padding = new Thickness(3);
-                categoryItem.FontSize = 14;
-                categoryItem.FontWeight = FontWeights.Bold;
-
-                treeView.Items.Add(categoryItem);
-
-                FillTreeView(student, categoryItem);
-
-                categoryItem.IsExpanded = (i == 0);
-                i++;
-            });
-
-            treeView.EndInit();
-
-            CmbSchool.SelectedValuePath = "Key";
-            CmbSchool.DisplayMemberPath = "Value";
-            CmbSchool.ItemsSource = cmbDic;
-            CmbSchool.SelectedIndex = 0;
-        }
-
-        private int studentCount = 0;
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="studentInfo"></param>
-        /// <param name="treeItem"></param>
-        private void FillTreeView(StudentInfo studentInfo, TreeViewItem treeItem)
-        {
-            int itemCount = 0;
-
-            studentInfo.List.ForEach(student =>
-            {
-                TextBlock itemText = new TextBlock();
-                itemText.Text = $"{student.StudentName}";
-                itemText.Margin = new Thickness(3, 0, 0, 0);
-
-                BulletDecorator fileItem = new BulletDecorator();
-                if (_fileThumbnail != null)
-                {
-                    Image image = new Image();
-                    image.Source = _fileThumbnail;
-                    image.Height = 16;
-                    image.Width = 16;
-
-                    fileItem.Bullet = image;
-                }
-                else
-                {
-                    Ellipse bullet = new Ellipse();
-                    bullet.Height = 10;
-                    bullet.Width = 10;
-                    bullet.Fill = Brushes.Goldenrod;
-                    bullet.Stroke = Brushes.DarkGray;
-                    bullet.StrokeThickness = 1;
-
-                    fileItem.Bullet = bullet;
-                }
-                fileItem.Margin = new Thickness(0, 0, 10, 0);
-                fileItem.Child = itemText;
-
-                TreeViewItem item = new TreeViewItem();
-                item.Tag = student;
-                item.Header = fileItem;
-                item.Margin = new Thickness(0);
-                item.Padding = new Thickness(2);
-                item.FontSize = 12;
-                item.FontWeight = FontWeights.Normal;
-
-                treeItem.Items.Add(item);
-
-                studentCount++;
-                itemCount++;
             });
         }
 
