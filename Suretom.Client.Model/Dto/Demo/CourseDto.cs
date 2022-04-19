@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Web;
 
 namespace Suretom.Client.Entity
@@ -10,6 +11,22 @@ namespace Suretom.Client.Entity
     /// </summary>
     public class CourseDto : IComparable<CourseDto>
     {
+        /// <summary>
+        /// 声明CancellationTokenSource对象
+        /// </summary>
+        public CancellationTokenSource TokenSource = new CancellationTokenSource();
+
+        /// <summary>
+        ///
+        /// </summary>
+        public CancellationToken Token = new CancellationToken();
+
+        public CourseDto()
+        {
+            TokenSource = new CancellationTokenSource();
+            Token =TokenSource.Token;
+        }
+
         /// <summary>
         ///
         /// </summary>
@@ -96,9 +113,9 @@ namespace Suretom.Client.Entity
         public string imgStr { get; set; }
 
         /// <summary>
-        /// 0：未开始 1：学习中 2：已完成
+        /// -1：未开始 0：待开始 1：学习中 2：已完成
         /// </summary>
-        public int Status { get; set; } = 0;
+        public int Status { get; set; } = -1;
 
         /// <summary>
         ///是否开始

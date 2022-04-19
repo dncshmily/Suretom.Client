@@ -151,36 +151,57 @@
 
                         <TabControl  Grid.Row="1"  Margin="5" Padding="0">
                             <TabItem Header="未结束课程">
-                                <Grid Background="#FFE5E5E5">
-                                    <DataGrid x:Name="dgCourseInfo"  IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}" Height="Auto">
-                                        <DataGrid.Columns>
-                                            <DataGridTextColumn  Binding="{Binding CourseName}" Header="课程名称" ElementStyle="{StaticResource DataGridTextCenter}" Width="200" />
-                                            <DataGridTextColumn  Binding="{Binding StudyYear}" Header="学年" ElementStyle="{StaticResource DataGridTextCenter}" Width="150" />
-                                            <DataGridTextColumn  Binding="{Binding StudyTerm}" Header="季度" ElementStyle="{StaticResource DataGridTextCenter}" Width="150" />
-                                            <DataGridTextColumn  Binding="{Binding DisplayName}" Header="教师" ElementStyle="{StaticResource DataGridTextCenter}" Width="150" />
-                                            <DataGridTemplateColumn Header="进度"   Width="300">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <Grid>
-                                                            <StackPanel Orientation="Horizontal">
-                                                                <ProgressBar  Tag="{Binding}"  Minimum="0"  Maximum="100"   Width="150"  Height="20" Foreground="SkyBlue" Background="LightGray" Value="{Binding Schedule}" />
-                                                                <Label  x:Name="labFinish1"  FontSize="15" Content="{Binding Schedule}"  Margin="15 0 0 0" VerticalContentAlignment="Center" />
-                                                                <Label  x:Name="labTitle1"  Content="%" FontSize="15"     Margin="5 0 0 0" VerticalContentAlignment="Center" />
-                                                            </StackPanel>
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
-                                            <DataGridTextColumn Binding="{Binding ExpiredTime}" Header="截止时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="200" />
-                                            <DataGridTemplateColumn Width="150" Header="信息">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <Button Content="添加刷课" Style="{DynamicResource btn-primary}" Tag="{Binding}" Visibility="{Binding IsCheckSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnItemStart_Click" Margin="15 0 0 0" />
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
-                                        </DataGrid.Columns>
-                                    </DataGrid>
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel x:Name="Sp99"   Grid.Row="0">
+                                        <DataGrid x:Name="dgCourseInfo" Grid.Row="1"  IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}" Height="Auto">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn  Binding="{Binding CourseName}" Header="课程名称" ElementStyle="{StaticResource DataGridTextCenter}" Width="200" />
+                                                <DataGridTextColumn  Binding="{Binding StudyYear}" Header="学年" ElementStyle="{StaticResource DataGridTextCenter}" Width="150" />
+                                                <DataGridTextColumn  Binding="{Binding StudyTerm}" Header="季度" ElementStyle="{StaticResource DataGridTextCenter}" Width="150" />
+                                                <DataGridTextColumn  Binding="{Binding DisplayName}" Header="教师" ElementStyle="{StaticResource DataGridTextCenter}" Width="150" />
+                                                <DataGridTemplateColumn Header="进度"   Width="300">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <Grid>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <ProgressBar  Tag="{Binding}"  Minimum="0"  Maximum="100"   Width="150"  Height="20" Foreground="SkyBlue" Background="LightGray" Value="{Binding Schedule}" />
+                                                                    <Label  x:Name="labFinish1"  FontSize="15" Content="{Binding Schedule}"  Margin="15 0 0 0" VerticalContentAlignment="Center" />
+                                                                    <Label  x:Name="labTitle1"  Content="%" FontSize="15"     Margin="5 0 0 0" VerticalContentAlignment="Center" />
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <DataGridTextColumn Binding="{Binding ExpiredTime}" Header="截止时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="200" />
+                                                <DataGridTemplateColumn Width="150" Header="信息">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <Button Content="添加刷课" Style="{DynamicResource btn-primary}" Tag="{Binding}" Visibility="{Binding IsCheckSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnAddCourse_Click" Margin="15 0 0 0" />
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </StackPanel>
+                                    <Border  Grid.Column="1" BorderBrush="LightGray" BorderThickness="0.6" Background="White">
+                                        <StackPanel x:Name="Sp88"  VerticalAlignment="Center">
+                                            <Grid>
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+                                                </Grid>
+                                                <Button Content="一键添加"  Grid.Row="0"   Margin="0 0 0 0"  Style="{DynamicResource  btn-warning}" Tag="{Binding}" Visibility="{Binding IsCheckSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnAddCourses_Click" />
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
                                 </Grid>
                             </TabItem>
                             <TabItem Header="已结束课程">
@@ -205,56 +226,66 @@
                                                 </DataGridTemplateColumn.CellTemplate>
                                             </DataGridTemplateColumn>
                                             <DataGridTextColumn Binding="{Binding ExpiredTime}" Header="截止时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="*" />
-                                            <!--<DataGridTemplateColumn Width="150" Header="信息">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <Button Content="添加刷课" Style="{DynamicResource btn-primary}" Tag="{Binding}" Visibility="{Binding IsCheckSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnItemStart_Click" Margin="15 0 0 0" />
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>-->
                                         </DataGrid.Columns>
                                     </DataGrid>
                                 </Grid>
                             </TabItem>
                         </TabControl>
 
-                     
                         <TabControl  Grid.Row="2"  Margin="5" Padding="0">
                             <TabItem Header="刷课信息">
-                                <Grid Background="#FFE5E5E5">
-                                
-                                    <DataGrid x:Name="dgCourseList"   IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}">
-                                        <DataGrid.Columns>
-                                            <DataGridTextColumn   Binding="{Binding CourseName}"  Header="课程名称" ElementStyle="{StaticResource DataGridTextCenter}" Width="*" />
-                                            <!--<DataGridTextColumn Binding="{Binding ExpiredTime}" Header="截止时间" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />
-                                            <DataGridTextColumn Binding="{Binding ScheduleTxt}" Header="状态" ElementStyle="{StaticResource DataGridTextCenter}" Width="10*" />-->
-                                            <DataGridTemplateColumn Header="进度"  Width="*">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate >
-                                                        <Grid>
-                                                            <StackPanel Orientation="Horizontal">
-                                                                <ProgressBar  Tag="{Binding}"  Minimum="0"  Maximum="100"   Width="150"  Height="20" Foreground="SkyBlue" Background="LightGray" Value="{Binding Schedule}" />
-                                                                <Label  x:Name="labFinish"  FontSize="15" Content="{Binding Schedule}"  Margin="15 0 0 0" VerticalContentAlignment="Center" />
-                                                                <Label  x:Name="labTitle"  Content="%" FontSize="15"     Margin="5 0 0 0" VerticalContentAlignment="Center" />
-                                                            </StackPanel>
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
-                                            <DataGridTemplateColumn Header="操作" Width="*">
-                                                <DataGridTemplateColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <Grid>
-                                                            <StackPanel Orientation="Horizontal">
-                                                                <Button Content="开始" Style="{DynamicResource btn-primary}" Tag="{Binding}" Visibility="{Binding IsCheckSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnItemStart_Click" Margin="15 0 0 0" />
-                                                                <Button Content="暂停" Style="{DynamicResource btn-warning}" Tag="{Binding}" Visibility="{Binding IsCutImgSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnItemPause_Click"   Margin="15 0 0 0" />
-                                                            </StackPanel>
-                                                        </Grid>
-                                                    </DataTemplate>
-                                                </DataGridTemplateColumn.CellTemplate>
-                                            </DataGridTemplateColumn>
-                                        </DataGrid.Columns>
-                                    </DataGrid>
+                                <Grid Background="White">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel x:Name="Sp101"   Grid.Row="0">
+                                        <DataGrid x:Name="dgCourseList"   IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}">
+                                            <DataGrid.Columns>
+                                                <DataGridTextColumn   Binding="{Binding CourseName}"  Header="课程名称" ElementStyle="{StaticResource DataGridTextCenter}" Width="*" />
+                                                <DataGridTemplateColumn Header="进度"  Width="*">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <Grid>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <ProgressBar  Tag="{Binding}"  Minimum="0"  Maximum="100"   Width="150"  Height="20" Foreground="SkyBlue" Background="LightGray" Value="{Binding Schedule}" />
+                                                                    <Label  x:Name="labFinish"  FontSize="15" Content="{Binding Schedule}"  Margin="15 0 0 0" VerticalContentAlignment="Center" />
+                                                                    <Label  x:Name="labTitle"  Content="%" FontSize="15"     Margin="5 0 0 0" VerticalContentAlignment="Center" />
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                                <DataGridTemplateColumn Header="操作" Width="*">
+                                                    <DataGridTemplateColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <Grid>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <Button Content="开  始" Style="{DynamicResource btn-primary}" Tag="{Binding}" Visibility="{Binding IsCheckSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnCourseStart_Click" Margin="30 0 0 0" />
+                                                                    <Button Content="停  止" Style="{DynamicResource btn-warning}" Tag="{Binding}" Visibility="{Binding IsCutImgSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnCoursePause_Click"   Margin="30 0 0 0" />
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </DataGridTemplateColumn.CellTemplate>
+                                                </DataGridTemplateColumn>
+                                            </DataGrid.Columns>
+                                        </DataGrid>
+                                    </StackPanel>
+                                    <Border  Grid.Column="1" BorderBrush="LightGray" BorderThickness="0.6" Background="White">
+                                        <StackPanel x:Name="Sp102"  VerticalAlignment="Center">
+                                            <Grid>
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+                                                </Grid>
+                                                <Button Content="一键开始"  Grid.Row="1"    Margin="0 0 0 50"   Style="{DynamicResource btn-success}" Tag="{Binding}" Visibility="{Binding IsCheckSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnCoursesStart_Click" />
+                                                <Button Content="一键停止"  Grid.Row="1"    Margin="0 50 0 0"   Style="{DynamicResource btn-danger}" Tag="{Binding}" Visibility="{Binding IsCheckSuccess,Converter={StaticResource bool2VisibilityConverter}}" Click="BtnCoursesStop_Click" />
+                                            </Grid>
+                                        </StackPanel>
+                                    </Border>
                                 </Grid>
                             </TabItem>
                             <TabItem Header="操作日志">

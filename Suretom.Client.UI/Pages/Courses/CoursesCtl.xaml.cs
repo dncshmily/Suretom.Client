@@ -89,7 +89,7 @@ namespace Suretom.Client.UI.Pages.Courses
         private ObservableCollection<CourseDto> ez_UndoneCoursesList = new ObservableCollection<CourseDto>();
 
         /// <summary>
-        /// 当前学生-学习中的课程
+        /// 当前学生-刷课课程
         /// </summary>
         private ObservableCollection<CourseDto> do_CoursesList = new ObservableCollection<CourseDto>();
 
@@ -111,7 +111,12 @@ namespace Suretom.Client.UI.Pages.Courses
         /// <summary>
         ///
         /// </summary>
-        private DispatcherTimer ez_timer;
+        private DispatcherTimer ez_timer1;
+
+        /// <summary>
+        ///
+        /// </summary>
+        private DispatcherTimer ez_timer2;
 
         /// <summary>
         ///
@@ -139,6 +144,16 @@ namespace Suretom.Client.UI.Pages.Courses
             dgCourseList.DataContext = do_CoursesList;
             //
             dgStudents.DataContext = ez_StudentList;
+
+            ez_timer1 = new DispatcherTimer();
+            ez_timer1.Interval = TimeSpan.FromMinutes(0.1);
+            ez_timer1.Tick += Timer1_Tick;
+            ez_timer1.Start();
+
+            //ez_timer2 = new DispatcherTimer();
+            //ez_timer2.Interval = TimeSpan.FromMinutes(0.1);
+            //ez_timer2.Tick += Timer2_Tick;
+            //ez_timer2.Start();
         }
 
         /// <summary>
@@ -371,7 +386,7 @@ namespace Suretom.Client.UI.Pages.Courses
         }
 
         /// <summary>
-        /// 开始学习-自动处理
+        /// 开始学习-智能刷课
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -398,11 +413,6 @@ namespace Suretom.Client.UI.Pages.Courses
 
                             _isStopDeal = true;
                         }
-
-                        ez_timer = new DispatcherTimer();
-                        ez_timer.Interval = TimeSpan.FromMinutes(0.1);
-                        ez_timer.Tick += Timer1_Tick;
-                        ez_timer.Start();
 
                         OperationBtnEnable(false);
                         CurrentStatus = BatchImportStatus.手动处理;
@@ -528,105 +538,6 @@ namespace Suretom.Client.UI.Pages.Courses
         }
 
         /// <summary>
-        /// 开始
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnItemStart_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var result = MessageBox.Show("是否确定开始学习？", "提示", MessageBoxButton.OKCancel);
-
-                if (CurrentStatus == BatchImportStatus.初始化失败)
-                {
-                    MessageBox.Show("初始化失败");
-                    return;
-                }
-                var button = sender as Button;
-                var course = button.Tag as CourseDto;
-
-                //ez_timer = new DispatcherTimer();
-                //ez_timer.Interval = TimeSpan.FromMinutes(0.1);
-                //ez_timer.Tick += Timer2_Tick;
-                //ez_timer.Start();
-
-                if (course != null)
-                {
-                    button.IsEnabled=false;
-
-                    Task.Run(() =>
-                    {
-                        try
-                        {
-                            //
-                            StudyCourses(course);
-                        }
-                        catch (Exception inEx)
-                        {
-                            log.Error(inEx);
-                            MessageBox.Show(inEx.Message);
-                        }
-                    }).ContinueWith(t =>
-                    {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            button.IsEnabled = true;
-                        });
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// 暂停
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnItemPause_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var button = sender as Button;
-                var course = button.Tag as CourseDto;
-
-                if (course != null)
-                {
-                    button.IsEnabled = false;
-
-                    Task.Run(() =>
-                    {
-                        try
-                        {
-                            //DoWork
-                        }
-                        catch (Exception inEx)
-                        {
-                            log.Error(inEx);
-                            MessageBox.Show(inEx.Message);
-                        }
-                    }).ContinueWith(t =>
-                    {
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            button.IsEnabled = true;
-                        });
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex);
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        /// <summary>
         ///
         /// </summary>
         /// <param name="sender"></param>
@@ -667,6 +578,214 @@ namespace Suretom.Client.UI.Pages.Courses
                 //MessageBox.Show("双击");
                 e.Handled = true;
             }
+        }
+
+        /// <summary>
+        /// 单课程添加-刷课
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnAddCourse_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var course = button.Tag as CourseDto;
+
+            if (course!=null)
+            {
+                if (do_CoursesList.Count(f => f.Student.IdCard == ez_student.IdCard && f.CourseOpenId == course.CourseOpenId&&f.CourseName==course.CourseName)==0)
+                {
+                    do_CoursesList.Add(course);
+
+                    AddProcessInfo($"添加刷课—{course.CourseName} 成功");
+                }
+                else
+                {
+                    MessageBox.Show("课程已存在，不可重复添加");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 一键添加-刷课
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnAddCourses_Click(object sender, RoutedEventArgs e)
+        {
+            AddProcessInfo($"一键添加刷课...");
+
+            //当前学生-未完成课程信息
+            foreach (var course in ez_UndoneCoursesList)
+            {
+                if (do_CoursesList.Count(f => f.Student.IdCard == ez_student.IdCard && f.CourseOpenId == course.CourseOpenId&&f.CourseName==course.CourseName)==0)
+                {
+                    do_CoursesList.Add(course);
+
+                    AddProcessInfo($"添加刷课—{course.CourseName} 成功");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 单课程-开始
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void BtnCourseStart_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var result = MessageBox.Show("是否确定开始学习？", "提示", MessageBoxButton.OKCancel);
+
+                if (CurrentStatus == BatchImportStatus.初始化失败)
+                {
+                    MessageBox.Show("初始化失败");
+                    return;
+                }
+                var button = sender as Button;
+                var course = button.Tag as CourseDto;
+
+                if (course != null)
+                {
+                    button.IsEnabled=false;
+
+                    if (do_AllCoursesList.Count(f => f.Student.IdCard == ez_student.IdCard && f.CourseOpenId == course.CourseOpenId&& f.CourseName == course.CourseName)==0)
+                    {
+                        course.Status=0;
+
+                        do_AllCoursesList.Add((course));
+                    }
+
+                    try
+                    {
+                        var idx = do_AllCoursesList.IndexOf(course);
+
+                        AddProcessInfo($"{strInfo}-开始学习{course.CourseName}");
+
+                        await Task.Run(() =>
+                        {
+                            AddProcessInfo($"{strInfo}-{course.CourseName}-学习中...");
+
+                            OperationBtnEnable(false);
+
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                do_AllCoursesList[idx].Status = 1;
+                            });
+
+                            //开始学习
+                            new CoursesData(course.Student).SingeSyudentStart(course);
+                        }, course.Token).ContinueWith(t =>
+                        {
+                            try
+                            {
+                                this.Dispatcher.Invoke(() =>
+                                {
+                                    do_AllCoursesList[idx].Status = 2;
+                                });
+                            }
+                            catch (Exception inEx)
+                            {
+                                log.Error(inEx);
+                            }
+                        });
+
+                        AddProcessInfo($"{strInfo}-{course.CourseName}-学习结束");
+                    }
+                    catch (Exception ex)
+                    {
+                        log.Error(ex);
+                        AddProcessError($"{strInfo}-{course.CourseName}-{ex.Message}");
+                    }
+                    finally
+                    {
+                        button.IsEnabled=true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 一键开始-当前学生-刷课
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnCoursesStart_Click(object sender, RoutedEventArgs e)
+        {
+            AddProcessInfo($"一键开始刷课...");
+
+            //当前学生-待刷课课程
+            var studenCourses = do_CoursesList.Where(c => c.Student.IdCard==ez_student.IdCard&&c.Student.StudentName==ez_student.StudentName&&c.Schedule<100).ToList();
+
+            foreach (var course in studenCourses)
+            {
+                if (do_AllCoursesList.Count(f => f.Student.IdCard == ez_student.IdCard && f.CourseOpenId == course.CourseOpenId)==0)
+                {
+                    course.Status=0;
+
+                    do_AllCoursesList.Add((course));
+
+                    AddProcessInfo($"开始刷课—{course.CourseName} 启动成功");
+                }
+            };
+        }
+
+        /// <summary>
+        /// 单课程-暂停
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnCoursePause_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var button = sender as Button;
+                var course = button.Tag as CourseDto;
+
+                if (course != null)
+                {
+                    button.IsEnabled = false;
+
+                    course.TokenSource.Cancel();
+
+                    button.IsEnabled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex);
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// 一键停止
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void BtnCoursesStop_Click(object sender, RoutedEventArgs e)
+        {
+            AddProcessInfo($"一键停止刷课...");
+
+            //当前学生-未完成课程
+            var studenCourses = do_CoursesList.Where(c => c.Student.IdCard==ez_student.IdCard&&c.Student.StudentName==ez_student.StudentName&&c.Schedule<100).ToList();
+
+            foreach (var course in studenCourses)
+            {
+                var do_AllCourses = do_AllCoursesList.FirstOrDefault(f => f.CourseName==course.CourseName&&f.Student.IdCard==course.Student.IdCard);
+
+                if (do_AllCourses!=null)
+                {
+                    course.TokenSource.Cancel();
+
+                    AddProcessInfo($"停止刷课—{course.CourseName} 成功");
+                }
+            };
         }
 
         #endregion 按钮
@@ -718,43 +837,18 @@ namespace Suretom.Client.UI.Pages.Courses
         /// <param name="e"></param>
         private async void Timer2_Tick(object sender, EventArgs e)
         {
-            var doCoursesList = do_AllCoursesList.Where(f => f.Status == 0).ToList();
+            var studenCourses = do_AllCoursesList.Where(c => c.Student.IdCard==ez_student.IdCard&&c.Student.StudentName==ez_student.StudentName).ToList();
 
-            if (doCoursesList.Count > 0)
+            if (studenCourses.Count > 0)
             {
-                try
-                {
-                    this.Dispatcher.Invoke(() =>
-                    {
-                        doCoursesList.ForEach(f =>
-                        {
-                            f.Schedule+=1;
-                        });
-
-                        do_AllCoursesList.Clear();
-
-                        doCoursesList.ForEach((f) =>
-                        {
-                            do_AllCoursesList.Add(f);
-                        });
-                    });
-                }
-                catch (Exception ex)
-                {
-                    log.Error(ex);
-                    MessageBox.Show(ex.Message);
-                }
-                finally
-                {
-                    this.Sp1.IsEnabled = true;
-                }
-            }
-            else
-            {
-                OperationBtnEnable(true);
-
                 this.Dispatcher.Invoke(() =>
                 {
+                    do_CoursesList.Clear();
+
+                    studenCourses.ForEach(c =>
+                    {
+                        do_CoursesList.Add(c);
+                    });
                 });
             }
         }
@@ -764,7 +858,7 @@ namespace Suretom.Client.UI.Pages.Courses
         #region DoWork
 
         /// <summary>
-        ///
+        ///切换学生绑定
         /// </summary>
         /// <param name="student"></param>
         public void DataBindStudentList(string schoolName = "")
@@ -845,18 +939,6 @@ namespace Suretom.Client.UI.Pages.Courses
 
             if (ez_coursesList != null && ez_coursesList.Count > 0)
             {
-                //do_CoursesList.Clear();
-
-                //coursesList.ForEach(course =>
-                //{
-                //    do_CoursesList.Add(course);
-
-                //    if (do_AllCoursesList.Count(f => f.Student.IdCard == ez_student.IdCard && f.CourseOpenId == course.CourseOpenId)==0)
-                //    {
-                //        do_AllCoursesList.Add(course);
-                //    }
-                //});
-
                 ez_UndoneCoursesList.Clear();
                 ez_CompletedCoursesList.Clear();
 
@@ -902,7 +984,7 @@ namespace Suretom.Client.UI.Pages.Courses
 
                     //开始学习
                     new CoursesData(course.Student).SingeSyudentStart(course);
-                }, token).ContinueWith(t =>
+                }, course.Token).ContinueWith(t =>
                 {
                     try
                     {
@@ -934,7 +1016,7 @@ namespace Suretom.Client.UI.Pages.Courses
         }
 
         /// <summary>
-        ///
+        ///全部停止
         /// </summary>
         /// <param name="dgrStr"></param>
         /// <returns></returns>
@@ -944,10 +1026,14 @@ namespace Suretom.Client.UI.Pages.Courses
             {
                 AddProcessError($"{strInfo}停止学习");
 
-                tokenSource.Cancel();
-                if (ez_timer != null)
+                foreach (var course in do_AllCoursesList)
                 {
-                    ez_timer.Stop();
+                    course.TokenSource.Cancel();
+                }
+
+                if (ez_timer1 != null)
+                {
+                    ez_timer1.Stop();
                 }
 
                 this.Dispatcher.Invoke(() =>
