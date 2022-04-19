@@ -202,7 +202,15 @@ namespace Suretom.Client.UI.Pages.Courses
 
             if (student != null)
             {
-                DataBindStudentCourses(student);
+                gb2.IsEnabled = false;
+                try
+                {
+                    DataBindStudentCourses(student);
+                }
+                catch
+                {
+                }
+                gb2.IsEnabled = true;
             }
         }
 
@@ -439,7 +447,7 @@ namespace Suretom.Client.UI.Pages.Courses
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void BtnAutoStopClick(object sender, RoutedEventArgs e)
+        private async void BtnAutoStop_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -868,20 +876,18 @@ namespace Suretom.Client.UI.Pages.Courses
         {
             var userInfos = GlobalContext.UserInfo.studentInfos;
 
-            var cmbSchoolDic = new Dictionary<int, string>();
-            var cmbSemesterDic = new Dictionary<int, string>();
+            var cmbSchoolDic = new Dictionary<int, string>() { { 0, "全部" } };
+            var cmbSemesterDic = new Dictionary<int, string> { { 0, "全部" } };
 
             int selectIndex = 0;
 
-            if (!string.IsNullOrEmpty(schoolName))
+            if (!string.IsNullOrEmpty(schoolName)&&schoolName!="全部")
             {
                 selectIndex = CmbSchool.SelectedIndex;
                 userInfos= userInfos.Where(f => f.SchoolName==schoolName).ToList();
             }
 
             ez_StudentList.Clear();
-
-            //CmbSemester.Items.Clear();
 
             for (int i = 0; i < userInfos.Count; i++)
             {
@@ -894,7 +900,7 @@ namespace Suretom.Client.UI.Pages.Courses
 
                 if (!cmbSchoolDic.ContainsValue(schoolName))
                 {
-                    cmbSchoolDic.Add(i, userInfo.SchoolName);
+                    cmbSchoolDic.Add(i+1, userInfo.SchoolName);
                 }
             }
 
@@ -954,8 +960,7 @@ namespace Suretom.Client.UI.Pages.Courses
 
             for (int i = 0; i < ez_coursesList.Count; i++)
             {
-                var time = ez_coursesList[i].ExpiredTime.Contains("Date") ? UtilityHelper.ToConvertTime(ez_coursesList[i].ExpiredTime).ToString() : ez_coursesList[i].ExpiredTime;
-                ez_coursesList[i].ExpiredTime = time;
+                ez_coursesList[i].ExpiredTime = ez_coursesList[i].ExpiredTime.Contains("Date") ? UtilityHelper.ToConvertTime(ez_coursesList[i].ExpiredTime).ToString() : ez_coursesList[i].ExpiredTime;
                 ez_coursesList[i].Id = i+1;
             }
 

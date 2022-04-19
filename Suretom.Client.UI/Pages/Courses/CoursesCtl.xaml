@@ -13,16 +13,16 @@
     <Border BorderThickness="1" BorderBrush="#AAA" Width="Auto" Height="Auto" Margin="5">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="100" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid  Grid.Row="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="300" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <!--<ColumnDefinition Width="300" />
+                    <ColumnDefinition Width="Auto" />-->
                 </Grid.ColumnDefinitions>
-                <GroupBox  Grid.Column="0" Margin="5 5 5 5"  Header="" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox  Grid.Column="0" Margin="10 5 10 5"  Header="" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                     <GroupBox.BorderBrush>
                         <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
                     </GroupBox.BorderBrush>
@@ -32,7 +32,8 @@
                             <Button x:Name="BtnStartDeal" Content="批量导入" Margin="20,0,0,0"   Style="{DynamicResource btn-warning}"  Click="BtnBatchImport_Click" />
                             <Button x:Name="BtnAuto1"  Margin="20,0,0,0"  Content="学员管理" Style="{DynamicResource btn-info}"  Click="BtnStudentManageClick" />
                             <Button x:Name="BtnAuto2"  Margin="20,0,0,0"  Content="个人中心" Style="{DynamicResource btn-success}"  Click="BtnPersonCenterClick" />
-                            <Button x:Name="BtnAutoStart"  Margin="20,0,20,0"  Content="智能刷课" Style="{ DynamicResource btn-danger}"  Click="BtnAutoStart_Click" />
+                            <Button x:Name="BtnAutoStart"  Margin="20,0,20,0"  Content="智能刷课" Style="{ DynamicResource btn-primary}"  Click="BtnAutoStart_Click" />
+                            <Button x:Name="BtnAutoStop"  Margin="0,0,20,0"  Content="停止刷课" Style="{ DynamicResource btn-danger}"  Click="BtnAutoStop_Click" />
                         </StackPanel>
                     </Grid>
                 </GroupBox>
@@ -41,7 +42,6 @@
                         <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
                     </GroupBox.BorderBrush>
                     <StackPanel x:Name="Sp2" Orientation="Horizontal"  Grid.Column="0">
-                        <Button x:Name="BtnAutoStop" Visibility="Hidden"  Margin="20,0,0,0"  Content="停止学习" Style="{DynamicResource btn-danger}"  Click="BtnAutoStopClick" />
                     </StackPanel>
                 </GroupBox>
             </Grid>
@@ -51,7 +51,7 @@
                     <ColumnDefinition Width="150" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <GroupBox x:Name="gb1" Header="1"  Margin="0 0 5 0"   Grid.Column="0"  Padding="0,2,0,2"  Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox x:Name="gb1" Header=""  Margin="0 0 5 0"   Grid.Column="0"  Padding="0,2,0,2"  Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                     <GroupBox.BorderBrush>
                         <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
                     </GroupBox.BorderBrush>
@@ -82,7 +82,7 @@
                     </Grid>
                 </GroupBox>
 
-                <GroupBox  x:Name="gb2"  Margin="0 0 5 0" Grid.Column="1" Padding="0,2,0,2" Header="2" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox  x:Name="gb2"  Header=""  Margin="0 0 5 0" Grid.Column="1" Padding="0,2,0,2" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                     <GroupBox.BorderBrush>
                         <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
                     </GroupBox.BorderBrush>
