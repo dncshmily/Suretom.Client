@@ -24,9 +24,9 @@ namespace Suretom.Client.Common
 
             private CodeTypeEnum _codetype;
 
-            private readonly Single _jianju = (float)18.0;
+            private readonly Single _jianju = (float)25.0;
 
-            private readonly Single _height = (float)24.0;
+            private readonly Single _height = (float)30.0;
 
             #endregion Private Fields
 

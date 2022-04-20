@@ -45,6 +45,11 @@ namespace Suretom.Client.Entity
         public int StudyType { get; set; }
 
         /// <summary>
+        ///
+        /// </summary>
+        public string LearnType { get; set; }
+
+        /// <summary>
         /// 无说明:该字段不可空
         /// </summary>
         /// <returns></returns>

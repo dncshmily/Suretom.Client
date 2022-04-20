@@ -27,6 +27,8 @@ namespace Suretom.Client.UI.Pages.User
         /// </summary>
         private IStudentService studentService;
 
+        public bool studentExists = false;
+
         /// <summary>
         ///
         /// </summary>
@@ -88,6 +90,7 @@ namespace Suretom.Client.UI.Pages.User
             var result = studentService.AddStudent(student);
             if (result.Success)
             {
+                studentExists=result.Success;
                 MessageBox.Show("添加成功");
             }
             else

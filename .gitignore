@@ -1,0 +1,19 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/.vs/Suretom.Client/v17
+/Suretom.Client.Common/bin/Debug
+/Suretom.Client.Common/obj
+/Suretom.Client.Common/bin
+/Suretom.Client.Data/obj
+/Suretom.Client.Data/bin
+/Suretom.Client.IService/bin
+/Suretom.Client.IService/obj
+/Suretom.Client.Model/bin
+/Suretom.Client.Model/obj
+/Suretom.Client.Service/bin
+/Suretom.Client.Service/obj
+/Suretom.Client.UI/bin
+/Suretom.Client.UI/obj
+/.vs

@@ -77,7 +77,6 @@ namespace Suretom.Client.Service
                 {
                     //data= data.Remove(0, 1);
                     //data= data.Remove(data.Length-1, 1);
-
                     // var ss = JsonConvert.DeserializeObject<List<StudentInfo>>(data);
 
                     return JsonConvert.DeserializeObject<List<StudentInfo>>(data);
@@ -86,7 +85,7 @@ namespace Suretom.Client.Service
                 {
                 }
             }
-            return null;
+            return new List<StudentInfo>();
         }
     }
 }

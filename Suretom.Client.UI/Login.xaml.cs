@@ -113,12 +113,19 @@ namespace Suretom.Client.UI
 
                     //
                     var studentInfos = studentService.GetStudentList();
+                    //var studentInfos1 = studentService.GetStudentList().Select(f => f.List.Where(s => s.IdCard=="342422199610280021").ToList()).ToList();
 
-                    if (studentInfos.Count == 0)
-                    {
-                        MessageBox.Show("获取学生信息失败");
-                        return;
-                    }
+                    //studentInfos1.ForEach(f =>
+                    //{
+                    //    studentInfos =new List<StudentInfo>()
+                    //    {
+                    //      new StudentInfo()
+                    //      {
+                    //          SchoolName="安徽大学",
+                    //          List=f
+                    //      }
+                    //    };
+                    //});
 
                     GlobalContext.UserInfo = new UserInfo
                     {
@@ -151,6 +158,9 @@ namespace Suretom.Client.UI
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
         public void MageCodeSource()
         {
             var code = loginService.GetVerifyCode();
