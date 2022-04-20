@@ -7,18 +7,18 @@
         mc:Ignorable="d"
         Title="皖校通"
         IsTitleVisible="True"
-        ContentSource="/Pages/Demo/DemoWin.xaml"
+        ContentSource="/Pages/Courses/CoursesCtl.xaml"
         Height="450"
         Width="800"
         Closing="ModernWindow_Closing">
-    <mui:ModernWindow.TitleLinks>
+    <!--<mui:ModernWindow.TitleLinks>
         <mui:Link DisplayName="设置" Source="/Pages/Set/SetDemo.xaml" />
         <mui:Link DisplayName="站点" Source="http://suretom.com" />
-    </mui:ModernWindow.TitleLinks>
+    </mui:ModernWindow.TitleLinks>-->
     <mui:ModernWindow.MenuLinkGroups>
         <mui:LinkGroup DisplayName="">
             <mui:LinkGroup.Links>
-                <mui:Link Source="/Pages/Demo/DemoWin.xaml" />
+                <mui:Link Source="/Pages/Courses/CoursesCtl.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
         <mui:LinkGroup DisplayName="设置" GroupKey="settings">

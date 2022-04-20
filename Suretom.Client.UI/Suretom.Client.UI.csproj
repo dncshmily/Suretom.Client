@@ -136,6 +136,9 @@
     <Compile Include="Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Courses\CoursesCtl.xaml.cs">
+      <DependentUpon>CoursesCtl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Demo\DemoWin.xaml.cs">
       <DependentUpon>DemoWin.xaml</DependentUpon>
     </Compile>
@@ -160,6 +163,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Pages\Courses\CoursesCtl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\Demo\DemoWin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -250,6 +257,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\File\student.xlsx" />
     <Resource Include="Resources\kcfm-pic.jpg" />
     <Resource Include="Resources\demo.png" />
     <None Include="Resources\app.ico" />

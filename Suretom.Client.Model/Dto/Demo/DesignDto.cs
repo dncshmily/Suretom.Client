@@ -5,6 +5,9 @@ using System.Web;
 
 namespace Suretom.Client.Entity
 {
+    /// <summary>
+    ///
+    /// </summary>
     public class DesignDto
     {
         public string Id { get; set; }
@@ -13,6 +16,9 @@ namespace Suretom.Client.Entity
         public List<Lessons> Lessons { get; set; } = new List<Lessons>();
     }
 
+    /// <summary>
+    /// 章
+    /// </summary>
     public class Lessons
     {
         public string Id { get; set; }
@@ -22,6 +28,9 @@ namespace Suretom.Client.Entity
         public List<Cells> Cells { get; set; } = new List<Cells>();
     }
 
+    /// <summary>
+    /// 节
+    /// </summary>
     public class Cells
     {
         public string CourseDocId { get; set; }
