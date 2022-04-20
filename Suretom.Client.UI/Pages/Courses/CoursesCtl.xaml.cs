@@ -926,6 +926,8 @@ namespace Suretom.Client.UI.Pages.Courses
 
             ez_student = student;
 
+            //var assignment = new CoursesData(ez_student).GetAssignment("08o0ackusp9di1tqclczta", "dfraaciuu6zecyq0vv1tjq", "003");
+
             strInfo = $"{ez_student.SchoolName}-{ez_student.StudentName}-{ez_student.IdCard}";
 
             labNane.Content = ez_student.StudentName;

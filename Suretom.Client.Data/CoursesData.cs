@@ -136,12 +136,12 @@ namespace Suretom.Client.Data
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public List<CourseDto> GetStudentCourseList()
         {
-            var courses= new List<CourseDto>();
+            var courses = new List<CourseDto>();
 
             try
             {
@@ -173,7 +173,6 @@ namespace Suretom.Client.Data
             }
             return courses;
         }
-
 
         /// <summary>
         ///单课程学校
@@ -336,5 +335,140 @@ namespace Suretom.Client.Data
                 }
             }
         }
+
+        #region 作业
+
+        /// <summary>
+        /// 作业数据
+        /// </summary>
+        /// <param name="courseOpenId"></param>
+        /// <param name="cellId"></param>
+        /// <param name="schoolCode"></param>
+        /// <returns></returns>
+        public AssignmentDot GetAssignment(string courseOpenId, string cellId, string schoolCode)
+        {
+            var courseResults = new AssignmentDot();
+
+            try
+            {
+                var resultJson = CourseHelper.FromPost($"{apiUrl}/study/assignment/loadOnlineAssignment", header, $"courseOpenId={courseOpenId}&cellId={cellId}&schoolCode={schoolcode}");
+
+                courseResults= JsonConvert.DeserializeObject<AssignmentDot>(resultJson);
+
+                foreach (var course in courseResults.data)
+                {
+                    switch (course.type)
+                    {
+                        case 1://单选题
+                            course.list.ForEach(x =>
+                            {
+                                SubmitPaperItemUser(courseOpenId, x.id, "0", schoolCode);
+                            });
+                            break;
+
+                        case 2://多选题
+                            course.list.ForEach(x =>
+                            {
+                                SubmitPaperItemUser(courseOpenId, x.id, "0,1", schoolCode);
+                            });
+                            break;
+
+                        case 3://判断题
+                            course.list.ForEach(x =>
+                            {
+                                SubmitPaperItemUser(courseOpenId, x.id, "true", schoolCode);
+                            });
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+
+                RewriteOnlineAssignment(courseOpenId, cellId, schoolCode, 3);
+
+                SubmitOnlineAssignment(courseOpenId, cellId, schoolCode, "true");
+
+                var resultJson1 = CourseHelper.FromPost($"{apiUrl}/study/assignment/loadOnlineAssignment", header, $"courseOpenId={courseOpenId}&cellId={cellId}&schoolCode={schoolcode}");
+
+                var courseResults1 = JsonConvert.DeserializeObject<AssignmentDot>(resultJson1);
+            }
+            catch (Exception ex)
+            {
+            }
+
+            return courseResults;
+        }
+
+        /// <summary>
+        /// 答题
+        /// </summary>
+        /// <param name="courseOpenId"></param>
+        /// <param name="questionId"></param>
+        /// <param name="answer"></param>
+        /// <param name="schoolCode"></param>
+        public void SubmitPaperItemUser(string courseOpenId, string questionId, string answer, string schoolCode)
+        {
+            try
+            {
+                var resultJson = CourseHelper.FromPost($"{apiUrl}/study/assignment/submitPaperItem4User", header, $"courseOpenId={courseOpenId}&questionId={questionId}&answer={answer}&schoolCode={schoolcode}");
+
+                var courseResults = JsonConvert.DeserializeObject<SubmitPaperItemDto>(resultJson);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public class SubmitPaperItemDto
+        {
+            /// <summary>
+            ///
+            /// </summary>
+            public int code { get; set; }
+        }
+
+        /// <summary>
+        /// 作业提交
+        /// </summary>
+        /// <param name="courseOpenld"></param>
+        /// <param name="cellld"></param>
+        /// <param name="schoolCode"></param>
+        /// <param name="isConstraint"></param>
+        public void SubmitOnlineAssignment(string courseOpenld, string cellld, string schoolCode, string isConstraint)
+        {
+            try
+            {
+                var resultJson = CourseHelper.FromPost($"{apiUrl}/study/assignment/submitOnlineAssignment", header, $"courseOpenld={courseOpenld}&cellld={cellld}&isConstraint={isConstraint}&schoolCode={schoolcode}");
+
+                var courseResults = JsonConvert.DeserializeObject<AssignmentDot>(resultJson);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// 作业 重置
+        /// </summary>
+        /// <param name="courseOpenld"></param>
+        /// <param name="cellld"></param>
+        /// <param name="schoolCode"></param>
+        /// <param name="type"></param>
+        public void RewriteOnlineAssignment(string courseOpenld, string cellld, string schoolCode, int type)
+        {
+            try
+            {
+                var resultJson = CourseHelper.FromPost($"{apiUrl}/study/assignment/submitOnlineAssignment", header, $"courseOpenld={courseOpenld}&cellld={cellld}&type={type}&schoolCode={schoolcode}");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        #endregion
     }
 }
