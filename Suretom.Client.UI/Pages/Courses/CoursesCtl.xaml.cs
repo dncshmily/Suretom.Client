@@ -669,6 +669,18 @@ namespace Suretom.Client.UI.Pages.Courses
 
                     try
                     {
+                        //未完成的作业
+
+                        var coursesData = new CoursesData(course.Student);
+
+                        ///获取课程 未完成 作业 节点的 id合集
+                        var cellIds = coursesData.GetCourseCellIds(course);
+
+                        if (cellIds.Count > 0)
+                        {
+                            studentService.QuestionLog(course.CourseOpenId, coursesData.schoolcode, coursesData.cookie, string.Join(",", cellIds));
+                        }
+
                         var idx = do_AllCoursesList.IndexOf(course);
 
                         AddProcessInfo($"{strInfo}-开始学习{course.CourseName}");
@@ -685,7 +697,7 @@ namespace Suretom.Client.UI.Pages.Courses
                             });
 
                             //开始学习
-                            new CoursesData(course.Student).SingeSyudentStart(course);
+                            coursesData.SingeSyudentStart(course);
                         }, course.Token).ContinueWith(t =>
                         {
                             try
@@ -1005,6 +1017,18 @@ namespace Suretom.Client.UI.Pages.Courses
 
                 AddProcessInfo($"{strInfo}-开始学习{course.CourseName}");
 
+                //未完成的作业
+
+                var coursesData = new CoursesData(course.Student);
+
+                ///获取课程 未完成 作业 节点的 id合集
+                var cellIds = coursesData.GetCourseCellIds(course);
+
+                if (cellIds.Count > 0)
+                {
+                    studentService.QuestionLog(course.CourseOpenId, coursesData.schoolcode, coursesData.cookie, string.Join(",", cellIds));
+                }
+
                 await Task.Run(() =>
                 {
                     AddProcessInfo($"{strInfo}-学习中...");
@@ -1017,7 +1041,7 @@ namespace Suretom.Client.UI.Pages.Courses
                     });
 
                     //开始学习
-                    new CoursesData(course.Student).SingeSyudentStart(course);
+                    coursesData.SingeSyudentStart(course);
                 }, course.Token).ContinueWith(t =>
                 {
                     try

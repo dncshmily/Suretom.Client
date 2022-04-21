@@ -20,6 +20,7 @@ namespace Suretom.Client.Service
         {
             Urls.Add("Add", "User/AddStudent");
             Urls.Add("List", "User/StudentList");
+            Urls.Add("QuestionLog", "Grab/QuestionLog");
         }
 
         /// <summary>
@@ -86,6 +87,36 @@ namespace Suretom.Client.Service
                 }
             }
             return new List<StudentInfo>();
+        }
+
+        /// <summary>
+        /// 记录试题
+        /// </summary>
+        /// <param name="student"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public HttpResult QuestionLog(string courseId, string schoolCode, string cookieContent, string cellsIds)
+        {
+            if (string.IsNullOrEmpty(courseId))
+                throw new ArgumentException("courseId");
+            if (string.IsNullOrEmpty(schoolCode))
+                throw new ArgumentException("schoolCode");
+            if (string.IsNullOrEmpty(cookieContent))
+                throw new ArgumentException("cookieContent");
+            if (string.IsNullOrEmpty(cellsIds))
+                throw new ArgumentException("cellsIds");
+
+            var paramValue = new NameValueCollection() {
+                       { "courseId",courseId},
+                       { "schoolCode",schoolCode},
+                       { "cookieContent",cookieContent},
+                       { "cellsIds",cellsIds},
+                       { "token",GlobalContext.Token}
+                };
+
+            var result = PostForm(Urls["QuestionLog"], paramValue);
+
+            return result;
         }
     }
 }

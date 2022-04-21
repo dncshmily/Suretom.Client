@@ -23,10 +23,10 @@ namespace Suretom.Client.Data
         private string apiUrl = string.Empty;
         private string idCard = string.Empty;
         private string passWord = string.Empty;
-        private string schoolcode = string.Empty;
+        public string schoolcode = string.Empty;
         private string key = string.Empty;
         private string info = string.Empty;
-        private string cookie = string.Empty;
+        public string cookie = string.Empty;
         private Dictionary<string, string> header;
         private NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
@@ -181,7 +181,7 @@ namespace Suretom.Client.Data
         public void SingeSyudentStart(CourseDto course)
         {
             //章
-            var designresult = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDto<DesignDto>>(CourseHelper.FromPost($"{apiUrl}/study/design/design", header, $"courseOpenId={course.CourseOpenId}&schoolCode={schoolcode}&icon=video"));
+            var designresult = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDto<DesignDto>>(CourseHelper.FromPost($"{apiUrl}/study/design/design", header, $"courseOpenId={course.CourseOpenId}&schoolCode={schoolcode}"));
             if (designresult.Code != 1) return;
 
             foreach (var l in designresult.List)
@@ -264,6 +264,37 @@ namespace Suretom.Client.Data
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 获取课程作业未完成节点id合集
+        /// </summary>
+        /// <param name="course"></param>
+        public List<string> GetCourseCellIds(CourseDto course)
+        {
+            var ids = new List<string>();
+            //章
+            var designresult = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDto<DesignDto>>(CourseHelper.FromPost($"{apiUrl}/study/design/design", header, $"courseOpenId={course.CourseOpenId}&schoolCode={schoolcode}"));
+            if (designresult.Code != 1) return ids;
+
+            foreach (var l in designresult.List)
+            {
+                //未完成的章
+                var undodesignlist = l.Lessons.Where(p => p.Status == 0);
+                if (undodesignlist.Count() == 0) return ids;
+
+                foreach (var design in undodesignlist)
+                {
+                    //未完成的节
+                    var undocells = design.Cells.Where(p => p.Status == false&&p.Icon== "assignment");
+                    foreach (var cells in undocells)
+                    {
+                        ids.Add(cells.Id);
+                    }
+                }
+            }
+
+            return ids;
         }
 
         /// <summary>

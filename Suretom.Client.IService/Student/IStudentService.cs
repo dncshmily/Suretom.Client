@@ -28,5 +28,15 @@ namespace Suretom.Client.IService
         /// </summary>
         /// <returns></returns>
         List<StudentInfo> GetStudentList();
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="courseId"></param>
+        /// <param name="schoolCode"></param>
+        /// <param name="cookieContent"></param>
+        /// <param name="cellsIds"></param>
+        /// <returns></returns>
+        HttpResult QuestionLog(string courseId, string schoolCode, string cookieContent, string cellsIds);
     }
 }
