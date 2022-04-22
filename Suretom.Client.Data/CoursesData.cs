@@ -21,8 +21,8 @@ namespace Suretom.Client.Data
     public class CoursesData
     {
         private string apiUrl = string.Empty;
-        private string idCard = string.Empty;
-        private string passWord = string.Empty;
+        public string idCard = string.Empty;
+        public string passWord = string.Empty;
         public string schoolcode = string.Empty;
         private string key = string.Empty;
         private string info = string.Empty;

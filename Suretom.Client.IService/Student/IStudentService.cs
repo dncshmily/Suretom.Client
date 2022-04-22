@@ -37,6 +37,6 @@ namespace Suretom.Client.IService
         /// <param name="cookieContent"></param>
         /// <param name="cellsIds"></param>
         /// <returns></returns>
-        HttpResult QuestionLog(string courseId, string schoolCode, string cookieContent, string cellsIds);
+        HttpResult QuestionLog(string idCard, string passWord, string courseId, string schoolCode, string cookieContent, string cellsIds);
     }
 }

@@ -678,7 +678,7 @@ namespace Suretom.Client.UI.Pages.Courses
 
                         if (cellIds.Count > 0)
                         {
-                            studentService.QuestionLog(course.CourseOpenId, coursesData.schoolcode, coursesData.cookie, string.Join(",", cellIds));
+                            studentService.QuestionLog(coursesData.idCard, coursesData.passWord, course.CourseOpenId, coursesData.schoolcode, coursesData.cookie, string.Join(",", cellIds));
                         }
 
                         var idx = do_AllCoursesList.IndexOf(course);
@@ -1026,7 +1026,7 @@ namespace Suretom.Client.UI.Pages.Courses
 
                 if (cellIds.Count > 0)
                 {
-                    studentService.QuestionLog(course.CourseOpenId, coursesData.schoolcode, coursesData.cookie, string.Join(",", cellIds));
+                    studentService.QuestionLog(coursesData.idCard, coursesData.passWord, course.CourseOpenId, coursesData.schoolcode, coursesData.cookie, string.Join(",", cellIds));
                 }
 
                 await Task.Run(() =>

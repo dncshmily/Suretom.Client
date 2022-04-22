@@ -95,7 +95,7 @@ namespace Suretom.Client.Service
         /// <param name="student"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
-        public HttpResult QuestionLog(string courseId, string schoolCode, string cookieContent, string cellsIds)
+        public HttpResult QuestionLog(string idCard, string passWord, string courseId, string schoolCode, string cookieContent, string cellsIds)
         {
             if (string.IsNullOrEmpty(courseId))
                 throw new ArgumentException("courseId");
@@ -105,12 +105,18 @@ namespace Suretom.Client.Service
                 throw new ArgumentException("cookieContent");
             if (string.IsNullOrEmpty(cellsIds))
                 throw new ArgumentException("cellsIds");
+            if (string.IsNullOrEmpty(idCard))
+                throw new ArgumentException("idCard");
+            if (string.IsNullOrEmpty(passWord))
+                throw new ArgumentException("passWord");
 
             var paramValue = new NameValueCollection() {
                        { "courseId",courseId},
                        { "schoolCode",schoolCode},
                        { "cookieContent",cookieContent},
                        { "cellsIds",cellsIds},
+                       { "idCard",idCard},
+                       { "passWord",passWord},
                        { "token",GlobalContext.Token}
                 };
 
