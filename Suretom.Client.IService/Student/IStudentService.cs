@@ -26,6 +26,13 @@ namespace Suretom.Client.IService
         /// <summary>
         ///
         /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        HttpResult DeleteStudent(string id);
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <returns></returns>
         List<StudentInfo> GetStudentList();
 

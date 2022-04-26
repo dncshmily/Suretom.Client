@@ -73,7 +73,7 @@
                             </StackPanel>
                             <DataGrid x:Name="dgStudents" Grid.Row="2"   IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" DataGridRow.MouseUp="DataGrid_MouseUpClick" LoadingRow="DataGrid_LoadingRow"  ItemsSource="{Binding}">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn  Header="序号"  Width="40"  Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGridRow}},Path=Header}" />
+                                    <DataGridTextColumn  Header="序号"  Width="40"  Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGridRow}},Path=Header}"  ElementStyle="{StaticResource DataGridTextCenter}" />
                                     <DataGridTextColumn  Binding="{Binding Id}" Visibility="Hidden"  Header="序号" ElementStyle="{StaticResource DataGridTextCenter}" Width="Auto" />
                                     <DataGridTextColumn  Binding="{Binding StudentName}" Header="姓名" ElementStyle="{StaticResource DataGridTextCenter}" Width="Auto" />
                                 </DataGrid.Columns>

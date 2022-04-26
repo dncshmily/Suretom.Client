@@ -3,6 +3,7 @@ using Suretom.Client.Entity;
 using Suretom.Client.IService;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace Suretom.Client.UI.Pages.User
     /// <summary>
     /// AddStudentPage.xaml 的交互逻辑
     /// </summary>
-    public partial class AddStudentPage : Window
+    public partial class EditStudentPage : Window
     {
         /// <summary>
         ///
@@ -40,10 +41,14 @@ namespace Suretom.Client.UI.Pages.User
         /// <summary>
         ///
         /// </summary>
-        public AddStudentPage()
+        public Student student = null;
+
+        /// <summary>
+        ///
+        /// </summary>
+        public EditStudentPage()
         {
             InitializeComponent();
-
             //居中显示
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
@@ -62,6 +67,16 @@ namespace Suretom.Client.UI.Pages.User
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            if (student!=null)
+            {
+                txtStudentName.Text=student.StudentName;
+                txtidCard.Text=student.IdCard;
+                txtmoviePwd.Password=student.MoviePwd;
+                txtStudyCode.Text   =student.StudyCode;
+                txtSchoollName.Text =   student.SchoolName;
+                txtClassName.Text = student.ClassName;
+                CmbStudentType.SelectedIndex =student.StudyType;
+            }
         }
 
         /// <summary>
@@ -75,7 +90,7 @@ namespace Suretom.Client.UI.Pages.User
         }
 
         /// <summary>
-        /// 添加学生
+        /// 保存
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -96,11 +111,11 @@ namespace Suretom.Client.UI.Pages.User
             if (result.Success)
             {
                 studentExists=result.Success;
-                MessageBox.Show("添加成功");
+                MessageBox.Show("保存成功");
             }
             else
             {
-                MessageBox.Show($"添加失败:{result.Message}");
+                MessageBox.Show($"保存失败:{result.Message}");
             }
 
             this.Close();

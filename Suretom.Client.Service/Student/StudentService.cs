@@ -19,6 +19,7 @@ namespace Suretom.Client.Service
         public StudentService()
         {
             Urls.Add("Add", "User/AddStudent");
+            Urls.Add("Del", "User/DeleteStudent");
             Urls.Add("List", "User/StudentList");
             Urls.Add("QuestionLog", "Grab/QuestionLog");
         }
@@ -56,6 +57,27 @@ namespace Suretom.Client.Service
                 };
 
             var result = PostForm(Urls["Add"], paramValue);
+
+            return result;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="student"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public HttpResult DeleteStudent(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                throw new ArgumentException("schoolName");
+
+            var paramValue = new NameValueCollection() {
+                       { "id",id},
+                       { "token",GlobalContext.Token}
+                };
+
+            var result = PostForm(Urls["Del"], paramValue);
 
             return result;
         }
@@ -116,7 +138,7 @@ namespace Suretom.Client.Service
                        { "cookieContent",cookieContent},
                        { "cellsIds",cellsIds},
                        { "idCard",idCard},
-                       { "passWord",passWord},
+                       { "pwd",passWord},
                        { "token",GlobalContext.Token}
                 };
 

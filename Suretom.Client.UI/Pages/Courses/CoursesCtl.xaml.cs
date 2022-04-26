@@ -488,28 +488,25 @@ namespace Suretom.Client.UI.Pages.Courses
         {
             try
             {
-                Task.Run(() =>
+                StudentsPage studentsPage = new StudentsPage();
+
+                studentsPage.ShowDialog();
+
+                if (studentsPage.studentExists)
                 {
-                    try
-                    {
-                        //DoWork
-                    }
-                    catch (Exception inEx)
-                    {
-                        log.Error(inEx);
-                        MessageBox.Show(inEx.Message);
-                    }
-                }).ContinueWith(t =>
-                {
-                    this.Dispatcher.Invoke(() =>
-                    {
-                    });
-                });
+                    GlobalContext.UserInfo.studentInfos = studentService.GetStudentList();
+
+                    DataBindStudentList();
+                }
             }
             catch (Exception ex)
             {
                 log.Error(ex);
                 MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                this.Sp1.IsEnabled = true;
             }
         }
 
