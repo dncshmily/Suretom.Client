@@ -59,20 +59,6 @@ namespace Suretom.Client.UI.Pages.User
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
             studentService = GlobalContext.Resolve<IStudentService>();
-
-            var userInfos = GlobalContext.UserInfo.studentInfos;
-
-            for (int i = 0; i < userInfos.Count; i++)
-            {
-                var userInfo = userInfos[i];
-
-                userInfo.List.ForEach(s =>
-                {
-                    ez_StudentList.Add(s);
-                });
-            }
-
-            dgStudents.DataContext= ez_StudentList;
         }
 
         /// <summary>
@@ -82,10 +68,21 @@ namespace Suretom.Client.UI.Pages.User
         /// <param name="e"></param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            var userInfos = GlobalContext.UserInfo.studentInfos;
+
+            for (int i = 0; i < userInfos.Count; i++)
+            {
+                userInfos[i].List.ForEach(s =>
+                {
+                    ez_StudentList.Add(s);
+                });
+            }
+
+            dgStudents.DataContext= ez_StudentList;
         }
 
         /// <summary>
-        ///
+        ///编辑
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -109,7 +106,6 @@ namespace Suretom.Client.UI.Pages.User
                 }
                 else
                 {
-                    MessageBox.Show("111");
                 }
             }
             catch (Exception ex)
