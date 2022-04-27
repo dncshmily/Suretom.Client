@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         Title="学员管理" Height="600" Width="1200" WindowStyle="SingleBorderWindow"
         ResizeMode="NoResize" WindowStartupLocation="CenterScreen"
-        Background="White" Loaded="Window_Loaded">
+        Background="White" Loaded="Window_Loaded" Closing="Window_Closing">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -37,19 +37,19 @@
                                 <DataGridTextColumn  Binding="{Binding IdCard}" Header="账号" ElementStyle="{StaticResource DataGridTextCenter}" Width="150" />
                                 <DataGridTextColumn  Binding="{Binding StudyCode}" Header="学号" ElementStyle="{StaticResource DataGridTextCenter}" Width="150" />
                                 <DataGridTextColumn  Binding="{Binding SchoolName}" Header="学校" ElementStyle="{StaticResource DataGridTextCenter}" Width="100" />
-                                <DataGridTextColumn  Binding="{Binding ClassName}" Header="班级" ElementStyle="{StaticResource DataGridTextCenter}" Width="*" />
+                                <DataGridTextColumn  Binding="{Binding ClassName}" Header="班级" ElementStyle="{StaticResource DataGridTextCenter}" Width="300" />
                                 <DataGridTextColumn  Binding="{Binding StudyType}" Header="学习形式" ElementStyle="{StaticResource DataGridTextCenter}" Width="80" />
-                                <DataGridTemplateColumn Width="Auto" Header="">
+                                <DataGridTemplateColumn  Header="">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <Button Content="编辑"   Style="{DynamicResource btn-primary}" Tag="{Binding}"  Click="BtnEditStudent_Click" Margin="15 0 0 0" />
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
-                                <DataGridTemplateColumn Width="Auto" Header="">
+                                <DataGridTemplateColumn  Header="">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Button Content="删除" Style="{DynamicResource btn-danger}" Tag="{Binding}"  Click="BtnDelStudent_Click" Margin="15 0 0 0" />
+                                            <Button Content="删除" Style="{DynamicResource btn-danger}" Tag="{Binding}"  Click="BtnDelStudent_Click" Margin="0 0 0 0" />
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>

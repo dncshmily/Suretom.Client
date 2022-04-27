@@ -31,12 +31,12 @@ namespace Suretom.Client.UI.Pages.User
         /// <summary>
         ///学生列表
         /// </summary>
-        private ObservableCollection<Student> ez_StudentList = new ObservableCollection<Student>();
+        public ObservableCollection<Student> ez_StudentList = new ObservableCollection<Student>();
 
         /// <summary>
         ///
         /// </summary>
-        public bool studentExists = false;
+        public bool IsClose = false;
 
         /// <summary>
         ///
@@ -82,6 +82,25 @@ namespace Suretom.Client.UI.Pages.User
         }
 
         /// <summary>
+        ///
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            //MessageBoxResult result = MessageBox.Show("确定是退出吗？", "询问", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            ////关闭窗口
+            //if (result == MessageBoxResult.Yes)
+            //    e.Cancel = false;
+            ////不关闭窗口
+            //if (result == MessageBoxResult.No)
+            //    e.Cancel = true;
+
+            IsClose =true;
+            GlobalContext.UserInfo.studentInfos[0].List= ez_StudentList.ToList();
+        }
+
+        /// <summary>
         ///编辑
         /// </summary>
         /// <param name="sender"></param>
@@ -102,6 +121,15 @@ namespace Suretom.Client.UI.Pages.User
 
                     if (edit.studentExists)
                     {
+                        var students = ez_StudentList.ToList();
+                        students[ez_StudentList.IndexOf(student)]=edit.newStudent;
+
+                        ez_StudentList.Clear();
+
+                        foreach (var item in students)
+                        {
+                            ez_StudentList.Add(item);
+                        }
                     }
                 }
                 else
@@ -132,17 +160,21 @@ namespace Suretom.Client.UI.Pages.User
 
                 if (student!=null)
                 {
-                    var result = studentService.DeleteStudent(student.Id);
+                    ez_StudentList.Remove(student);
 
-                    if (result.Success)
-                    {
-                        studentExists=result.Success;
-                        MessageBox.Show("操作成功");
-                    }
-                    else
-                    {
-                        MessageBox.Show($"操作失败:{result.Message}");
-                    }
+                    //var result = studentService.DeleteStudent(student.Id);
+
+                    //if (result.Success)
+                    //{
+                    //    ez_StudentList.Remove(student);
+
+                    //    studentExists =result.Success;
+                    //    MessageBox.Show("操作成功");
+                    //}
+                    //else
+                    //{
+                    //    MessageBox.Show($"操作失败:{result.Message}");
+                    //}
                 }
             }
             catch (Exception ex)

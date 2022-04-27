@@ -492,10 +492,8 @@ namespace Suretom.Client.UI.Pages.Courses
 
                 studentsPage.ShowDialog();
 
-                if (studentsPage.studentExists)
+                if (studentsPage.IsClose)
                 {
-                    GlobalContext.UserInfo.studentInfos = studentService.GetStudentList();
-
                     DataBindStudentList();
                 }
             }

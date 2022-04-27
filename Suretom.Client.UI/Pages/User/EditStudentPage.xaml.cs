@@ -41,6 +41,11 @@ namespace Suretom.Client.UI.Pages.User
         /// <summary>
         ///
         /// </summary>
+        public Student newStudent = new Student();
+
+        /// <summary>
+        ///
+        /// </summary>
         public Student student = null;
 
         /// <summary>
@@ -69,6 +74,8 @@ namespace Suretom.Client.UI.Pages.User
         {
             if (student!=null)
             {
+                newStudent=student;
+
                 txtStudentName.Text=student.StudentName;
                 txtidCard.Text=student.IdCard;
                 txtmoviePwd.Password=student.MoviePwd;
@@ -96,18 +103,16 @@ namespace Suretom.Client.UI.Pages.User
         /// <param name="e"></param>
         private void BtnSave_Click(object sender, RoutedEventArgs e)
         {
-            Student student = new Student()
-            {
-                SchoolName =txtSchoollName.Text,
-                IdCard=txtidCard.Text,
-                MoviePwd=txtmoviePwd.Password.Trim(),
-                StudyCode=txtStudyCode.Text,
-                StudentName=txtStudentName.Text,
-                ClassName=txtClassName.Text,
-                StudyType=CmbStudentType.SelectedIndex
-            };
+            newStudent.SchoolName =txtSchoollName.Text;
+            newStudent.IdCard=txtidCard.Text;
+            newStudent.MoviePwd=txtmoviePwd.Password.Trim();
+            newStudent.StudyCode=txtStudyCode.Text;
+            newStudent.StudentName=txtStudentName.Text;
+            newStudent.ClassName=txtClassName.Text;
+            newStudent.StudyType=CmbStudentType.SelectedIndex;
 
-            var result = studentService.AddStudent(student);
+            var result = studentService.AddStudent(newStudent);
+
             if (result.Success)
             {
                 studentExists=result.Success;
