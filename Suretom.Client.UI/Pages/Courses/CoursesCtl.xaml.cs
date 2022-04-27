@@ -44,14 +44,19 @@ namespace Suretom.Client.UI.Pages.Courses
         private IUserService userService;
 
         /// <summary>
-        /// 是否停止处理
+        ///
         /// </summary>
-        private bool _isStopDeal = false;
+        private IStudentService studentService;
 
         /// <summary>
         ///
         /// </summary>
-        private IStudentService studentService;
+        private ICourseService courseService;
+
+        /// <summary>
+        /// 是否停止处理
+        /// </summary>
+        private bool _isStopDeal = false;
 
         /// <summary>
         ///学生信息
@@ -139,6 +144,8 @@ namespace Suretom.Client.UI.Pages.Courses
             userService = GlobalContext.Resolve<IUserService>();
             //
             studentService = GlobalContext.Resolve<IStudentService>();
+            //
+            courseService=GlobalContext.Resolve<ICourseService>();
             //日志信息
             dgProcessInfo.DataContext = ez_processInfoList;
             //未完成课程
@@ -692,7 +699,13 @@ namespace Suretom.Client.UI.Pages.Courses
                             });
 
                             //开始学习
-                            coursesData.SingeSyudentStart(course);
+                            coursesData.SingeSyudentStart(course, ref courseInfo);
+
+                            //添加课程
+                            courseService.AddCourse(courseInfo.course);
+
+                            //添加章节
+                            courseService.AddSection(courseInfo.section);
                         }, course.Token).ContinueWith(t =>
                         {
                             try
@@ -923,7 +936,7 @@ namespace Suretom.Client.UI.Pages.Courses
         }
 
         /// <summary>
-        ///
+        ///学生课程
         /// </summary>
         /// <param name="student"></param>
         public void DataBindStudentCourses(Student student)
@@ -1002,6 +1015,11 @@ namespace Suretom.Client.UI.Pages.Courses
         /// <summary>
         ///
         /// </summary>
+        private CourseInfoDto courseInfo = new CourseInfoDto();
+
+        /// <summary>
+        ///课程学习
+        /// </summary>
         /// <param name="dgrStr"></param>
         /// <returns></returns>
         public async Task<bool> SigneCourseStudy(CourseDto course)
@@ -1010,50 +1028,59 @@ namespace Suretom.Client.UI.Pages.Courses
             {
                 var idx = do_AllCoursesList.IndexOf(course);
 
-                AddProcessInfo($"{strInfo}-开始学习{course.CourseName}");
-
-                //未完成的作业
-
-                var coursesData = new CoursesData(course.Student);
-
-                ///获取课程 未完成 作业 节点的 id合集
-                var cellIds = coursesData.GetCourseCellIds(course);
-
-                if (cellIds.Count > 0)
+                if (idx>=0)
                 {
-                    studentService.QuestionLog(coursesData.idCard, coursesData.passWord, course.CourseOpenId, coursesData.schoolcode, coursesData.cookie, string.Join(",", cellIds));
-                }
+                    AddProcessInfo($"{strInfo}-开始学习{course.CourseName}");
 
-                await Task.Run(() =>
-                {
-                    AddProcessInfo($"{strInfo}-学习中...");
+                    //未完成的作业
 
-                    OperationBtnEnable(false);
+                    var coursesData = new CoursesData(course.Student);
 
-                    this.Dispatcher.Invoke(() =>
+                    ///获取课程 未完成 作业 节点的 id合集
+                    var cellIds = coursesData.GetCourseCellIds(course);
+
+                    if (cellIds.Count > 0)
                     {
-                        do_AllCoursesList[idx].Status = 1;
-                    });
+                        studentService.QuestionLog(coursesData.idCard, coursesData.passWord, course.CourseOpenId, coursesData.schoolcode, coursesData.cookie, string.Join(",", cellIds));
+                    }
 
-                    //开始学习
-                    coursesData.SingeSyudentStart(course);
-                }, course.Token).ContinueWith(t =>
-                {
-                    try
+                    await Task.Run(() =>
                     {
+                        AddProcessInfo($"{strInfo}-学习中...");
+
+                        OperationBtnEnable(false);
+
                         this.Dispatcher.Invoke(() =>
                         {
-                            do_AllCoursesList[idx].Status = 2;
-                            OperationBtnEnable(true);
+                            do_AllCoursesList[idx].Status = 1;
                         });
-                    }
-                    catch (Exception inEx)
-                    {
-                        log.Error(inEx);
-                    }
-                });
 
-                AddProcessInfo($"{strInfo}学习结束");
+                        //开始学习
+                        coursesData.SingeSyudentStart(course, ref courseInfo);
+
+                        //添加课程
+                        courseService.AddCourse(courseInfo.course);
+
+                        //添加章节
+                        courseService.AddSection(courseInfo.section);
+                    }, course.Token).ContinueWith(t =>
+                    {
+                        try
+                        {
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                do_AllCoursesList[idx].Status = 2;
+                                OperationBtnEnable(true);
+                            });
+                        }
+                        catch (Exception inEx)
+                        {
+                            log.Error(inEx);
+                        }
+                    });
+
+                    AddProcessInfo($"{strInfo}学习结束");
+                }
             }
             catch (Exception ex)
             {

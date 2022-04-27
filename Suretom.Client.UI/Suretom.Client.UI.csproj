@@ -139,12 +139,6 @@
     <Compile Include="Pages\Courses\CoursesCtl.xaml.cs">
       <DependentUpon>CoursesCtl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Demo\DemoWin.xaml.cs">
-      <DependentUpon>DemoWin.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Demo\DemoWinContent.xaml.cs">
-      <DependentUpon>DemoWinContent.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Others\DataResourceConverters.cs" />
     <Compile Include="Pages\Others\DataResourceEventArgs.cs" />
     <Page Include="Login.xaml">
@@ -164,14 +158,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Pages\Courses\CoursesCtl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\Demo\DemoWin.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\Demo\DemoWinContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

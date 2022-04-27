@@ -26,11 +26,13 @@ namespace Suretom.Client.UI.Ioc
         private void DataPlatformServcieRegister(ContainerBuilder builder, ITypeFinder typeFinder, SuretomConfig config)
         {
             var httpChannel = new FormHttpChannel();
+
             builder.RegisterInstance(httpChannel).As<IHttpChannel>().SingleInstance();
 
             builder.RegisterType<LoginService>().As<ILoginService>().InstancePerLifetimeScope();
             builder.RegisterType<UserService>().As<IUserService>().InstancePerLifetimeScope();
             builder.RegisterType<StudentService>().As<IStudentService>().InstancePerLifetimeScope();
+            builder.RegisterType<CourseService>().As<ICourseService>().InstancePerLifetimeScope();
         }
     }
 }

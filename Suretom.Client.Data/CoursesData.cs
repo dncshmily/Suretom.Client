@@ -178,11 +178,35 @@ namespace Suretom.Client.Data
         ///单课程学校
         /// </summary>
         /// <param name="undocourselist"></param>
-        public void SingeSyudentStart(CourseDto course)
+        public void SingeSyudentStart(CourseDto course, ref CourseInfoDto courseInfo)
         {
             //章
             var designresult = Newtonsoft.Json.JsonConvert.DeserializeObject<ResultDto<DesignDto>>(CourseHelper.FromPost($"{apiUrl}/study/design/design", header, $"courseOpenId={course.CourseOpenId}&schoolCode={schoolcode}"));
             if (designresult.Code != 1) return;
+
+            courseInfo.course= new AddCourseDto()
+            {
+                idCard=idCard,
+                schoolCode=schoolcode,
+                list=new List<CourseInfo>()
+                {
+                    new CourseInfo()
+                    {
+                        studyTerm=course.StudyTerm,
+                        studyYear=course.StudyYear,
+                        schedule=course.Schedule.ToString(),
+                        courseName=course.CourseName,
+                        displayName=course.DisplayName,
+                        courseId=course.Id.ToString()
+                    }
+                }
+            };
+
+            var addSectionDto = new AddSectionDto()
+            {
+                courseId=course.Id.ToString(),
+                schoolCode=schoolcode
+            };
 
             foreach (var l in designresult.List)
             {
@@ -191,10 +215,25 @@ namespace Suretom.Client.Data
 
                 foreach (var design in undodesignlist)
                 {
+                    var section = new SectionsItem()
+                    {
+                        sectionId = design.Id.ToString(),
+                        sortOrder = design.SortOrder,
+                        title = design.Title
+                    };
+
                     //节
                     var undocells = design.Cells.Where(p => p.Status == false&&p.Icon== "video"); //未完成的节
                     foreach (var cells in undocells)
                     {
+                        section.cells.Add(new CellsItem()
+                        {
+                            cellId=design.Id.ToString(),
+                            cellTitle=design.Title,
+                            icon="video",
+                            sortOrder=design.SortOrder,
+                        });
+
                         var doingcellsjson = CourseHelper.FromPost($"{apiUrl}/study/studying/studying", header, $"courseOpenId={course.CourseOpenId}&cellId={cells.Id}&schoolCode={schoolcode}");
                         var doingcells = Newtonsoft.Json.JsonConvert.DeserializeObject<DoingCellsDto>(doingcellsjson);
                         if (doingcells.Code != 1) continue;
@@ -262,8 +301,12 @@ namespace Suretom.Client.Data
                             }
                         }
                     }
+
+                    addSectionDto.sections.Add(section);
                 }
             }
+
+            courseInfo.section=addSectionDto;
         }
 
         /// <summary>
