@@ -30,8 +30,8 @@
                         <StackPanel x:Name="Sp1"  Orientation="Horizontal" Margin="5 5 5 5">
                             <Button x:Name="BtnAddWords" Content="添加学员" Margin="20,0,0,0"  Style="{DynamicResource btn-primary}"   Click="BtnAddStudent_Click" />
                             <Button x:Name="BtnStartDeal" Content="批量导入" Margin="20,0,0,0"   Style="{DynamicResource btn-warning}"  Click="BtnBatchImport_Click" />
-                            <Button x:Name="BtnAuto1"  Margin="20,0,0,0"  Content="学员管理" Style="{DynamicResource btn-info}"  Click="BtnStudentManageClick" />
-                            <Button x:Name="BtnAuto2"  Margin="20,0,0,0"  Content="个人中心" Style="{DynamicResource btn-success}"  Click="BtnPersonCenterClick" />
+                            <Button x:Name="BtnStudentManage"  Margin="20,0,0,0"  Content="学员管理" Style="{DynamicResource btn-info}"  Click="BtnStudentManageClick" />
+                            <Button x:Name="BtnPersonCenter"  Margin="20,0,0,0"  Content="个人中心" Style="{DynamicResource btn-success}"  Click="BtnPersonCenterClick" />
                             <Button x:Name="BtnAutoStart"  Margin="20,0,20,0"  Content="智能刷课" Style="{ DynamicResource btn-primary}"  Click="BtnAutoStart_Click" />
                             <Button x:Name="BtnAutoStop"  Margin="0,0,20,0"  Content="停止刷课" Style="{ DynamicResource btn-danger}"  Click="BtnAutoStop_Click" />
                         </StackPanel>

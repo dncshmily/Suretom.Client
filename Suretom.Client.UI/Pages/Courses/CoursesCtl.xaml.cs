@@ -412,7 +412,7 @@ namespace Suretom.Client.UI.Pages.Courses
         {
             try
             {
-                var result = MessageBox.Show("是否确定开始学习？", "提示", MessageBoxButton.OKCancel);
+                var result = MessageBox.Show("是否智能刷课？", "提示", MessageBoxButton.OKCancel);
 
                 if (result == MessageBoxResult.OK)
                 {
@@ -421,25 +421,26 @@ namespace Suretom.Client.UI.Pages.Courses
                         MessageBox.Show("初始化失败");
                         return;
                     }
-                    if (do_AllCoursesList.Count(f => f.Status == 0) > 0)
+
+                    AddProcessInfo($"智能刷课 启动成功—");
+
+                    ez_StudentList.ToList().ForEach(student =>
                     {
-                        if (!_isStopDeal)
+                        var courseList = new CoursesData(student).GetCourseInfoList();
+
+                        //未完成的课程
+                        var courses = courseList.Where(f => f.Schedule < 100).ToList();
+
+                        foreach (var course in courses)
                         {
-                            AddProcessInfo($"————————开始学习————————");
+                            if (do_AllCoursesList.Count(f => f.Student.IdCard == student.IdCard && f.CourseOpenId == course.CourseOpenId)==0)
+                            {
+                                course.Status=0;
 
-                            AddProcessInfo($"数据初始化...");
-
-                            _isStopDeal = true;
+                                do_AllCoursesList.Add((course));
+                            }
                         }
-
-                        OperationBtnEnable(false);
-                        CurrentStatus = BatchImportStatus.手动处理;
-                        OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
-                    }
-                    else
-                    {
-                        AddProcessError($"请选择要学习的学生！");
-                    }
+                    });
                 }
             }
             catch (Exception ex)
@@ -1222,8 +1223,9 @@ namespace Suretom.Client.UI.Pages.Courses
                 this.Dispatcher.Invoke(() =>
                 {
                     Sp1.IsEnabled = isEnable;
-                    BtnAutoStart.IsEnabled = isEnable;
                     gb1.IsEnabled = isEnable;
+                    gb2.IsEnabled = isEnable;
+                    BtnAutoStart.IsEnabled = isEnable;
                 });
             }
             catch (Exception ex)
