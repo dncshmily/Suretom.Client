@@ -29,7 +29,7 @@ namespace Suretom.Client.UI
             var scope = GlobalContext.LifetimeScope();
             _loginService = GlobalContext.Resolve<ILoginService>(scope);
 
-            Title = $"Suretom.Client.{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()}";
+            Title = $"{Title}.{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()}";
 
             _tokenTimer.Elapsed += _tokenTimer_Elapsed;
         }
