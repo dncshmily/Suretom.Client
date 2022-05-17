@@ -10,7 +10,7 @@
         <local:Bool2VisibilityConverter x:Key="bool2VisibilityConverter" />
         <local:BatchImportProcessInfoTypeConverter x:Key="batchImportProcessInfoTypeConverter" />
     </UserControl.Resources>
-    <Border BorderThickness="1" BorderBrush="#AAA" Width="Auto" Height="Auto" Margin="5">
+    <Border BorderThickness="1" BorderBrush="Black" Width="Auto" Height="Auto" Margin="5">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
@@ -19,12 +19,11 @@
             <Grid  Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <!--<ColumnDefinition Width="300" />
-                    <ColumnDefinition Width="Auto" />-->
+                    <ColumnDefinition Width="260" />
                 </Grid.ColumnDefinitions>
-                <GroupBox  Grid.Column="0" Margin="10 5 10 5"  Header="" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox  Grid.Column="0" Margin="10 5 10 5" Header="" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                     <GroupBox.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
+                        <SolidColorBrush Color="Black" />
                     </GroupBox.BorderBrush>
                     <Grid>
                         <StackPanel x:Name="Sp1"  Orientation="Horizontal" Margin="5 5 5 5">
@@ -37,39 +36,40 @@
                         </StackPanel>
                     </Grid>
                 </GroupBox>
-                <GroupBox Grid.Column="1" Margin="5 5 5 5" Visibility="Hidden"   Header="批量处理" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox Grid.Column="1" Margin="0 5 5 5"    Header="" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                     <GroupBox.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
+                        <SolidColorBrush Color="Black" />
                     </GroupBox.BorderBrush>
                     <StackPanel x:Name="Sp2" Orientation="Horizontal"  Grid.Column="0">
                     </StackPanel>
                 </GroupBox>
             </Grid>
-
             <Grid Grid.Row="1" Margin="5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="200" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="260" />
                 </Grid.ColumnDefinitions>
+
                 <GroupBox x:Name="gb1" Header=""  Margin="0 0 5 0"   Grid.Column="0"  Padding="0,2,0,2"  Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                     <GroupBox.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
+                        <SolidColorBrush Color="Black" />
                     </GroupBox.BorderBrush>
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Grid Background="#FFE5E5E5">
+                        <Grid Background="White">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="40" />
                                 <RowDefinition Height="40" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <StackPanel x:Name="SpSchool" Grid.Row="0" Orientation="Horizontal"  Grid.Column="1">
-                                <ComboBox x:Name="CmbSchool"  DropDownClosed="OnDropDownClosed_CmbSchool"  Width="120"  Height="30" Margin="5" />
+                                <ComboBox x:Name="CmbSchool"  DropDownClosed="OnDropDownClosed_CmbSchool"  Width="170"  Height="30" Margin="5" />
                             </StackPanel>
                             <StackPanel x:Name="SpSemester"   Grid.Row="1" Orientation="Horizontal"  Grid.Column="1" Margin="5">
-                                <ComboBox x:Name="CmbSemester"   DropDownClosed="OnDropDownClosed_CmbSemester"   Width="120" Height="30" />
+                                <ComboBox x:Name="CmbSemester"   DropDownClosed="OnDropDownClosed_CmbSemester"   Width="170" Height="30" />
                             </StackPanel>
                             <DataGrid x:Name="dgStudents" Grid.Row="2"   IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" DataGridRow.MouseUp="DataGrid_MouseUpClick" LoadingRow="DataGrid_LoadingRow"  ItemsSource="{Binding}">
                                 <DataGrid.Columns>
@@ -82,9 +82,9 @@
                     </Grid>
                 </GroupBox>
 
-                <GroupBox  x:Name="gb2"  Header=""  Margin="0 0 5 0" Grid.Column="1" Padding="0,2,0,2" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                <GroupBox  x:Name="gb2"   Header=""  Margin="5 0 5 0" Grid.Column="1" Padding="0,2,0,2" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
                     <GroupBox.BorderBrush>
-                        <SolidColorBrush Color="{DynamicResource DefaultColor2}" />
+                        <SolidColorBrush Color="Black" />
                     </GroupBox.BorderBrush>
                     <Grid>
                         <Grid.RowDefinitions>
@@ -93,7 +93,7 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <TabControl  Grid.Row="0" Margin="5"  Padding="0">
+                        <TabControl  Grid.Row="0" Margin="5"  BorderBrush="Black" Padding="0">
                             <TabItem Header="个人信息">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -144,7 +144,7 @@
                             </TabItem>
                         </TabControl>
 
-                        <TabControl  Grid.Row="1"  Margin="5" Padding="0">
+                        <TabControl  Grid.Row="1"  Margin="5" BorderBrush="Black" Padding="0">
                             <TabItem Header="未结束课程">
                                 <Grid Background="White">
                                     <Grid.ColumnDefinitions>
@@ -156,9 +156,9 @@
                                         <DataGrid x:Name="dgCourseInfo" Grid.Row="1"  IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False"  ItemsSource="{Binding}" Height="Auto">
                                             <DataGrid.Columns>
                                                 <DataGridTextColumn  Binding="{Binding CourseName}" Header="课程名称" ElementStyle="{StaticResource DataGridTextCenter}" Width="200" />
-                                                <DataGridTextColumn  Binding="{Binding StudyYear}" Header="学年" ElementStyle="{StaticResource DataGridTextCenter}" Width="150" />
-                                                <DataGridTextColumn  Binding="{Binding StudyTerm}" Header="季度" ElementStyle="{StaticResource DataGridTextCenter}" Width="150" />
-                                                <DataGridTextColumn  Binding="{Binding DisplayName}" Header="教师" ElementStyle="{StaticResource DataGridTextCenter}" Width="150" />
+                                                <DataGridTextColumn  Binding="{Binding StudyYear}" Header="学年" ElementStyle="{StaticResource DataGridTextCenter}" Width="100" />
+                                                <DataGridTextColumn  Binding="{Binding StudyTerm}" Header="季度" ElementStyle="{StaticResource DataGridTextCenter}" Width="100" />
+                                                <DataGridTextColumn  Binding="{Binding DisplayName}" Header="教师" ElementStyle="{StaticResource DataGridTextCenter}" Width="100" />
                                                 <DataGridTemplateColumn Header="进度"   Width="300">
                                                     <DataGridTemplateColumn.CellTemplate>
                                                         <DataTemplate>
@@ -183,7 +183,7 @@
                                             </DataGrid.Columns>
                                         </DataGrid>
                                     </StackPanel>
-                                    <Border  Grid.Column="1" BorderBrush="LightGray" BorderThickness="0.6" Background="White">
+                                    <Border  Grid.Column="1" BorderBrush="LightGray"  BorderThickness="0.6" Background="White">
                                         <StackPanel x:Name="Sp88"  VerticalAlignment="Center">
                                             <Grid>
                                                 <Grid>
@@ -227,7 +227,7 @@
                             </TabItem>
                         </TabControl>
 
-                        <TabControl  Grid.Row="2"  Margin="5" Padding="0">
+                        <TabControl  Grid.Row="2"  Margin="5" BorderBrush="Black" Padding="0">
                             <TabItem Header="刷课信息">
                                 <Grid Background="White">
                                     <Grid.ColumnDefinitions>
@@ -302,6 +302,33 @@
                                 </Grid>
                             </TabItem>
                         </TabControl>
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox x:Name="gb3" Grid.Column="2" Margin="5" BorderBrush="Black"  Header="" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid Background="White">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <ProgressBar  Name="pbStatus"  Value="60"  Width="256"  Height="30" Foreground="SkyBlue" Background="LightGray" />
+                                <TextBlock  HorizontalAlignment="Center"   VerticalAlignment="Center" Text="{Binding ElementName=pbStatus, Path=Value, StringFormat={}{0:0}/}"></TextBlock>
+                                <ProgressBar  Name="pbStatus1"  Value="100" Visibility="Hidden" />
+                                <TextBlock  HorizontalAlignment="Center"  Margin="40 0 0 0"   VerticalAlignment="Center"  Text="{Binding ElementName=pbStatus1, Path=Value, StringFormat={}{0:0}}"></TextBlock>
+                            </Grid>
+                            <DataGrid x:Name="dgStudents1" Grid.Row="1" Margin="0 5 0 0"  HeadersVisibility="None" IsReadOnly="True" CanUserAddRows="False" AutoGenerateColumns="False" DataGridRow.MouseUp="DataGrid_MouseUpClick" LoadingRow="DataGrid_LoadingRow"  ItemsSource="{Binding}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn  Header="序号"  Width="40"  Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type DataGridRow}},Path=Header}"  ElementStyle="{StaticResource DataGridTextCenter}" />
+                                    <DataGridTextColumn  Binding="{Binding Id}" Visibility="Hidden"  Header="序号" ElementStyle="{StaticResource DataGridTextCenter}" Width="Auto" />
+                                    <DataGridTextColumn  Binding="{Binding StudentName}"   Header="姓名" ElementStyle="{StaticResource DataGridTextCenter}" Width="Auto" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
                     </Grid>
                 </GroupBox>
             </Grid>

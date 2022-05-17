@@ -156,6 +156,7 @@ namespace Suretom.Client.UI.Pages.Courses
             dgCourseList.DataContext = do_CoursesList;
             //
             dgStudents.DataContext = ez_StudentList;
+            dgStudents1.DataContext = ez_StudentList;
 
             ez_timer1 = new DispatcherTimer();
             ez_timer1.Interval = TimeSpan.FromMinutes(0.1);
