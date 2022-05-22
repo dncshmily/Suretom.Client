@@ -137,4 +137,94 @@ namespace Suretom.Client.UI.Others
             return null;
         }
     }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public class BatchCoursesInfoTypeConverter : IValueConverter
+    {
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="targetType"></param>
+        /// <param name="parameter"></param>
+        /// <param name="culture"></param>
+        /// <returns></returns>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var infoType = (CourseStatusEnum)value;
+            switch (infoType)
+            {
+                case CourseStatusEnum.Learning:
+                    return "停 止";
+
+                case CourseStatusEnum.NotStart:
+                case CourseStatusEnum.Completed:
+                    return "删 除";
+
+                default:
+                    return "开 始";
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public class CoursesStatusConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var infoType = (CourseStatusEnum)value;
+            switch (infoType)
+            {
+                case CourseStatusEnum.Learning:
+                    return "btn-primary";
+
+                case CourseStatusEnum.NotStart:
+                case CourseStatusEnum.Completed:
+                    return "btn-danger";
+
+                default:
+                    return "btn-success";
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///
+    /// </summary>
+    public class CoursesScheduleIsEnabledyConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var val = float.Parse(value.ToString());
+            if (val < 100)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value == null)
+                return false;
+            return !(float.Parse(value.ToString()) < 100);
+        }
+    }
 }

@@ -24,7 +24,7 @@ namespace Suretom.Client.Entity
         public CourseDto()
         {
             TokenSource = new CancellationTokenSource();
-            Token =TokenSource.Token;
+            Token = TokenSource.Token;
         }
 
         /// <summary>
@@ -136,5 +136,25 @@ namespace Suretom.Client.Entity
         ///章节
         /// </summary>
         public List<DesignDto> CourseList { get; set; } = new List<DesignDto>();
+    }
+
+    public enum CourseStatusEnum
+    {
+        /// <summary>
+        /// -1：未开始 
+        /// </summary>
+        NotStart = -1,
+        /// <summary>
+        /// 0：待开始 
+        /// </summary>
+        Starte = 0,
+        /// <summary>
+        /// 1：学习中 
+        /// </summary>
+        Learning = 1,
+        /// <summary>
+        /// 2：已完成
+        /// </summary>
+        Completed = 2
     }
 }

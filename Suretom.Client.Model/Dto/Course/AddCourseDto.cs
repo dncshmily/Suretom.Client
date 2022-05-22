@@ -97,7 +97,7 @@ namespace Suretom.Client.Entity
         /// <summary>
         ///
         /// </summary>
-        public List<SectionsItem> sections { get; set; }
+        public List<SectionsItem> sections { get; set; } = new List<SectionsItem>();
     }
 
     /// <summary>
@@ -108,7 +108,7 @@ namespace Suretom.Client.Entity
         /// <summary>
         ///
         /// </summary>
-        public List<CellsItem> cells { get; set; }
+        public List<CellsItem> cells { get; set; } = new List<CellsItem>();
 
         /// <summary>
         /// 章id

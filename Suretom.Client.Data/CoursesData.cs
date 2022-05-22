@@ -244,7 +244,8 @@ namespace Suretom.Client.Data
                             if (!i) break;
                             System.Threading.Thread.Sleep(1000 * 60);
                             doingcells.Cell.LastTime += 60;
-                            var recordjson = string.Empty;
+                            var recordjson = string.Empty; 
+
                             bool isResult = false;
 
                             try

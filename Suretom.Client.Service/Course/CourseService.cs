@@ -36,13 +36,13 @@ namespace Suretom.Client.Service
                 throw new ArgumentException("idCard");
             if (string.IsNullOrEmpty(dto.schoolCode))
                 throw new ArgumentException("schoolCode");
-            if (dto.list.Count==0)
+            if (dto.list.Count == 0)
                 throw new ArgumentException("list");
 
             var paramValue = new NameValueCollection() {
                        { "idCard",dto.idCard},
                        { "schoolCode",dto.schoolCode},
-                       { "list",dto.list.ToJson()},
+                       { "data",dto.ToJson()},
                        { "token",GlobalContext.Token}
                 };
 
@@ -63,13 +63,13 @@ namespace Suretom.Client.Service
                 throw new ArgumentException("courseId");
             if (string.IsNullOrEmpty(dto.schoolCode))
                 throw new ArgumentException("schoolCode");
-            if (dto.sections.Count==0)
+            if (dto.sections.Count == 0)
                 throw new ArgumentException("sections");
 
             var paramValue = new NameValueCollection() {
                        { "idCard",dto.courseId},
                        { "schoolCode",dto.schoolCode},
-                       { "list",dto.sections.ToJson()},
+                       { "data",dto.ToJson()},
                        { "token",GlobalContext.Token}
                 };
 

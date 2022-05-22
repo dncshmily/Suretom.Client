@@ -145,28 +145,24 @@ namespace Suretom.Client.UI.Pages.Courses
             //
             studentService = GlobalContext.Resolve<IStudentService>();
             //
-            courseService=GlobalContext.Resolve<ICourseService>();
-            //日志信息
-            dgProcessInfo.DataContext = ez_processInfoList;
-            //未完成课程
-            dgCourseInfo.DataContext = ez_UndoneCoursesList;
-            //已完成课程
-            dgFinishCourseInfo.DataContext =ez_CompletedCoursesList;
-            //学习课程列表
-            dgCourseList.DataContext = do_CoursesList;
-            //
+            courseService = GlobalContext.Resolve<ICourseService>();
+
+            //课程数据
+            dgCourseInfo.DataContext = do_CoursesList;
+            //学生数据
             dgStudents.DataContext = ez_StudentList;
-            dgStudents1.DataContext = ez_StudentList;
+            //所有任务课程
+            dgStudentsAll.DataContext = do_AllCoursesList;
 
             ez_timer1 = new DispatcherTimer();
             ez_timer1.Interval = TimeSpan.FromMinutes(0.1);
             ez_timer1.Tick += Timer1_Tick;
             ez_timer1.Start();
 
-            //ez_timer2 = new DispatcherTimer();
-            //ez_timer2.Interval = TimeSpan.FromMinutes(0.1);
-            //ez_timer2.Tick += Timer2_Tick;
-            //ez_timer2.Start();
+            ez_timer2 = new DispatcherTimer();
+            ez_timer2.Interval = TimeSpan.FromSeconds(1);
+            ez_timer2.Tick += Timer2_Tick;
+            ez_timer2.Start();
         }
 
         /// <summary>
@@ -434,11 +430,14 @@ namespace Suretom.Client.UI.Pages.Courses
 
                         foreach (var course in courses)
                         {
-                            if (do_AllCoursesList.Count(f => f.Student.IdCard == student.IdCard && f.CourseOpenId == course.CourseOpenId)==0)
+                            if (do_AllCoursesList.Count(f => f.Student.IdCard == student.IdCard && f.CourseOpenId == course.CourseOpenId) == 0)
                             {
-                                course.Status=0;
+                                course.Status = 0;
 
-                                do_AllCoursesList.Add((course));
+                                this.Dispatcher.Invoke(() =>
+                                {
+                                    do_AllCoursesList.Add(course);
+                                });
                             }
                         }
                     });
@@ -572,72 +571,7 @@ namespace Suretom.Client.UI.Pages.Courses
                 CurrentStatus = BatchImportStatus.手动处理;
                 OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
 
-                //var doCourses = do_CoursesList.FirstOrDefault(f => f.course.Status==0);
-
-                //if (doCourses != null)
-                //{
-                //    var result = await SigneCourseStudy(doCourses);
-
-                //    if (result)
-                //    {
-                //        CurrentStatus = BatchImportStatus.成功;
-                //        OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
-                //    }
-                //    else
-                //    {
-                //        CurrentStatus = BatchImportStatus.失败;
-                //        OnStatusChangeEvent(new StatusChangeEventArgs(CurrentStatus));
-                //    }
-                //}
-
-                //MessageBox.Show("双击");
                 e.Handled = true;
-            }
-        }
-
-        /// <summary>
-        /// 单课程添加-刷课
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnAddCourse_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            var course = button.Tag as CourseDto;
-
-            if (course!=null)
-            {
-                if (do_CoursesList.Count(f => f.Student.IdCard == ez_student.IdCard && f.CourseOpenId == course.CourseOpenId&&f.CourseName==course.CourseName)==0)
-                {
-                    do_CoursesList.Add(course);
-
-                    AddProcessInfo($"添加刷课—{course.CourseName} 成功");
-                }
-                else
-                {
-                    MessageBox.Show("课程已存在，不可重复添加");
-                }
-            }
-        }
-
-        /// <summary>
-        /// 一键添加-刷课
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnAddCourses_Click(object sender, RoutedEventArgs e)
-        {
-            AddProcessInfo($"一键添加刷课...");
-
-            //当前学生-未完成课程信息
-            foreach (var course in ez_UndoneCoursesList)
-            {
-                if (do_CoursesList.Count(f => f.Student.IdCard == ez_student.IdCard && f.CourseOpenId == course.CourseOpenId&&f.CourseName==course.CourseName)==0)
-                {
-                    do_CoursesList.Add(course);
-
-                    AddProcessInfo($"添加刷课—{course.CourseName} 成功");
-                }
             }
         }
 
@@ -662,13 +596,16 @@ namespace Suretom.Client.UI.Pages.Courses
 
                 if (course != null)
                 {
-                    button.IsEnabled=false;
+                    button.IsEnabled = false;
 
-                    if (do_AllCoursesList.Count(f => f.Student.IdCard == ez_student.IdCard && f.CourseOpenId == course.CourseOpenId&& f.CourseName == course.CourseName)==0)
+                    if (do_AllCoursesList.Count(f => f.Student.IdCard == ez_student.IdCard && f.CourseOpenId == course.CourseOpenId && f.CourseName == course.CourseName) == 0)
                     {
-                        course.Status=0;
+                        course.Status = 0;
 
-                        do_AllCoursesList.Add((course));
+                        this.Dispatcher.Invoke(() =>
+                        {
+                            do_AllCoursesList.Add(course);
+                        });
                     }
 
                     try
@@ -732,7 +669,7 @@ namespace Suretom.Client.UI.Pages.Courses
                     }
                     finally
                     {
-                        button.IsEnabled=true;
+                        button.IsEnabled = true;
                     }
                 }
             }
@@ -744,39 +681,15 @@ namespace Suretom.Client.UI.Pages.Courses
         }
 
         /// <summary>
-        /// 一键开始-当前学生-刷课
+        ///暂停或删除
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void BtnCoursesStart_Click(object sender, RoutedEventArgs e)
-        {
-            AddProcessInfo($"一键开始刷课...");
-
-            //当前学生-待刷课课程
-            var studenCourses = do_CoursesList.Where(c => c.Student.IdCard==ez_student.IdCard&&c.Student.StudentName==ez_student.StudentName&&c.Schedule<100).ToList();
-
-            foreach (var course in studenCourses)
-            {
-                if (do_AllCoursesList.Count(f => f.Student.IdCard == ez_student.IdCard && f.CourseOpenId == course.CourseOpenId)==0)
-                {
-                    course.Status=0;
-
-                    do_AllCoursesList.Add((course));
-
-                    AddProcessInfo($"开始刷课—{course.CourseName} 启动成功");
-                }
-            };
-        }
-
-        /// <summary>
-        /// 单课程-暂停
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnCoursePause_Click(object sender, RoutedEventArgs e)
+        private void BtnCourseStopDemo_Click(object sender, RoutedEventArgs e)
         {
             try
             {
+                var content = ((ContentControl)sender).Content;
                 var button = sender as Button;
                 var course = button.Tag as CourseDto;
 
@@ -784,7 +697,34 @@ namespace Suretom.Client.UI.Pages.Courses
                 {
                     button.IsEnabled = false;
 
-                    course.TokenSource.Cancel();
+                    switch (content)
+                    {
+                        case "停 止":
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                //course.Status = -1;
+                                var idx = do_AllCoursesList.IndexOf(course);
+                                if (idx >= 0)
+                                {
+                                    do_AllCoursesList[idx].Status = -1;
+                                }
+                                course.TokenSource.Cancel();
+                            });
+                            break;
+
+                        case "删 除":
+                            this.Dispatcher.Invoke(() =>
+                            {
+                                do_AllCoursesList.Remove(course);
+                            });
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    dgStudentsAll.DataContext = null;
+                    dgStudentsAll.DataContext = do_AllCoursesList;
 
                     button.IsEnabled = true;
                 }
@@ -794,31 +734,6 @@ namespace Suretom.Client.UI.Pages.Courses
                 log.Error(ex);
                 MessageBox.Show(ex.Message);
             }
-        }
-
-        /// <summary>
-        /// 一键停止
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void BtnCoursesStop_Click(object sender, RoutedEventArgs e)
-        {
-            AddProcessInfo($"一键停止刷课...");
-
-            //当前学生-未完成课程
-            var studenCourses = do_CoursesList.Where(c => c.Student.IdCard==ez_student.IdCard&&c.Student.StudentName==ez_student.StudentName&&c.Schedule<100).ToList();
-
-            foreach (var course in studenCourses)
-            {
-                var do_AllCourses = do_AllCoursesList.FirstOrDefault(f => f.CourseName==course.CourseName&&f.Student.IdCard==course.Student.IdCard);
-
-                if (do_AllCourses!=null)
-                {
-                    course.TokenSource.Cancel();
-
-                    AddProcessInfo($"停止刷课—{course.CourseName} 成功");
-                }
-            };
         }
 
         #endregion 按钮
@@ -870,19 +785,14 @@ namespace Suretom.Client.UI.Pages.Courses
         /// <param name="e"></param>
         private async void Timer2_Tick(object sender, EventArgs e)
         {
-            var studenCourses = do_AllCoursesList.Where(c => c.Student.IdCard==ez_student.IdCard&&c.Student.StudentName==ez_student.StudentName).ToList();
-
-            if (studenCourses.Count > 0)
+            try
             {
-                this.Dispatcher.Invoke(() =>
-                {
-                    do_CoursesList.Clear();
-
-                    studenCourses.ForEach(c =>
-                    {
-                        do_CoursesList.Add(c);
-                    });
-                });
+                pbStatus.Maximum = do_AllCoursesList.Count;
+                pbStatus.Value = do_AllCoursesList.Count(f => f.Schedule == 100);
+                pbStatusAll.Value = do_AllCoursesList.Count;
+            }
+            catch
+            {
             }
         }
 
@@ -903,10 +813,10 @@ namespace Suretom.Client.UI.Pages.Courses
 
             int selectIndex = 0;
 
-            if (!string.IsNullOrEmpty(schoolName)&&schoolName!="全部")
+            if (!string.IsNullOrEmpty(schoolName) && schoolName != "全部")
             {
                 selectIndex = CmbSchool.SelectedIndex;
-                userInfos= userInfos.Where(f => f.SchoolName==schoolName).ToList();
+                userInfos = userInfos.Where(f => f.SchoolName == schoolName).ToList();
             }
 
             ez_StudentList.Clear();
@@ -922,7 +832,7 @@ namespace Suretom.Client.UI.Pages.Courses
 
                 if (!cmbSchoolDic.ContainsValue(schoolName))
                 {
-                    cmbSchoolDic.Add(i+1, userInfo.SchoolName);
+                    cmbSchoolDic.Add(i + 1, userInfo.SchoolName);
                 }
             }
 
@@ -959,9 +869,9 @@ namespace Suretom.Client.UI.Pages.Courses
             labIdType.Content = StudyTypeConverter(ez_student.StudyType);
 
             //课程信息
-            var studentCourses = ez_AllCoursesList.Where(f => f.Student.IdCard==student.IdCard).ToList();
+            var studentCourses = ez_AllCoursesList.Where(f => f.Student.IdCard == student.IdCard).ToList();
 
-            if (studentCourses.Count>0)
+            if (studentCourses.Count > 0)
             {
                 foreach (var course in studentCourses)
                 {
@@ -975,7 +885,7 @@ namespace Suretom.Client.UI.Pages.Courses
                 foreach (var course in ez_coursesList)
                 {
                     //所有学生课程
-                    if (ez_AllCoursesList.Count(f => f.Student.IdCard==student.IdCard&&f.CourseName==course.CourseName)==0)
+                    if (ez_AllCoursesList.Count(f => f.Student.IdCard == student.IdCard && f.CourseName == course.CourseName) == 0)
                     {
                         ez_AllCoursesList.Add(course);
                     }
@@ -985,31 +895,18 @@ namespace Suretom.Client.UI.Pages.Courses
             for (int i = 0; i < ez_coursesList.Count; i++)
             {
                 ez_coursesList[i].ExpiredTime = ez_coursesList[i].ExpiredTime.Contains("Date") ? UtilityHelper.ToConvertTime(ez_coursesList[i].ExpiredTime).ToString() : ez_coursesList[i].ExpiredTime;
-                ez_coursesList[i].Id = i+1;
+                ez_coursesList[i].Id = i + 1;
             }
 
             ObservableHelper.ObservableMySort(ez_coursesList, 1);
 
-            //未完成的课程
-            var coursesList = ez_coursesList.Where(f => f.Schedule < 100).ToList();
-
             if (ez_coursesList != null && ez_coursesList.Count > 0)
             {
-                ez_UndoneCoursesList.Clear();
-                ez_CompletedCoursesList.Clear();
+                do_CoursesList.Clear();
 
                 foreach (var courses in ez_coursesList)
                 {
-                    if (courses.Schedule < 100)
-                    {
-                        //未完成课程
-                        ez_UndoneCoursesList.Add(courses);
-                    }
-                    else
-                    {
-                        //已完成课程
-                        ez_CompletedCoursesList.Add(courses);
-                    }
+                    do_CoursesList.Add(courses);
                 }
             }
         }
@@ -1030,7 +927,7 @@ namespace Suretom.Client.UI.Pages.Courses
             {
                 var idx = do_AllCoursesList.IndexOf(course);
 
-                if (idx>=0)
+                if (idx >= 0)
                 {
                     AddProcessInfo($"{strInfo}-开始学习{course.CourseName}");
 
